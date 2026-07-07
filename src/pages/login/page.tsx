@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, Sun, Moon, X } from "lucide-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
+import OperatorIdField from "@/components/ui/operator-id-field.tsx";
 
 
 function hashPin(pin: string) {
@@ -22,16 +23,21 @@ type Props = {
   onOperatorLogin: (session: OperatorSession) => void;
 };
 
+
 export default function LoginPage({ onOperatorLogin }: Props) {
   const [userId, setUserId] = useState("");
+  const [userIdFinalized, setUserIdFinalized] = useState(false);
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetId, setResetId] = useState("");
+  const [resetIdFinalized, setResetIdFinalized] = useState(false);
   const [resetPin, setResetPin] = useState("");
   const [resetPin2, setResetPin2] = useState("");
+  const [showResetPin, setShowResetPin] = useState(false);
+  const [showResetPin2, setShowResetPin2] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
   const { resolvedTheme, setTheme } = useTheme();
@@ -41,8 +47,19 @@ export default function LoginPage({ onOperatorLogin }: Props) {
   const seedOps = useMutation(api.auth.operators.seedOperators);
   const ensureSystemOps = useMutation(api.auth.operators.ensureSystemOperators);
   const requestReset = useMutation(api.auth.pinReset.requestReset);
+  const loginOperator = useQuery(
+    api.venda.operadores.resolveOperatorConvexId,
+    userId.length === 3 ? { operatorId: userId.padStart(3, "0") } : "skip",
+  );
+  const resetOperator = useQuery(
+    api.venda.operadores.resolveOperatorConvexId,
+    resetId.length === 3 ? { operatorId: resetId.padStart(3, "0") } : "skip",
+  );
   const userRef = useRef<HTMLInputElement>(null);
   const pinRef = useRef<HTMLInputElement>(null);
+  const resetIdRef = useRef<HTMLInputElement>(null);
+  const resetPinRef = useRef<HTMLInputElement>(null);
+  const resetPin2Ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     seedOps().catch(() => {});
@@ -50,6 +67,12 @@ export default function LoginPage({ onOperatorLogin }: Props) {
     // Auto-focus no primeiro campo conforme RIA-MISSION-001
     userRef.current?.focus();
   }, [seedOps]);
+
+  useEffect(() => {
+    if (showResetModal) {
+      setTimeout(() => resetIdRef.current?.focus(), 50);
+    }
+  }, [showResetModal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,17 +98,36 @@ export default function LoginPage({ onOperatorLogin }: Props) {
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 relative overflow-hidden">
+  const resetValid =
+    resetId.length === 3 &&
+    resetPin.length === 4 &&
+    resetPin === resetPin2 &&
+    resetOperator !== null &&
+    resetOperator !== undefined;
 
-      {/* Textura de fundo sutil */}
-      <div
-        className="absolute inset-0 opacity-[0.035] pointer-events-none"
-        style={{
-          backgroundImage: "radial-gradient(circle at 1.5px 1.5px, currentColor 1px, transparent 0)",
-          backgroundSize: "28px 28px",
-        }}
-      />
+  const handleRequestReset = async () => {
+    if (!resetValid) return;
+    setResetLoading(true);
+    try {
+      const res = await requestReset({
+        operatorId: resetId.padStart(3, "0"),
+        newPinHash: hashPin(resetPin),
+      });
+      if (res.success) {
+        setShowResetModal(false);
+        toast.success("Solicitação enviada. Aguarde aprovação do gerente.");
+      } else {
+        toast.error("Usuário não encontrado.");
+      }
+    } catch {
+      toast.error("Erro ao enviar. Tente novamente.");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-[#07180d] px-6 relative overflow-hidden">
 
       {/* Alternância Claro/Escuro — segundo plano, canto superior direito */}
       <button
@@ -114,31 +156,22 @@ export default function LoginPage({ onOperatorLogin }: Props) {
           <label className="block text-[10px] font-medium text-muted-foreground tracking-[0.08em] uppercase px-1">
             Usuário
           </label>
-          <input
-            ref={userRef}
-            type="text"
-            inputMode="numeric"
-            maxLength={3}
-            placeholder="001"
+          <OperatorIdField
             value={userId}
-            autoComplete="off"
-            onChange={(e) => {
-              const val = e.target.value.replace(/\D/g, "");
-              setUserId(val);
-              setError("");
-              // Cursor vai automaticamente para o PIN ao completar 3 dígitos
-              if (val.length === 3) {
-                setTimeout(() => pinRef.current?.focus(), 50);
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && userId.length > 0) {
-                e.preventDefault();
-                pinRef.current?.focus();
-              }
-            }}
-            className="w-full h-11 px-11 rounded-xl bg-secondary border border-transparent text-foreground text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] placeholder:text-muted-foreground/30 placeholder:text-base placeholder:tracking-normal placeholder:indent-0 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+            operator={loginOperator}
+            finalized={userIdFinalized}
+            inputRef={userRef}
+            borderClass="border-transparent"
+            onValueChange={setUserId}
+            onFinalizedChange={setUserIdFinalized}
+            onNext={() => pinRef.current?.focus()}
+            onClear={() => setError("")}
           />
+          {userIdFinalized && userId.length === 3 && loginOperator === null && (
+            <p className="text-[11px] text-destructive px-1">
+              Operador não encontrado.
+            </p>
+          )}
         </div>
 
         {/* Campo Senha */}
@@ -202,7 +235,15 @@ export default function LoginPage({ onOperatorLogin }: Props) {
         {/* Esqueci a senha — segundo plano */}
         <button
           type="button"
-          onClick={() => { setShowResetModal(true); setResetId(userId); setResetPin(""); setResetPin2(""); }}
+          onClick={() => {
+            setShowResetModal(true);
+            setResetId("");
+            setResetIdFinalized(false);
+            setResetPin("");
+            setResetPin2("");
+            setShowResetPin(false);
+            setShowResetPin2(false);
+          }}
           className="cursor-pointer text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
         >
           Esqueci a senha
@@ -244,16 +285,27 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                   <label className="block text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
                     Usuário
                   </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={3}
-                    placeholder="001"
+                  <OperatorIdField
                     value={resetId}
-                    autoComplete="off"
-                    onChange={(e) => setResetId(e.target.value.replace(/\D/g, ""))}
-                    className="w-full h-11 px-4 rounded-xl bg-secondary border border-border text-foreground text-center text-xl font-serif tracking-[0.4em] placeholder:text-muted-foreground/30 placeholder:text-sm placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    operator={resetOperator}
+                    finalized={resetIdFinalized}
+                    inputRef={resetIdRef}
+                    borderClass="border-border"
+                    onValueChange={setResetId}
+                    onFinalizedChange={setResetIdFinalized}
+                    onNext={() => setTimeout(() => resetPinRef.current?.focus(), 0)}
                   />
+                  {resetIdFinalized && resetId.length === 3 && (
+                    resetOperator === null ? (
+                      <p className="text-[11px] text-destructive px-1">
+                        Operador não encontrado.
+                      </p>
+                    ) : resetOperator === undefined ? (
+                      <p className="text-[11px] text-muted-foreground px-1">
+                        Buscando operador...
+                      </p>
+                    ) : null
+                  )}
                 </div>
 
                 {/* Novo PIN */}
@@ -261,16 +313,34 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                   <label className="block text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
                     Novo PIN
                   </label>
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={4}
-                    placeholder="••••"
-                    value={resetPin}
-                    autoComplete="off"
-                    onChange={(e) => setResetPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                    className="w-full h-11 px-4 rounded-xl bg-secondary border border-border text-foreground text-center text-xl tracking-[0.5em] placeholder:text-muted-foreground/30 placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      ref={resetPinRef}
+                      type={showResetPin ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="••••"
+                      value={resetPin}
+                      autoComplete="off"
+                      onChange={(e) => setResetPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && resetPin.length === 4) {
+                          e.preventDefault();
+                          resetPin2Ref.current?.focus();
+                        }
+                      }}
+                      className="w-full h-11 px-11 rounded-xl bg-secondary border border-border text-foreground text-center text-xl tracking-[0.5em] indent-[0.5em] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowResetPin((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      aria-label={showResetPin ? "Ocultar novo PIN" : "Mostrar novo PIN"}
+                    >
+                      {showResetPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Confirmar PIN */}
@@ -278,40 +348,40 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                   <label className="block text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
                     Confirmar PIN
                   </label>
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={4}
-                    placeholder="••••"
-                    value={resetPin2}
-                    autoComplete="off"
-                    onChange={(e) => setResetPin2(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                    className="w-full h-11 px-4 rounded-xl bg-secondary border border-border text-foreground text-center text-xl tracking-[0.5em] placeholder:text-muted-foreground/30 placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                  />
+                  <div className="relative">
+                    <input
+                      ref={resetPin2Ref}
+                      type={showResetPin2 ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="••••"
+                      value={resetPin2}
+                      autoComplete="off"
+                      onChange={(e) => setResetPin2(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && resetValid && !resetLoading) {
+                          e.preventDefault();
+                          void handleRequestReset();
+                        }
+                      }}
+                      className="w-full h-11 px-11 rounded-xl bg-secondary border border-border text-foreground text-center text-xl tracking-[0.5em] indent-[0.5em] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowResetPin2((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      aria-label={showResetPin2 ? "Ocultar confirmação do PIN" : "Mostrar confirmação do PIN"}
+                    >
+                      {showResetPin2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <button
-                disabled={resetLoading || resetId.length < 1 || resetPin.length !== 4 || resetPin !== resetPin2}
-                onClick={async () => {
-                  setResetLoading(true);
-                  try {
-                    const res = await requestReset({
-                      operatorId: resetId.padStart(3, "0"),
-                      newPinHash: hashPin(resetPin),
-                    });
-                    if (res.success) {
-                      setShowResetModal(false);
-                      toast.success("Solicitação enviada. Aguarde aprovação do gerente.");
-                    } else {
-                      toast.error("Usuário não encontrado.");
-                    }
-                  } catch {
-                    toast.error("Erro ao enviar. Tente novamente.");
-                  } finally {
-                    setResetLoading(false);
-                  }
-                }}
+                disabled={resetLoading || !resetValid}
+                onClick={() => void handleRequestReset()}
                 className="cursor-pointer w-full h-11 mt-5 rounded-xl bg-primary text-primary-foreground text-sm font-medium tracking-[0.15em] uppercase hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-35 disabled:cursor-not-allowed"
               >
                 {resetLoading ? "Enviando..." : "Solicitar"}
