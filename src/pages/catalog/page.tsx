@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "convex/react";
+﻿import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
 import ProductSheet from "./_components/ProductSheet.tsx";
 import type { Product } from "./_components/ProductSheet.tsx";
+import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
 
 type CategoryDoc = {
   _id: Id<"categories">;
@@ -52,10 +53,7 @@ export default function CatalogPage() {
       <header className="sticky top-0 z-30 bg-primary px-4 pt-10 pb-3 shadow-md">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h1 className="text-xl font-extrabold text-primary-foreground leading-tight">
-              🏠 Sabor da Casa
-            </h1>
-            <p className="text-primary-foreground/70 text-xs">Padaria • Lanchonete • Pizzaria</p>
+            <AlvoradaLogo size="sm" className="w-32" />
           </div>
           <button
             className="relative p-2 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors cursor-pointer"
@@ -280,7 +278,7 @@ function ProductCard({
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-3xl">🍽️</div>
+          <div className="w-full h-full flex items-center justify-center text-3xl">ðŸ½ï¸</div>
         )}
       </div>
 

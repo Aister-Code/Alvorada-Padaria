@@ -11,6 +11,7 @@ import OperatorsTab from "./OperatorsTab.tsx";
 import PinResetsTab from "./PinResetsTab.tsx";
 import OverviewTab from "./OverviewTab.tsx";
 import { cn } from "@/lib/utils.ts";
+import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
 
 type Tab = "overview" | "operators" | "pinresets";
 
@@ -71,11 +72,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 py-3 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <img
-            src="https://hercules-cdn.com/file_HPjTSRmu0Y2UO4eTkNA5IUvH"
-            alt="Alvorada"
-            className="w-8 h-8 rounded-lg object-cover"
-          />
+          <AlvoradaLogo variant="icon" size="sm" />
           <div>
             <p className="text-sm font-semibold leading-tight">Admin</p>
             <p className="text-[11px] text-muted-foreground leading-tight">RondônIA Apps</p>

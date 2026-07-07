@@ -1,6 +1,7 @@
 import { Bell, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils.ts";
+import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
 
 type Props = {
   operatorName: string;
@@ -32,11 +33,7 @@ export default function DashboardHeader({
     <header className="flex items-center justify-between gap-3 px-4 md:px-6 py-3 border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-30">
       {/* Logo + info */}
       <div className="flex items-center gap-3 min-w-0">
-        <img
-          src="https://hercules-cdn.com/file_HPjTSRmu0Y2UO4eTkNA5IUvH"
-          alt="Alvorada"
-          className="w-9 h-9 rounded-xl object-cover shrink-0"
-        />
+        <AlvoradaLogo variant="icon" size="sm" />
         <div className="min-w-0 hidden sm:block">
           <p className="text-sm font-semibold text-foreground leading-tight truncate">
             {operatorName}

@@ -4,6 +4,7 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import AdminDashboard from "./_components/AdminDashboard.tsx";
+import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
 
 export default function AdminPage() {
   return (
@@ -15,11 +16,7 @@ export default function AdminPage() {
       </AuthLoading>
       <Unauthenticated>
         <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-background px-6">
-          <img
-            src="https://hercules-cdn.com/file_HPjTSRmu0Y2UO4eTkNA5IUvH"
-            alt="Alvorada"
-            className="w-16 h-16 rounded-2xl object-cover"
-          />
+          <AlvoradaLogo size="md" />
           <div className="text-center space-y-1">
             <h1 className="text-lg font-semibold">Admin · RondônIA Apps</h1>
             <p className="text-sm text-muted-foreground">Acesso restrito</p>

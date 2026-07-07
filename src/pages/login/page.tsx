@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
 
 
 function hashPin(pin: string) {
@@ -65,7 +66,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
       } else {
         setError("Usuário ou senha incorretos.");
         setPin("");
-        userRef.current?.focus();
+        setTimeout(() => userRef.current?.focus(), 50);
       }
     } catch {
       setError("Erro ao conectar. Tente novamente.");
@@ -104,15 +105,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
         className="w-full max-w-xs flex flex-col items-center"
       >
         {/* Logo */}
-        <img
-          src="https://hercules-cdn.com/file_HPjTSRmu0Y2UO4eTkNA5IUvH"
-          alt="Alvorada"
-          className="w-36 h-36 rounded-3xl object-cover mb-8 shadow-lg"
-        />
+        <div className="mb-8 flex flex-col items-center">
+          <AlvoradaLogo size="lg" className="w-56 max-w-full" />
+        </div>
 
         {/* Campo Usuário */}
-        <div className="w-full space-y-1.5 mb-4">
-          <label className="block text-[10px] font-medium text-muted-foreground tracking-widest uppercase px-1">
+        <div className="w-[18rem] max-w-full space-y-1 mb-3.5">
+          <label className="block text-[10px] font-medium text-muted-foreground tracking-[0.08em] uppercase px-1">
             Usuário
           </label>
           <input
@@ -132,13 +131,19 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                 setTimeout(() => pinRef.current?.focus(), 50);
               }
             }}
-            className="w-full h-12 px-4 rounded-xl bg-secondary border border-border text-foreground text-center text-2xl font-serif tracking-[0.4em] placeholder:text-muted-foreground/30 placeholder:text-base placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && userId.length > 0) {
+                e.preventDefault();
+                pinRef.current?.focus();
+              }
+            }}
+            className="w-full h-11 px-11 rounded-xl bg-secondary border border-transparent text-foreground text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] placeholder:text-muted-foreground/30 placeholder:text-base placeholder:tracking-normal placeholder:indent-0 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
           />
         </div>
 
         {/* Campo Senha */}
-        <div className="w-full space-y-1.5 mb-6">
-          <label className="block text-[10px] font-medium text-muted-foreground tracking-widest uppercase px-1">
+        <div className="w-[18rem] max-w-full space-y-1 mb-5">
+          <label className="block text-[10px] font-medium text-muted-foreground tracking-[0.08em] uppercase px-1">
             Senha
           </label>
           <div className="relative">
@@ -154,7 +159,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                 setPin(e.target.value.replace(/\D/g, "").slice(0, 4));
                 setError("");
               }}
-              className="w-full h-12 px-4 pr-11 rounded-xl bg-secondary border border-border text-foreground text-center text-2xl tracking-[0.5em] placeholder:text-muted-foreground/30 placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+              className="w-full h-11 px-11 rounded-xl bg-secondary border border-transparent text-foreground text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none focus:ring-2 focus:ring-ring transition-all"
             />
             <button
               type="button"
@@ -187,9 +192,11 @@ export default function LoginPage({ onOperatorLogin }: Props) {
         <button
           type="submit"
           disabled={loading || !userId || pin.length !== 4}
-          className="cursor-pointer w-full h-12 rounded-xl bg-primary text-primary-foreground font-medium tracking-[0.2em] uppercase text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-35 disabled:cursor-not-allowed mb-5"
+          className="cursor-pointer inline-flex items-center justify-center w-[18rem] max-w-full h-11 rounded-xl bg-primary text-primary-foreground font-medium uppercase text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-35 disabled:cursor-not-allowed mb-5"
         >
-          {loading ? "Entrando..." : "Entrar"}
+          <span className="tracking-[0.12em] indent-[0.12em]">
+            {loading ? "Entrando..." : "Entrar"}
+          </span>
         </button>
 
         {/* Esqueci a senha — segundo plano */}
@@ -314,9 +321,9 @@ export default function LoginPage({ onOperatorLogin }: Props) {
         )}
       </AnimatePresence>
 
-      {/* Rodapé RondonIA Apps */}
-      <p className="absolute bottom-5 text-[9px] text-muted-foreground/40 tracking-[0.25em] uppercase select-none">
-        RondonIA Apps
+      {/* Rodapé RondônIA Apps */}
+      <p className="absolute bottom-5 text-[9px] text-muted-foreground/40 tracking-[0.25em] select-none">
+        RondônIA Apps
       </p>
     </div>
   );
