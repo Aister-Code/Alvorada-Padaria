@@ -221,7 +221,7 @@ export default function ModalDadosDelivery({ dadosIniciais, onConfirm, onClose, 
               onClick={handleConfirm}
               disabled={loading}
             >
-              {loading ? "Salvando..." : "Confirmar Entrega"}
+              {loading ? "Salvando..." : "Salvar Dados"}
             </Button>
           </div>
         </motion.div>

@@ -48,6 +48,7 @@ type CatalogProduct = {
 export default function VendaPage({ operator, onBack }: Props) {
   const [showModal, setShowModal] = useState(false);
   const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [confirmAfterDeliverySave, setConfirmAfterDeliverySave] = useState(false);
   const [loadingDelivery, setLoadingDelivery] = useState(false);
   const [pedidoAberto, setPedidoAberto] = useState<{
     pedidoId: Id<"pedidos">;
@@ -234,6 +235,7 @@ export default function VendaPage({ operator, onBack }: Props) {
       const temCliente = pedido?.clienteNomeSnapshot && pedido?.clienteTelefoneSnapshot;
       const temEndereco = pedido?.enderecoEntrega?.logradouro;
       if (!temCliente || !temEndereco) {
+        setConfirmAfterDeliverySave(true);
         setShowDeliveryModal(true);
         return;
       }
@@ -270,10 +272,13 @@ export default function VendaPage({ operator, onBack }: Props) {
       setShowDeliveryModal(false);
       toast.success("Dados do delivery salvos");
       // Após salvar, confirma o pedido
-      await executarConfirmarPedido();
+      if (confirmAfterDeliverySave) {
+        await executarConfirmarPedido();
+      }
     } catch {
       toast.error("Erro ao salvar dados do delivery");
     } finally {
+      setConfirmAfterDeliverySave(false);
       setLoadingDelivery(false);
     }
   };
@@ -316,7 +321,10 @@ export default function VendaPage({ operator, onBack }: Props) {
         </div>
         {pedidoAberto?.modalidade === "delivery" && (
           <button
-            onClick={() => setShowDeliveryModal(true)}
+            onClick={() => {
+              setConfirmAfterDeliverySave(false);
+              setShowDeliveryModal(true);
+            }}
             className="ml-2 flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400 border border-sky-200 dark:border-sky-700 cursor-pointer hover:bg-sky-200 dark:hover:bg-sky-800 transition-colors"
           >
             <Bike size={12} />
@@ -474,7 +482,10 @@ export default function VendaPage({ operator, onBack }: Props) {
             enderecoEntrega: pedidoDetalhe?.pedido.enderecoEntrega,
           }}
           onConfirm={handleSalvarDadosDelivery}
-          onClose={() => setShowDeliveryModal(false)}
+          onClose={() => {
+            setConfirmAfterDeliverySave(false);
+            setShowDeliveryModal(false);
+          }}
           loading={loadingDelivery}
         />
       )}
