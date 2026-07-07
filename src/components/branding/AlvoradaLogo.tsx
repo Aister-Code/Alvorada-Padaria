@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils.ts";
+import alvoradaIconDark from "@/assets/branding/alvorada-icon-v1-dark.png";
 import alvoradaIcon from "@/assets/branding/alvorada-icon-v1.png";
+import alvoradaLogoDark from "@/assets/branding/alvorada-logo-v1-dark.png";
 import alvoradaLogo from "@/assets/branding/alvorada-logo-v1.png";
 
 type Props = {
@@ -26,11 +28,22 @@ export default function AlvoradaLogo({
   size = "md",
   className,
 }: Props) {
+  const lightSrc = variant === "icon" ? alvoradaIcon : alvoradaLogo;
+  const darkSrc = variant === "icon" ? alvoradaIconDark : alvoradaLogoDark;
+  const classes = cn("h-auto shrink-0 object-contain", SIZE_CLASSES[variant][size], className);
+
   return (
-    <img
-      src={variant === "icon" ? alvoradaIcon : alvoradaLogo}
-      alt="Alvorada - Padaria | Lanchonete | Pizzaria"
-      className={cn("h-auto shrink-0 object-contain", SIZE_CLASSES[variant][size], className)}
-    />
+    <>
+      <img
+        src={lightSrc}
+        alt="Alvorada - Padaria | Lanchonete | Pizzaria"
+        className={cn(classes, "dark:hidden")}
+      />
+      <img
+        src={darkSrc}
+        alt="Alvorada - Padaria | Lanchonete | Pizzaria"
+        className={cn(classes, "hidden dark:block")}
+      />
+    </>
   );
 }

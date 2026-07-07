@@ -5,6 +5,9 @@ Tela: `Login Geral`
 Objetivo:
 Permitir acesso rapido de operadores internos por ID + PIN, com padrao visual e comportamental reutilizavel para todo o ERP Alvorada.
 
+Referencia visual:
+Esta tela segue o `RondonIA Visual Language` definido em `docs/padroes/RondonIA-Visual-Language.md`.
+
 Componentes principais:
 - Logo oficial da marca
 - Campo `Usuario`
@@ -164,6 +167,28 @@ Regras:
 - A tipografia deve seguir o sistema tipografico da marca.
 - O fundo deve respeitar a atmosfera visual definida para a marca, incluindo variacao claro/escuro quando aplicavel.
 - Nao duplicar subtitulos ou elementos de marca ja presentes no asset oficial.
+
+## DNA Alvorada v1 aplicado
+
+Modo dia:
+- Fundo: `#D5D4C8`
+- Campos: `#E4E2D7`
+- Foco: `#E8E6DC`
+- Texto: `#5D5822`
+- Acao: `#F04A2A`
+
+Modo noite:
+- Fundo: `#5D5822`
+- Campos: `#696328`
+- Texto: `#F8C6AA`
+- Acao: `#F04A2A`
+
+Botao principal:
+- Presenca por cor, contraste e hierarquia.
+- Sem sombra difusa externa.
+- Sem glow.
+- Sem efeito spray.
+- Inativo com aproximadamente 75% de opacidade.
 
 ## Arquivos Relacionados
 

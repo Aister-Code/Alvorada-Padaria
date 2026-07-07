@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+﻿import type { RefObject } from "react";
 
 type OperatorLookup = {
   name: string;
@@ -40,7 +40,7 @@ export default function OperatorIdField({
 
   return (
     <div
-      className={`flex h-11 w-full cursor-text items-center rounded-xl border ${borderClass} bg-secondary px-3 focus-within:ring-2 focus-within:ring-ring transition-all`}
+      className={`flex h-11 w-full cursor-text items-center rounded-xl border ${borderClass} bg-[#e4e2d7] px-3 shadow-[0_1px_8px_rgba(78,91,29,0.045)] transition-all focus-within:border-[#5d5822]/35 focus-within:bg-[#e8e6dc] focus-within:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus-within:border-[#f8c6aa]/40 dark:bg-[#696328] dark:shadow-none dark:focus-within:bg-[#696328]`}
       onPointerDown={(e) => {
         if (e.target !== inputRef.current) e.preventDefault();
         onFinalizedChange(false);
@@ -76,14 +76,14 @@ export default function OperatorIdField({
         }}
         className={
           operatorName
-            ? "h-full w-14 bg-transparent text-left text-xl font-serif tracking-[0.18em] text-foreground placeholder:text-muted-foreground/30 focus:outline-none"
-            : "h-full w-full bg-transparent text-center text-xl font-serif tracking-[0.18em] indent-[0.18em] text-foreground placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none"
+            ? "h-full w-14 bg-transparent text-left text-xl font-serif tracking-[0.18em] text-[#5d5822] placeholder:text-muted-foreground/30 focus:outline-none dark:text-[#f8c6aa]"
+            : "h-full w-full bg-transparent text-center text-xl font-serif tracking-[0.18em] indent-[0.18em] text-[#5d5822] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none dark:text-[#f8c6aa]"
         }
       />
       {operatorName && (
         <>
-          <span className="mx-2 h-5 w-px bg-border" />
-          <span className="min-w-0 flex-1 truncate text-left text-sm text-foreground">
+          <span className="mx-2 h-5 w-px bg-[#5d5822]/15 dark:bg-[#f8c6aa]/20" />
+          <span className="min-w-0 flex-1 truncate text-left text-sm font-light text-[#5d5822]/90 dark:text-[#f8c6aa]/90">
             {operatorName}
           </span>
         </>
@@ -91,3 +91,11 @@ export default function OperatorIdField({
     </div>
   );
 }
+
+
+
+
+
+
+
+
