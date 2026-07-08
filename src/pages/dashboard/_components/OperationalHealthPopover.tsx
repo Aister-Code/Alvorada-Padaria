@@ -1,5 +1,5 @@
 import { Activity } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import {
   calculateOperationalHealthScore,
@@ -31,16 +31,27 @@ const statusDotClasses: Record<HealthStatus, string> = {
   online: "bg-emerald-500",
   warning: "bg-amber-400",
   offline: "bg-red-700",
-  pending: "bg-[#5d5822]/28",
+  pending: "bg-[#d8c8bb] dark:bg-[#5d5822]/38",
 };
 
 export default function OperationalHealthPopover({ items }: Props) {
   const [open, setOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const score = calculateOperationalHealthScore(items);
   const level = getOperationalHealthLevel(score);
 
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!popoverRef.current || popoverRef.current.contains(event.target as Node)) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open]);
+
   return (
-    <div className="relative">
+    <div ref={popoverRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -53,11 +64,11 @@ export default function OperationalHealthPopover({ items }: Props) {
       </button>
 
       {open && (
-        <div className="fixed right-4 top-14 z-40 w-[min(16rem,calc(100vw-2rem))] rounded-2xl bg-[#f4f2ea] p-4 text-[#5d5822] dark:bg-[#f8c6aa] dark:text-[#5d5822]">
+        <div className="fixed right-4 top-14 z-40 w-[min(16rem,calc(100vw-2rem))] animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#5d5822] p-4 text-[#fff4e8] duration-150 dark:bg-[#f8c6aa] dark:text-[#5d5822]">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium leading-tight">Saúde Operacional</p>
-              <p className="text-[11px] font-light text-[#5d5822]/68">
+              <p className="text-[11px] font-medium text-[#d8c8bb] dark:text-[#6f6932]">
                 ISO {score}%
               </p>
             </div>
@@ -69,9 +80,9 @@ export default function OperationalHealthPopover({ items }: Props) {
               const Icon = item.icon;
               return (
                 <div key={item.id} className="flex items-center gap-2 text-xs">
-                  <Icon className="h-4 w-4 shrink-0 stroke-[1.8]" />
-                  <span className="min-w-0 flex-1 truncate font-light">{item.label}</span>
-                  <span className="flex items-center gap-1.5 text-[#5d5822]/72">
+                  <Icon className="h-4 w-4 shrink-0 stroke-[1.8] text-[#fff4e8] dark:text-[#5d5822]" />
+                  <span className="min-w-0 flex-1 truncate font-medium text-[#fff4e8] dark:text-[#5d5822]">{item.label}</span>
+                  <span className="flex items-center gap-1.5 text-[#d8c8bb] dark:text-[#6f6932]">
                     <span className={cn("h-2 w-2 rounded-full", statusDotClasses[item.status])} />
                     {statusLabels[item.status]}
                   </span>

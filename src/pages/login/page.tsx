@@ -153,7 +153,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Usuário */}
         <div className="w-[18rem] max-w-full space-y-1 mb-3.5">
-          <label className="block px-1 text-[10px] font-light uppercase tracking-[0.08em] text-[#5d5822]/82 dark:text-[#f8c6aa]/70">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#5d5822]/86 dark:text-[#f8c6aa]/80">
             Usuário
           </label>
           <OperatorIdField
@@ -176,7 +176,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Senha */}
         <div className="w-[18rem] max-w-full space-y-1 mb-5">
-          <label className="block px-1 text-[10px] font-light uppercase tracking-[0.08em] text-[#5d5822]/82 dark:text-[#f8c6aa]/70">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#5d5822]/86 dark:text-[#f8c6aa]/80">
             Senha
           </label>
           <div className="relative">
@@ -269,20 +269,20 @@ export default function LoginPage({ onOperatorLogin }: Props) {
               className="w-full max-w-xs rounded-2xl border border-transparent bg-[#d5d4c8] p-6 shadow-[0_24px_60px_rgba(7,24,13,0.22)] dark:bg-[#696328] dark:shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
             >
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-medium tracking-wide text-[#5d5822] dark:text-[#f8c6aa]">Redefinir PIN</h2>
-                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#5d5822]/50 hover:text-[#5d5822] transition-colors dark:text-[#f8c6aa]/50 dark:hover:text-[#f8c6aa]">
+                <h2 className="text-sm font-semibold tracking-wide text-[#5d5822] dark:text-[#f8c6aa]">Redefinir PIN</h2>
+                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#5d5822]/68 hover:text-[#5d5822] transition-colors dark:text-[#f8c6aa]/68 dark:hover:text-[#f8c6aa]">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-xs font-light text-[#5d5822]/60 dark:text-[#f8c6aa]/60 mb-5 leading-relaxed">
+              <p className="text-xs font-medium text-[#5d5822]/70 dark:text-[#f8c6aa]/72 mb-5 leading-relaxed">
                 Informe seu ID e o novo PIN. Após envio, aguarde aprovação do gerente.
               </p>
 
               <div className="space-y-3">
                 {/* ID do operador */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-light text-[#5d5822]/82 dark:text-[#f8c6aa]/70 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
                     Usuário
                   </label>
                   <OperatorIdField
@@ -310,7 +310,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Novo PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-light text-[#5d5822]/82 dark:text-[#f8c6aa]/70 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
                     Novo PIN
                   </label>
                   <div className="relative">
@@ -345,7 +345,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Confirmar PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-light text-[#5d5822]/82 dark:text-[#f8c6aa]/70 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
                     Confirmar PIN
                   </label>
                   <div className="relative">

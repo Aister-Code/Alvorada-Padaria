@@ -1,38 +1,35 @@
-﻿# RondonIA Visual Language
+# RondonIA Visual Language
 
-## Posicao no Produto
+## Posição no Produto
 
-O RondonIA Visual Language, ou RVL, e a camada visual acima do Design System.
+O RondonIA Visual Language, ou RVL, é a camada visual acima do Design System.
 
-O Design System define componentes, contratos, estados e consistencia tecnica.
-O RVL define a expressao visual, a hierarquia, o silencio da interface e a forma como o DNA da marca aparece no produto.
+O Design System define componentes, contratos, estados e consistência técnica. O RVL define a expressão visual, a hierarquia, o silêncio da interface e a forma como o DNA da marca aparece no produto.
 
 Toda nova tela deve consultar este documento antes de ser implementada.
 
-## Principios
+## Princípios
 
 - Premium.
 - Ultra clean.
 - Poucas cores.
-- Silencio visual.
-- Foco na operacao.
+- Silêncio visual.
+- Foco na operação.
 - Identidade da marca acima do framework.
-- Interface conduz por hierarquia, nao por efeitos.
+- Interface conduz por hierarquia, não por efeitos.
 
-## DNA Parametrizavel por Cliente
+## DNA Parametrizável por Cliente
 
-Cada cliente deve ter um DNA visual proprio, parametrizado antes da implementacao das telas.
+Cada cliente deve ter um DNA visual próprio, parametrizado antes da implementação das telas.
 
-Parametros obrigatorios:
+Parâmetros obrigatórios:
 
 - Cor estrutural.
-- Cor de acao.
-- Superficies.
+- Cor de ação.
+- Superfícies.
 - Texto.
 - Modo dia.
 - Modo noite.
-
-O objetivo e manter um sistema reconhecivel como RondonIA OS, mas com identidade viva e especifica para cada marca.
 
 ## DNA Alvorada v1
 
@@ -42,80 +39,66 @@ O objetivo e manter um sistema reconhecivel como RondonIA OS, mas com identidade
 - Campos: `#E4E2D7`
 - Foco: `#E8E6DC`
 - Texto: `#5D5822`
-- Acao: `#F04A2A`
+- Ação: `#F04A2A`
 
 ### Modo Noite
 
 - Fundo: `#5D5822`
 - Campos: `#696328`
 - Texto: `#F8C6AA`
-- Acao: `#F04A2A`
+- Ação: `#F04A2A`
 
-## RVL-001 â€” Campo Editavel
+## RVL-001 — Campo Editável
 
-Nenhum componente editavel pode parecer bloqueado.
+Nenhum componente editável pode parecer bloqueado.
 
-Regras:
-
-- Campo editavel deve aceitar clique/toque em toda a sua area util.
-- O usuario nunca deve precisar descobrir onde clicar.
-- Estado visual de edicao deve ser claro, mas discreto.
-- Campos nao devem parecer caixas tradicionais de ERP.
-- Bordas fixas devem ser evitadas.
+- Campo editável deve aceitar clique/toque em toda a sua área útil.
+- O usuário nunca deve precisar descobrir onde clicar.
+- Estado visual de edição deve ser claro, mas discreto.
+- Campos não devem parecer caixas tradicionais de ERP.
 - Foco pode usar borda ultra fina, sem outline pesado.
 
-## RVL-002 â€” Botao Principal
+## RVL-002 — Botão Principal
 
-O botao principal mantem presenca por cor, contraste e hierarquia.
+O botão principal mantém presença por cor, contraste e hierarquia.
 
-Regras:
-
-- Usar a cor de acao do DNA.
+- Usar a cor de ação do DNA.
 - Texto com contraste claro.
 - Sem sombra difusa externa.
 - Sem glow.
 - Sem efeito spray.
 - Estado inativo com aproximadamente 75% de opacidade.
-- A presenca do botao deve vir da hierarquia visual, nao de efeitos decorativos.
 
-## RVL-003 - Iconografia Operacional
+## RVL-003 — Iconografia Operacional
 
-A iconografia operacional e parte da linguagem principal do RondonIA OS.
+A iconografia operacional é parte da linguagem principal do RondonIA OS.
 
-Regras:
-
-- Icone comunica.
+- Ícone comunica.
 - Texto confirma.
-- A mesma semantica visual deve se repetir em todo o sistema.
-- Icones devem ser simples, reconheciveis e funcionais.
-- Nao usar iconografia decorativa quando ela nao acrescenta leitura operacional.
-- Nao usar animacoes, glow ou efeitos para compensar falta de hierarquia.
+- A mesma semântica visual deve se repetir em todo o sistema.
+- Ícones devem ser simples, reconhecíveis e funcionais.
+- Não usar iconografia decorativa quando ela não acrescenta leitura operacional.
 
-## RVL-004 - Saude Operacional
+## RVL-004 — Saúde Operacional
 
-A Saude Operacional representa tendencia e confiabilidade do ambiente, nao apenas um evento instantaneo.
+A Saúde Operacional representa tendência e confiabilidade do ambiente, não apenas um evento instantâneo.
 
-Regras:
-
-- Usar indice operacional preparado para media por periodo.
-- A janela recomendada para evolucao e media movel de 5 minutos.
+- Usar índice operacional preparado para média por período.
+- A janela recomendada para evolução é média móvel de 5 minutos.
 - Adaptar os itens exibidos por perfil.
 - Sinalizar somente quando houver impacto operacional.
-- Nao marcar vermelho por um evento isolado sem confirmacao de tendencia.
-- Estados devem seguir leitura semaforica discreta.
+- Não marcar vermelho por um evento isolado sem confirmação de tendência.
 
 Estados do ISO:
 
-- Verde: 95-100%.
-- Amarelo: 80-94%.
-- Laranja: 60-79%.
+- Verde: 95–100%.
+- Amarelo: 80–94%.
+- Laranja: 60–79%.
 - Vermelho: abaixo de 60%.
 
-## RVL-005 - Atencao Contextual
+## RVL-005 — Atenção Contextual
 
-A Atencao Contextual organiza pendencias por urgencia, importancia e perfil.
-
-Prioridades:
+A Atenção Contextual organiza pendências por urgência, importância e perfil.
 
 - `info`: discreto.
 - `attention`: amarelo.
@@ -124,286 +107,292 @@ Prioridades:
 
 Regras:
 
-- Icone comunica.
+- Ícone comunica.
 - Texto confirma.
-- Nao piscar.
-- Nao usar som nesta versao.
-- Nao vibrar nesta versao.
-- Preparar alarme e vibracao apenas para evento critico quando a tela estiver off.
+- Não piscar.
+- Não usar som nesta versão.
+- Não vibrar nesta versão.
+- Preparar alarme e vibração apenas para evento crítico quando a tela estiver off.
 - Nunca interromper sem motivo.
-- O destaque visual deve ser pequeno, objetivo e coerente com o DNA visual.
 
-## RVL-006 - Responsividade Intencional
+## RVL-006 — Responsividade Intencional
 
-Nenhuma tela principal deve deixar grandes areas vazias sem intencao de design.
+Nenhuma tela principal deve deixar grandes áreas vazias sem intenção de design.
 
-Regras:
-
-- A interface deve usar a altura disponivel com harmonia.
-- Nao preencher espaco com conteudo artificial.
+- A interface deve usar a altura disponível com harmonia.
+- Não preencher espaço com conteúdo artificial.
 - Mobile estreito deve priorizar toque, leitura e grids simples.
-- Tablet deve aumentar respiro, area clicavel e proporcao visual.
-- Desktop nao deve esticar componentes exageradamente.
-- A leitura principal deve continuar possivel em ate 5 segundos.
-- A responsividade deve preservar o DNA visual antes de preservar densidade.
+- Tablet deve aumentar respiro, área clicável e proporção visual.
+- Desktop não deve esticar componentes exageradamente.
 
-## RAW-001 - Configuracao Contextual
+## RAW-001 — Configuração Contextual
 
-Configuracoes devem manter o contexto operacional visivel.
+Configurações devem manter o contexto operacional visível.
 
-Regras:
-
-- Evitar tela cheia quando nao for necessario.
+- Evitar tela cheia quando não for necessário.
 - Preferir popover expandido, sheet leve ou card contextual.
-- Usar switches/on-off quando possivel.
-- Usar selecao unica para filtros mutuamente exclusivos.
-- Usar selecao multipla quando fizer sentido operacional.
-- Bloquear combinacoes invalidas.
-- Permitir sugestao do sistema.
-- Respeitar perfil, unidade, periodo e funcao.
-- O operador deve conseguir configurar sem perder a leitura da tela principal.
+- Usar switches/on-off quando possível.
+- Usar seleção única para filtros mutuamente exclusivos.
+- Usar seleção múltipla quando fizer sentido operacional.
+- Bloquear combinações inválidas.
+- Permitir sugestão do sistema.
+- Respeitar perfil, unidade, período e função.
 
-## RVL-007 - Planos Visuais Simplificados
+## RVL-007 — Planos Visuais Simplificados
 
-A linguagem visual do RondonIA OS usa poucos planos para reduzir ruido.
+A linguagem visual do RondonIA OS usa poucos planos para reduzir ruído.
 
-Regra:
+- Separar blocos por ritmo, alinhamento, espaço e proporção.
+- Não usar mudanças constantes de cor para explicar a tela.
+- O operador deve perceber temperatura e identidade, não camadas artificiais.
 
-- Evitar hierarquias excessivas de superficie.
-- Separar blocos por ritmo, alinhamento, espaco e proporcao.
-- Nao usar mudancas constantes de cor para explicar a tela.
-- O operador deve perceber temperatura e identidade, nao camadas artificiais.
+## RVL-008 — Tela Principal Sem Rolagem
 
-## RVL-008 - Tela Principal Sem Rolagem
+Telas principais operacionais devem caber na viewport do dispositivo elegível.
 
-Telas principais operacionais devem caber na viewport do dispositivo elegivel.
+- A tela principal não deve depender de scroll vertical.
+- A responsividade deve adaptar proporções, respiros, altura dos cards e acabamento.
+- Popovers, menus e painéis internos podem ter rolagem própria quando necessário.
 
-Regras:
+## RVL-009 — Grid Óptico
 
-- A tela principal nao deve depender de scroll vertical.
-- A responsividade deve adaptar proporcoes, respiros, altura dos cards e acabamento.
-- Popovers, menus e paineis internos podem ter rolagem propria quando necessario.
-- Se faltar espaco, reduzir proporcionalmente elementos antes de permitir rolagem.
-- Se sobrar espaco, distribuir blocos e area clicavel com harmonia.
-- Nao adicionar conteudo artificial para preencher tela.
+Toda tela operacional deve seguir um grid invisível.
 
-## RVL-009 - Grid Optico
+- Logo, textos, títulos, ícones, menus e cards devem parecer parte de uma única composição.
+- Menus de widgets configuráveis devem compartilhar o mesmo eixo sempre que possível.
+- O alinhamento visual tem prioridade sobre alinhamento puramente matemático.
 
-Toda tela operacional deve seguir um grid invisivel.
+## RVL-010 — Modelo de 3 Planos
 
-Regras:
+### Plano 0 — Ambiente
 
-- Logo, textos, titulos, icones, menus e cards devem parecer parte de uma unica composicao.
-- Menus de widgets configuraveis devem compartilhar o mesmo eixo sempre que possivel.
-- O alinhamento visual tem prioridade sobre alinhamento puramente matematico.
-- Nenhum elemento deve parecer solto, deslocado ou flutuando fora do ritmo.
-- A tela deve conduzir leitura sem esforco: header, operacao, jornada e modulos.
+Fundo da tela. Modo dia usa off-white quente; modo noite usa oliva profundo.
 
-## RVL-010 - Modelo de 3 Planos
+### Plano 1 — Operação
 
-Este e o modelo oficial de superficies do RondonIA OS.
+Área operacional: Operação Agora, Jornada Hoje, módulos, cards e widgets.
 
-### Plano 0 - Ambiente
+Todos os elementos operacionais compartilham a mesma superfície. A separação acontece por respiro, composição, hierarquia e tipografia.
 
-Representa o ambiente da aplicacao.
+### Plano 2 — Contexto
 
-Uso:
+Menus, popovers, configuração, ajuda e modais.
 
-- Fundo da tela.
-- Modo dia: off-white quente.
-- Modo noite: oliva profundo.
-- Sem textura.
-- Sem ruido.
-- Sem gradiente forte.
+Deve parecer flutuar naturalmente sobre a operação, sem glow, sem sombra pesada e sem borda tradicional.
 
-### Plano 1 - Operacao
+## RVL-011 — Configuração Contextual sem Ruído
 
-Representa toda a area operacional.
+Configurações devem parecer ferramentas contextuais, não formulários extensos.
 
-Uso:
-
-- Operacao Agora.
-- Jornada Hoje.
-- Modulos.
-- Cards e widgets operacionais.
-
-Regra:
-
-- Todos os elementos operacionais compartilham a mesma superficie.
-- A separacao acontece por respiro, composicao, hierarquia e tipografia.
-- Nao criar diferencas artificiais de cor entre blocos operacionais.
-
-### Plano 2 - Contexto
-
-Representa elementos temporarios ou contextuais.
-
-Uso:
-
-- Menus.
-- Popovers.
-- Configuracao.
-- Ajuda.
-- Modais.
-
-Regra:
-
-- Pode usar uma superficie ligeiramente diferente.
-- Deve parecer flutuar naturalmente sobre a operacao.
-- Sem glow.
-- Sem sombra pesada.
-- Sem borda tradicional.
-- Quando necessario, usar apenas linha optica extremamente discreta.
-
-## RVL-011 - Configuracao Contextual sem Ruido
-
-Configuracoes devem parecer ferramentas contextuais, nao formularios extensos.
-
-Regras:
-
-- Manter o contexto visivel.
+- Manter o contexto visível.
 - Evitar telas cheias.
 - Evitar textos explicativos longos.
-- Priorizar organizacao visual, agrupamento e chips compactos.
-- Usar componentes progressivos quando necessario: grupos recolhiveis, tabs, etapas ou paginacao interna.
-- Rolagem em popovers deve ser o ultimo recurso.
-- A configuracao deve continuar agradavel mesmo sem backend conectado.
+- Priorizar organização visual, agrupamento e chips compactos.
+- Usar componentes progressivos quando necessário.
+- Rolagem em popovers deve ser o último recurso.
 
-## RVL-012 - Composicao Editorial
+## RVL-012 — Composição Editorial
 
 A interface conduz o olhar.
 
-Principios:
+- A hierarquia é criada pela composição.
+- O operador nunca procura informação.
+- A informação encontra o operador.
+- Ritmo visual é mais importante que quantidade de componentes.
+- Respiros, massas e proporções substituem linhas divisórias.
 
-- A hierarquia e criada pela composicao.
-- O operador nunca procura informacao.
-- A informacao encontra o operador.
-- Ritmo visual e mais importante que quantidade de componentes.
-- Respiros, massas e proporcoes substituem linhas divisorias.
-- A tela deve ser lida naturalmente: header, operacao, jornada e modulos.
-- A interface nao deve chamar atencao; o trabalho do operador deve chamar atencao.
+## RVL-013 — Contexto Contrasta
 
-## RVL-013 - Contexto Contrasta
+Elementos do Plano 2 devem destacar-se pela temperatura da superfície, nunca por efeitos gráficos.
 
-Elementos do Plano 2 devem destacar-se pela temperatura da superficie, nunca por efeitos graficos.
-
-Regras:
-
-- Plano 2 inclui menus, popovers, configuracoes, ajuda e modais.
-- Modo dia usa branco quente.
+- Modo dia usa oliva.
 - Modo noite usa bege quente.
-- A separacao deve acontecer pela temperatura da superficie.
-- Nao usar glow.
-- Nao usar sombra pesada.
-- Nao usar bordas tradicionais.
-- Se necessario, usar apenas linha optica extremamente discreta.
-- Chips em estado normal devem ter baixo contraste.
-- Chips ativos usam oliva com texto claro.
+- Não usar glow.
+- Não usar sombra pesada.
+- Não usar bordas tradicionais.
 
-## RVL-014 - Escala Operacional
+## RVL-014 — Escala Operacional
 
 A Escala Operacional faz parte do RondonIA Visual Language e do RondonIA Adaptive Workspace.
 
-O operador pode escolher a escala da experiencia operacional.
-
-Opcoes:
+Opções:
 
 - `aa`: Escala Pequena.
 - `Aa`: Escala Normal.
 - `AA`: Escala Grande.
 
-Principios:
+Princípios:
 
-- A escala nao altera apenas a fonte.
-- Fonte, respiros, altura de componentes e area clicavel devem adaptar-se proporcionalmente.
-- O ajuste deve respeitar o DNA visual e nao quebrar a composicao.
-- Popovers, modais e widgets devem acompanhar a escala.
-- A preferencia deve ser salva por operador.
-- O proprio controle no header deve indicar a escala ativa.
-- O seletor deve usar apenas contraste, leve fundo e animacao discreta para indicar a opcao ativa.
-- Nao usar check, radio ou badge para esse controle.
+- A escala não altera apenas a fonte.
+- Fonte, respiros, altura de componentes e área clicável devem adaptar-se proporcionalmente.
+- A preferência deve ser salva por operador.
+- O próprio controle no header deve indicar a escala ativa.
 
-## RAW-002 - Preferencias por Operador
+## RVL-015 — Navegação Natural
 
-O RondonIA OS deve preparar preferencias persistentes por operador.
+Widgets operacionais representam resumos.
 
-Preferencias previstas:
+- Não existe ação de expandir widget.
+- Ao tocar em um widget, abrir sua tela correspondente.
+- O retorno acontece pelo botão Back.
+- Os três pontos permanecem apenas para configuração do widget, quando existir.
 
-- Tema.
-- Escala operacional.
-- Widgets expandidos ou compactos.
-- Favoritos.
-- Configuracoes dos widgets.
-
-Regras:
-
-- Preferencias locais podem ser usadas enquanto nao houver backend dedicado.
-- A estrutura deve estar pronta para migracao futura para persistencia real.
-- A preferencia nunca deve alterar regra de negocio.
-- O operador deve poder adaptar a interface sem perder contexto operacional.
-
-## RVL-016 - Inversao de Temperatura
+## RVL-016 — Inversão de Temperatura
 
 Ferramentas contextuais usam temperatura oposta ao Plano 1.
 
-Principio:
+- Modo dia: Plano 1 usa neutros claros; Plano 2 usa oliva.
+- Modo noite: Plano 1 usa oliva; Plano 2 usa bege quente.
+- O contraste vem da temperatura da superfície, não de efeito visual.
 
-- Plano 2 inclui menus, popovers, configuracoes, ajuda e modais.
-- Plano 2 deve contrastar naturalmente com o Plano 1.
-- O contraste deve vir da temperatura da superficie, nao de efeito visual.
+## RVL-022 — Configuração Progressiva
+
+Controles contextuais devem comunicar estado com legibilidade e descoberta natural.
+
+- Opções disponíveis permanecem totalmente legíveis.
+- Somente itens realmente indisponíveis podem parecer desabilitados.
+Padrão preferencial:
+
+- Lista compacta com valor atual à direita.
+- Dropdown contextual ao tocar.
+- Cada critério aparece em uma linha de controle.
+- Nome do critério à esquerda.
+- Valor atual à direita.
+- Ao tocar na linha, abrir dropdown compacto apenas com as opções daquele critério.
+- O dropdown abre como continuação da própria linha, abaixo dela, sem repetir o nome do critério como cabeçalho interno.
+- Ao selecionar uma opção, o dropdown fecha automaticamente.
+- O cabeçalho do painel contextual não deve repetir o nome do widget quando o contexto visual já indica a origem da configuração.
+Segmented control:
+
+- Permitido apenas quando houver poucas opções e ganho claro de leitura.
+- Multi-seleção usa dropdown contextual com seleção discreta.
+- Em seleção múltipla, opções agregadoras como `Todos` são exclusivas: se `Todos` estiver ativo, nenhuma outra opção fica selecionada junto.
+- Evitar chips sempre expostos, blocos internos, cartões dentro de cartões e aparência de formulário.
+- Mais de 8 opções devem evoluir para dropdown com busca.
+- Configuração avançada deve abrir tela específica, sem sobrecarregar o modal contextual.
+- A largura do painel contextual deve respeitar a proporção do conteúdo escrito.
+- Usar largura mínima confortável, largura máxima responsiva e evitar sobras laterais exageradas.
+- A configuração deve ser limpa, previsível e permitir descoberta das opções sem poluir.
+- RAW poderá reorganizar futuramente as opções frequentes conforme uso do operador, sempre com confirmação.
+
+Estados oficiais:
+
+- Selecionado: fundo oliva, texto claro e peso semibold.
+- Disponível: fundo transparente ou neutro, texto legível e contorno extremamente discreto.
+- Desabilitado: opacidade reduzida apenas quando realmente indisponível.
+
+## RVL-018 — Confirmação Explícita
+
+Telas de configuração devem confirmar conclusão da ação.
+
+- Toda configuração deve oferecer `Cancelar`.
+- Toda configuração deve oferecer `Salvar Alterações`.
+- Ao salvar, o botão deve comunicar `Salvando...`.
+- Ao concluir, o botão deve comunicar `✓ Salvo`.
+- Nunca fechar silenciosamente após uma ação de salvar.
+
+## RVL-018.1 — Sugestão do Sistema
+
+Configurações contextuais podem oferecer sugestão do sistema como estado ativo.
+
+Regras:
+
+- Usar checkbox ou toggle discreto.
+- Quando ativo, aplicar as opções padrão do sistema.
+- Se o operador alterar qualquer opção manualmente, sair automaticamente do modo sugestão.
+- Se o operador ativar novamente, restaurar as opções padrão.
+- O estado deve ser legível e não parecer uma ação avulsa.
+
+## RVL-019 — Fechamento Contextual
+
+Popovers e configurações contextuais fecham automaticamente ao clicar fora.
+
+Exceções:
+
+1. Se houver alterações não salvas, solicitar confirmação antes de fechar.
+2. Se for uma operação crítica, nunca fechar automaticamente.
+
+## RVL-020 — Inversão de Leitura
+
+Quando um painel contextual utilizar superfície escura, toda sua leitura principal passa automaticamente para branco quente e cinza quente.
+
+Modo dia:
+
+- Superfície do Plano 2: oliva.
+- Texto principal: branco quente.
+- Texto secundário: cinza quente.
+- Ícones: branco quente.
+- Destaques: branco.
+
+Modo noite:
+
+- Superfície do Plano 2: bege quente.
+- Texto principal: oliva.
+- Texto secundário: oliva suavizado.
+- Ícones: oliva.
+- Destaques: oliva estrutural.
+
+Regras:
+
+- Nunca usar texto oliva sobre superfície oliva.
+- Opções disponíveis devem permanecer legíveis.
+- Baixa opacidade deve indicar apenas item realmente indisponível.
+
+## RVL-021 — Comunicação Editorial
+
+A comunicação editorial faz parte da experiência operacional.
+
+- Um conceito, um ícone.
+- Textos curtos.
+- Português correto.
+- Acentuação obrigatória.
+- Legibilidade acima de efeitos visuais.
+- Ícones devem permanecer somente quando agregarem significado.
+- Opções disponíveis nunca devem parecer desabilitadas.
+
+## RVL-023 — Não Duplicar Informação Operacional
+
+Uma mesma informação operacional não deve ser apresentada simultaneamente em dois níveis da interface, salvo quando houver justificativa arquitetural.
 
 Exemplo:
 
-- Modo Dia: Plano 1 usa neutros claros; Plano 2 usa oliva.
-- Modo Noite: Plano 1 usa oliva; Plano 2 usa bege quente.
+- Se `Atenção` já aparece em `Operação Agora`, o header não deve repetir o mesmo indicador como controle global.
+- O header deve priorizar controles globais.
+- A área operacional deve concentrar informações de operação.
 
-Objetivo:
+## CAO — Centro de Atenção Operacional
 
-- Criar leitura imediata de contexto.
-- Evitar que configuracoes parecam parte permanente da operacao.
-- Preservar silencio visual.
+O RondonIA OS não utiliza Centro de Notificações.
 
-Nunca depender de:
+O padrão oficial é o Centro de Atenção Operacional, ou CAO.
 
-- Glow.
-- Sombra pesada.
-- Bordas tradicionais.
+O CAO organiza:
 
-## Padrao Login Geral
+- Críticas.
+- Importantes.
+- Atenção.
+- Informações.
 
-A tela de Login Geral e a tela piloto do DNA Visual Alvorada v1.
+## Padrão Login Geral
 
-Padroes:
+A tela de Login Geral é a tela piloto do DNA Visual Alvorada v1.
 
 - Usa a logo oficial como principal elemento visual.
-- Usa `OperatorIdField` para identificacao de operador.
+- Usa `OperatorIdField` para identificação de operador.
 - Campo de PIN centralizado.
 - Foco natural entre campos.
-- Botao principal segue RVL-002.
+- Botão principal segue RVL-002.
 - Modal Redefinir PIN segue o mesmo DNA visual.
-- Modo dia e modo noite devem preservar a mesma hierarquia.
 
-## OperatorIdField
-
-Comportamento:
-
-- Campo vazio ou em edicao mostra apenas o ID centralizado.
-- Ao completar o tamanho configurado do ID, valida automaticamente.
-- Quando valido, exibe `ID | Nome`.
-- O nome e apenas visual e nunca faz parte do valor editavel.
-- Ao clicar/tocar em qualquer area do campo, entra em reedicao.
-- Ao reeditar, esconde o nome e mostra somente o ID.
-- Enter, Tab e blur confirmam a validacao.
-
-## Aplicacao Obrigatoria
+## Aplicação Obrigatória
 
 Toda nova tela deve consultar este documento antes de ser implementada.
 
-Quando houver duvida visual, a prioridade deve ser:
+Prioridade visual:
 
 1. DNA da marca.
 2. Hierarquia operacional.
 3. Simplicidade.
-4. Consistencia com o Design System.
+4. Consistência com o Design System.
 
 O framework nunca deve parecer mais forte que a identidade da marca.
-

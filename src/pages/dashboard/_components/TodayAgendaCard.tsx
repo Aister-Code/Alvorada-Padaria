@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import { CalendarDays } from "lucide-react";
 import WidgetConfigButton from "./WidgetConfigButton.tsx";
 import { cn } from "@/lib/utils.ts";
 
@@ -26,7 +25,6 @@ export default function TodayAgendaCard({
     <section className={cn("relative flex h-full min-h-0 flex-col rounded-2xl bg-[#e8e6dc] px-3.5 py-3 dark:bg-[#696328]", className)}>
       <div className="mb-2 flex items-center gap-2 pr-9 text-[#5d5822] dark:text-[#f8c6aa]">
         <div className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4 stroke-[1.8]" />
           <h2 className="text-[11px] font-medium uppercase tracking-[0.12em]">
             Jornada Hoje
           </h2>

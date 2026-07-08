@@ -1,5 +1,5 @@
 import { HelpCircle, LogOut, Menu, Settings, User, Warehouse, type LucideIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   onHelp: () => void;
@@ -9,6 +9,17 @@ type Props = {
 
 export default function DashboardMenu({ onHelp, onLogout, onFutureAction }: Props) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!menuRef.current || menuRef.current.contains(event.target as Node)) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [open]);
 
   const runAndClose = (action: () => void) => {
     setOpen(false);
@@ -16,7 +27,7 @@ export default function DashboardMenu({ onHelp, onLogout, onFutureAction }: Prop
   };
 
   return (
-    <div className="relative">
+    <div ref={menuRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -28,7 +39,7 @@ export default function DashboardMenu({ onHelp, onLogout, onFutureAction }: Prop
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-40 w-56 rounded-2xl bg-[#f4f2ea] p-2 text-[#5d5822] dark:bg-[#f8c6aa] dark:text-[#5d5822]">
+        <div className="absolute right-0 top-10 z-40 w-56 animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#5d5822] p-2 text-[#fff4e8] duration-150 dark:bg-[#f8c6aa] dark:text-[#5d5822]">
           <MenuItem icon={Warehouse} label="Trocar unidade" onClick={() => runAndClose(() => onFutureAction("Trocar unidade"))} />
           <MenuItem icon={User} label="Meu Perfil" onClick={() => runAndClose(() => onFutureAction("Meu Perfil"))} />
           <MenuItem icon={HelpCircle} label="Ajuda" onClick={() => runAndClose(onHelp)} />
@@ -53,7 +64,7 @@ function MenuItem({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-light transition-colors hover:bg-[#e8e6dc] focus:outline-none dark:hover:bg-[#f4f2ea]/54"
+      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-medium text-[#fff4e8] transition-colors hover:bg-[#fff4e8]/10 focus:outline-none dark:text-[#5d5822] dark:hover:bg-[#5d5822]/8"
     >
       <Icon className="h-4 w-4 stroke-[1.8]" />
       {label}

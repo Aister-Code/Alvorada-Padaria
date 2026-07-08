@@ -1,7 +1,7 @@
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { motion, AnimatePresence } from "motion/react";
-import { X, KeyRound, CheckCircle2, XCircle, Bell } from "lucide-react";
+import { X, KeyRound, CheckCircle2, XCircle, TriangleAlert } from "lucide-react";
 import type { Id } from "@/convex/_generated/dataModel.js";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -20,7 +20,7 @@ type Props = {
   pendingResets: PendingReset[];
 };
 
-export default function NotificationsPanel({ open, onClose, pendingResets }: Props) {
+export default function AttentionCenterPanel({ open, onClose, pendingResets }: Props) {
   const approve = useMutation(api.auth.pinReset.approveReset);
   const reject = useMutation(api.auth.pinReset.rejectReset);
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -73,8 +73,8 @@ export default function NotificationsPanel({ open, onClose, pendingResets }: Pro
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-muted-foreground" />
-                <h2 className="text-sm font-semibold">Notificações</h2>
+                <TriangleAlert className="w-4 h-4 text-amber-500" />
+                <h2 className="text-sm font-semibold">Centro de Atenção</h2>
                 {pendingResets.length > 0 && (
                   <span className="flex items-center justify-center w-5 h-5 rounded-full bg-destructive text-[10px] font-bold text-white">
                     {pendingResets.length}
@@ -95,8 +95,8 @@ export default function NotificationsPanel({ open, onClose, pendingResets }: Pro
               {/* Solicitações de PIN */}
               {pendingResets.length > 0 && (
                 <section>
-                  <p className="text-[10px] font-medium text-muted-foreground tracking-widest uppercase mb-3">
-                    Redefinição de PIN
+                  <p className="text-[10px] font-semibold text-foreground/76 tracking-widest uppercase mb-3">
+                    Atenção · PIN
                   </p>
                   <div className="space-y-2">
                     {pendingResets.map((r) => (
@@ -110,14 +110,14 @@ export default function NotificationsPanel({ open, onClose, pendingResets }: Pro
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-foreground truncate">{r.operatorName}</p>
-                            <p className="text-[11px] text-muted-foreground">Usuário {r.operatorId}</p>
+                            <p className="text-[11px] text-foreground/68">Usuário {r.operatorId}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <button
                             disabled={loadingId === r._id}
                             onClick={() => handleReject(r._id, r.operatorName)}
-                            className="cursor-pointer p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-40"
+                            className="cursor-pointer p-1.5 rounded-lg text-foreground/68 hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-40"
                             aria-label="Recusar"
                           >
                             <XCircle className="w-4 h-4" />
@@ -125,7 +125,7 @@ export default function NotificationsPanel({ open, onClose, pendingResets }: Pro
                           <button
                             disabled={loadingId === r._id}
                             onClick={() => handleApprove(r._id, r.operatorName)}
-                            className="cursor-pointer p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 hover:bg-emerald-600/10 transition-colors disabled:opacity-40"
+                            className="cursor-pointer p-1.5 rounded-lg text-foreground/68 hover:text-emerald-600 hover:bg-emerald-600/10 transition-colors disabled:opacity-40"
                             aria-label="Aprovar"
                           >
                             <CheckCircle2 className="w-4 h-4" />
@@ -141,9 +141,9 @@ export default function NotificationsPanel({ open, onClose, pendingResets }: Pro
               {pendingResets.length === 0 && (
                 <Empty>
                   <EmptyHeader>
-                    <EmptyMedia variant="icon"><Bell /></EmptyMedia>
-                    <EmptyTitle>Sem notificações</EmptyTitle>
-                    <EmptyDescription>Tudo em dia por aqui.</EmptyDescription>
+                    <EmptyMedia variant="icon"><TriangleAlert /></EmptyMedia>
+                    <EmptyTitle>Sem atenção pendente</EmptyTitle>
+                    <EmptyDescription>Tudo em dia na operação.</EmptyDescription>
                   </EmptyHeader>
                 </Empty>
               )}

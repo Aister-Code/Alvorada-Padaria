@@ -29,7 +29,6 @@ import { toast } from "sonner";
 import DashboardHeader, { type AttentionPriority } from "./_components/DashboardHeader.tsx";
 import SummaryCard from "./_components/SummaryCard.tsx";
 import ModuleCard from "./_components/ModuleCard.tsx";
-import NotificationsPanel from "./_components/NotificationsPanel.tsx";
 import OperationMetricCard from "./_components/OperationMetricCard.tsx";
 import TodayAgendaCard, { type TodayAgendaItem } from "./_components/TodayAgendaCard.tsx";
 import WidgetConfigButton from "./_components/WidgetConfigButton.tsx";
@@ -126,12 +125,6 @@ function todayLabel(): string {
   }).format(new Date());
 }
 
-function getAttentionPriority(pinResets: number, deliveryReady: number): AttentionPriority {
-  if (deliveryReady >= 3) return "important";
-  if (deliveryReady > 0 || pinResets > 0) return "attention";
-  return "info";
-}
-
 function getDeliveryPriority(deliveryReady: number): AttentionPriority | undefined {
   if (deliveryReady <= 0) return undefined;
   if (deliveryReady === 1) return "info";
@@ -143,7 +136,7 @@ function ManagerActionButton({ label, icon: Icon, onClick, badge }: ManagerActio
   return (
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
-      className="relative flex h-full min-h-[calc(3.85rem*var(--rvl-card-scale,1))] min-w-0 cursor-pointer flex-col items-center justify-center gap-[calc(0.35rem*var(--rvl-space-scale,1))] rounded-2xl bg-[#e8e6dc] px-1.5 py-2 text-[#5d5822] transition-all active:scale-[0.98] dark:bg-[#696328] dark:text-[#f8c6aa] min-[380px]:min-h-[calc(4.1rem*var(--rvl-card-scale,1))] sm:min-h-[calc(4.55rem*var(--rvl-card-scale,1))]"
+      className="relative flex h-full min-h-[calc(3.85rem*var(--rvl-card-scale,1))] min-w-0 cursor-pointer flex-col items-center justify-center gap-[calc(0.26rem*var(--rvl-space-scale,1))] rounded-2xl bg-[#e8e6dc] px-1.5 py-2 text-[#5d5822] transition-all active:scale-[0.98] dark:bg-[#696328] dark:text-[#f8c6aa] min-[380px]:min-h-[calc(4.1rem*var(--rvl-card-scale,1))] sm:min-h-[calc(4.55rem*var(--rvl-card-scale,1))]"
     >
       {badge && badge.count > 0 && (
         <span
@@ -155,8 +148,8 @@ function ManagerActionButton({ label, icon: Icon, onClick, badge }: ManagerActio
           {badge.count > 9 ? "9+" : badge.count}
         </span>
       )}
-      <Icon className="h-[calc(1.35rem*var(--rvl-font-scale,1))] w-[calc(1.35rem*var(--rvl-font-scale,1))] stroke-[1.55] min-[380px]:h-[calc(1.55rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.55rem*var(--rvl-font-scale,1))] sm:h-[calc(1.75rem*var(--rvl-font-scale,1))] sm:w-[calc(1.75rem*var(--rvl-font-scale,1))]" />
-      <span className="text-[calc(9px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.01em] sm:text-[calc(10.5px*var(--rvl-font-scale,1))]">
+      <Icon className="h-[calc(1.42rem*var(--rvl-font-scale,1))] w-[calc(1.42rem*var(--rvl-font-scale,1))] stroke-[1.8] min-[380px]:h-[calc(1.62rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.62rem*var(--rvl-font-scale,1))] sm:h-[calc(1.82rem*var(--rvl-font-scale,1))] sm:w-[calc(1.82rem*var(--rvl-font-scale,1))]" />
+      <span className="text-[calc(9.8px*var(--rvl-font-scale,1))] font-medium leading-none tracking-[0.005em] sm:text-[calc(10.8px*var(--rvl-font-scale,1))]">
         {label}
       </span>
     </button>
@@ -164,7 +157,6 @@ function ManagerActionButton({ label, icon: Icon, onClick, badge }: ManagerActio
 }
 
 export default function DashboardPage({ operator, onLogout, onNavigate }: Props) {
-  const [showNotifications, setShowNotifications] = useState(false);
   const [configPanel, setConfigPanel] = useState<"journey" | "operation" | null>(null);
   const [activeWidgetView, setActiveWidgetView] = useState<"journey" | null>(null);
   const [preferences, setPreferences] = useState<OperatorPreferences>(() =>
@@ -189,7 +181,6 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
   const isManager = operator.role === "gerente";
   const prontoDelivery = resumo?.prontoDelivery ?? 0;
   const attentionCount = pendingCount + prontoDelivery;
-  const attentionPriority = getAttentionPriority(pendingCount, prontoDelivery);
   const showHeaderUnit = (operator.units?.length ?? 0) > 1;
 
   const todayItems: TodayAgendaItem[] = [
@@ -342,12 +333,9 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           role={operator.role}
           unit={unit}
           showUnit={showHeaderUnit}
-          pendingCount={attentionCount}
-          pendingPriority={attentionPriority}
           healthItems={visibleHealthItems}
           interfaceScale={preferences.interfaceScale}
           onInterfaceScaleChange={(interfaceScale) => updatePreferences({ interfaceScale })}
-          onNotificationsClick={() => setShowNotifications(true)}
           onLogout={onLogout}
         />
 
@@ -385,22 +373,12 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, ease: "easeOut" as const }}
-                  className="grid min-h-0 flex-1 grid-cols-2 content-center gap-2 min-[360px]:grid-cols-4 md:gap-3"
+                  className="grid min-h-0 flex-1 grid-cols-2 content-center gap-2 md:gap-3"
                 >
                   <OperationMetricCard
                     label="Pedidos"
                     value={resumo === undefined ? "-" : String(resumo.emAndamento)}
                     icon={ReceiptText}
-                  />
-                  <OperationMetricCard
-                    label="Produção"
-                    value="8"
-                    icon={ChefHat}
-                  />
-                  <OperationMetricCard
-                    label="Entrega"
-                    value={resumo === undefined ? "-" : String(resumo.saiuParaEntrega)}
-                    icon={Truck}
                   />
                   <OperationMetricCard
                     label="Atenção"
@@ -446,22 +424,16 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           </div>
         </main>
 
-        <NotificationsPanel
-          open={showNotifications}
-          onClose={() => setShowNotifications(false)}
-          pendingResets={pendingResets ?? []}
-        />
-
         <WidgetConfigPanel
           open={configPanel === "journey"}
           title="Configurar Jornada Hoje"
           fields={[
-            { label: "Período", description: "Janela operacional exibida no widget.", control: "single", options: ["Hoje", "Turno", "Semana"] },
-            { label: "Colaborador", description: "Filtro futuro por pessoa ou função.", control: "multi", options: ["Todos", "Equipe", "Individual"] },
-            { label: "Tarefa", description: "Tipo de compromisso ou lembrete.", control: "multi", options: ["Operação", "Estoque", "Fornecedor"] },
-            { label: "Origem", description: "Fonte do compromisso operacional.", control: "single", options: ["Sistema", "Manual", "Integração"] },
-            { label: "Prioridade", description: "Classificação contextual da jornada.", control: "multi", options: ["Info", "Atenção", "Crítica"] },
-            { label: "Unidade", description: "Unidade operacional relacionada.", control: "single", options: ["Atual", "Todas"] },
+            { label: "Período", description: "Janela operacional exibida no widget.", control: "single", options: ["Hoje", "Turno", "Semana", "Próximas 24h", "Personalizado"] },
+            { label: "Colaborador", description: "Filtro futuro por pessoa ou função.", control: "multi", options: ["Todos", "Equipe", "Individual", "Gerente", "Caixa", "Atendimento", "Produção"] },
+            { label: "Tarefa", description: "Tipo de compromisso ou lembrete.", control: "multi", options: ["Operação", "Estoque", "Fornecedor", "Limpeza", "Manutenção", "Treinamento", "Financeiro"] },
+            { label: "Origem", description: "Fonte do compromisso operacional.", control: "single", options: ["Sistema", "Manual", "Integração", "Recorrente", "Importado"] },
+            { label: "Prioridade", description: "Classificação contextual da jornada.", control: "multi", options: ["Info", "Atenção", "Importante", "Crítica"] },
+            { label: "Unidade", description: "Unidade operacional relacionada.", control: "single", options: ["Atual", "Todas", "Matriz", "Filial", "Delivery"] },
           ]}
           onClose={() => setConfigPanel(null)}
         />
@@ -470,10 +442,10 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           open={configPanel === "operation"}
           title="Configurar Operação Agora"
           fields={[
-            { label: "Período", description: "Intervalo usado nos indicadores superiores.", control: "single", options: ["Agora", "Turno", "Dia"] },
-            { label: "Unidade", description: "Filtro futuro por unidade operacional.", control: "single", options: ["Atual", "Todas"] },
-            { label: "Equipe", description: "Recorte futuro por equipe ou turno.", control: "multi", options: ["Todos", "Caixa", "Produção"] },
-            { label: "Status", description: "Estados operacionais considerados nos indicadores.", control: "multi", options: ["Ativos", "Pendentes", "Críticos"] },
+            { label: "Período", description: "Intervalo usado nos indicadores superiores.", control: "single", options: ["Agora", "Turno", "Hoje", "Última hora", "Personalizado"] },
+            { label: "Unidade", description: "Filtro futuro por unidade operacional.", control: "single", options: ["Atual", "Todas", "Matriz", "Filial", "Delivery"] },
+            { label: "Equipe", description: "Recorte futuro por equipe ou turno.", control: "multi", options: ["Todos", "Caixa", "Produção", "Atendimento", "Delivery", "Estoque", "Gerência"] },
+            { label: "Status", description: "Estados operacionais considerados nos indicadores.", control: "multi", options: ["Ativos", "Pendentes", "Atenção", "Importantes", "Críticos", "Concluídos"] },
           ]}
           onClose={() => setConfigPanel(null)}
         />
@@ -493,12 +465,9 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
         role={operator.role}
         unit={unit}
         showUnit={showHeaderUnit}
-        pendingCount={pendingCount}
-        pendingPriority={pendingCount > 0 ? "attention" : "info"}
         healthItems={visibleHealthItems}
         interfaceScale={preferences.interfaceScale}
         onInterfaceScaleChange={(interfaceScale) => updatePreferences({ interfaceScale })}
-        onNotificationsClick={() => setShowNotifications(true)}
         onLogout={onLogout}
       />
 
@@ -626,12 +595,6 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           </motion.section>
         </div>
       </main>
-
-      <NotificationsPanel
-        open={showNotifications}
-        onClose={() => setShowNotifications(false)}
-        pendingResets={pendingResets ?? []}
-      />
     </div>
   );
 }

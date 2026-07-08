@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils.ts";
 
 export const CANAIS_ORIGEM = [
   { value: "balcao", label: "Balcão" },
@@ -58,22 +57,17 @@ export default function NovoPedidoModal({ onConfirm, onClose }: Props) {
             <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
               Canal de Origem
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <select
+              value={canal}
+              onChange={(event) => setCanal(event.target.value)}
+              className="h-11 w-full cursor-pointer rounded-xl border border-border bg-muted/30 px-3 text-sm font-medium text-foreground outline-none transition-colors focus:border-[var(--brand-olive)]"
+            >
               {CANAIS_ORIGEM.map((c) => (
-                <button
-                  key={c.value}
-                  onClick={() => setCanal(c.value)}
-                  className={cn(
-                    "text-xs py-2 px-1 rounded-lg border font-medium cursor-pointer transition-all",
-                    canal === c.value
-                      ? "bg-[var(--brand-orange)] text-white border-[var(--brand-orange)]"
-                      : "border-border text-muted-foreground hover:border-[var(--brand-orange)]",
-                  )}
-                >
+                <option key={c.value} value={c.value}>
                   {c.label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Modalidade de Atendimento */}
@@ -81,22 +75,17 @@ export default function NovoPedidoModal({ onConfirm, onClose }: Props) {
             <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
               Modalidade
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <select
+              value={modalidade}
+              onChange={(event) => setModalidade(event.target.value)}
+              className="h-11 w-full cursor-pointer rounded-xl border border-border bg-muted/30 px-3 text-sm font-medium text-foreground outline-none transition-colors focus:border-[var(--brand-olive)]"
+            >
               {MODALIDADES.map((m) => (
-                <button
-                  key={m.value}
-                  onClick={() => setModalidade(m.value)}
-                  className={cn(
-                    "text-sm py-2.5 px-3 rounded-lg border font-medium cursor-pointer transition-all",
-                    modalidade === m.value
-                      ? "bg-[var(--brand-olive)] text-white border-[var(--brand-olive)]"
-                      : "border-border text-muted-foreground hover:border-[var(--brand-olive)]",
-                  )}
-                >
+                <option key={m.value} value={m.value}>
                   {m.label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Observação */}
