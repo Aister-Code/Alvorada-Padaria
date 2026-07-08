@@ -350,7 +350,27 @@ A comunicação editorial faz parte da experiência operacional.
 - Ícones devem permanecer somente quando agregarem significado.
 - Opções disponíveis nunca devem parecer desabilitadas.
 
-## RVL-023 — Não Duplicar Informação Operacional
+## RVL-023 — Indicadores Operacionais
+
+Todo indicador operacional deve conter:
+
+1. Ícone.
+2. Número.
+3. Label.
+
+Princípio:
+
+Todo resumo operacional comunica primeiro pela forma, depois pelo número e por último pelo texto.
+
+Regras:
+
+- Nunca usar apenas número + texto em resumos operacionais.
+- O ícone comunica a natureza da informação.
+- O número comunica intensidade.
+- O label confirma o significado.
+- A composição deve seguir o mesmo padrão visual dos indicadores de `Operação Agora`.
+
+## RVL-024 — Não Duplicar Informação Operacional
 
 Uma mesma informação operacional não deve ser apresentada simultaneamente em dois níveis da interface, salvo quando houver justificativa arquitetural.
 
@@ -359,6 +379,25 @@ Exemplo:
 - Se `Atenção` já aparece em `Operação Agora`, o header não deve repetir o mesmo indicador como controle global.
 - O header deve priorizar controles globais.
 - A área operacional deve concentrar informações de operação.
+
+## RVL-025 — Contexto Permanente da Operação
+
+Toda tela operacional deve informar claramente:
+
+- Título da tela.
+- Modo Operacional Atual.
+- Unidade Atual.
+
+Regras:
+
+- O Header deve mostrar o modo operacional em uso, não o perfil base.
+- O perfil base pertence à identidade e auditoria, não ao título operacional da tela.
+- O contexto deve acompanhar trocas futuras de modo operacional e unidade.
+- Exemplo: `Atendimento • Matriz`.
+- Nenhum título principal de módulo deve quebrar em mais de duas linhas.
+- Sempre que possível, o título principal deve permanecer em uma linha.
+- Subtítulos operacionais essenciais não devem ser truncados.
+- Se faltar espaço, reduzir levemente fonte, espaçamento ou densidade dos controles antes de cortar contexto essencial.
 
 ## CAO — Centro de Atenção Operacional
 

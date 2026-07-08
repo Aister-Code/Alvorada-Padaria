@@ -92,6 +92,7 @@ export default defineSchema({
     clienteNomeEntregaSnapshot: v.optional(v.string()),
     clienteTelefoneSnapshot: v.optional(v.string()),
     clienteCpfSnapshot: v.optional(v.string()),
+    conversaWhatsAppId: v.optional(v.id("conversasWhatsApp")),
     mesaId: v.optional(v.string()),
     mesaNumeroSnapshot: v.optional(v.number()),
     enderecoEntrega: v.optional(enderecoEntrega),
@@ -111,6 +112,7 @@ export default defineSchema({
     .index("by_unit_numero", ["unit", "numero"])
     .index("by_mesa", ["mesaId"])
     .index("by_cliente", ["clienteId"])
+    .index("by_conversa_whatsapp", ["conversaWhatsAppId"])
     .index("by_operador_abertura", ["operadorAberturaId"]),
 
   itensPedido: defineTable({
@@ -170,11 +172,167 @@ export default defineSchema({
     nomeImpressao: v.optional(v.string()),
     nomeEntrega: v.optional(v.string()),
     telefone: v.string(),
+    telefoneNormalizado: v.optional(v.string()),
     cpf: v.optional(v.string()),
     enderecos: v.optional(v.array(enderecoEntrega)),
     observacoes: v.optional(v.string()),
     statusEntidade: v.string(),
   })
     .index("by_unit_telefone", ["unit", "telefone"])
+    .index("by_unit_telefone_normalizado", ["unit", "telefoneNormalizado"])
     .index("by_unit_status", ["unit", "statusEntidade"]),
+
+  conversasWhatsApp: defineTable({
+    unit: v.string(),
+    clienteId: v.optional(v.id("clientes")),
+    clienteNomeSnapshot: v.optional(v.string()),
+    clienteTelefoneSnapshot: v.string(),
+    telefoneNormalizado: v.string(),
+    whatsappChatId: v.string(),
+    canalOrigem: v.literal("whatsapp"),
+    status: v.union(
+      v.literal("nova"),
+      v.literal("em_atendimento"),
+      v.literal("aguardando_cliente"),
+      v.literal("convertida_pedido"),
+      v.literal("encerrada"),
+    ),
+    prioridade: v.union(
+      v.literal("info"),
+      v.literal("attention"),
+      v.literal("important"),
+      v.literal("critical"),
+    ),
+    operadorResponsavelId: v.optional(v.id("operators")),
+    operadorResponsavelNomeSnapshot: v.optional(v.string()),
+    pedidoId: v.optional(v.id("pedidos")),
+    ultimoTextoSnapshot: v.optional(v.string()),
+    ultimaMensagemEm: v.optional(v.string()),
+    naoLidas: v.number(),
+    dataCriacao: v.string(),
+    dataAtualizacao: v.string(),
+    dataEncerramento: v.optional(v.string()),
+  })
+    .index("by_unit_status", ["unit", "status"])
+    .index("by_unit_ultima", ["unit", "ultimaMensagemEm"])
+    .index("by_chat", ["whatsappChatId"])
+    .index("by_cliente", ["clienteId"])
+    .index("by_pedido", ["pedidoId"])
+    .index("by_operador", ["operadorResponsavelId"])
+    .index("by_unit_telefone", ["unit", "telefoneNormalizado"]),
+
+  mensagensWhatsApp: defineTable({
+    conversaId: v.id("conversasWhatsApp"),
+    unit: v.string(),
+    whatsappMessageId: v.optional(v.string()),
+    direcao: v.union(v.literal("entrada"), v.literal("saida")),
+    tipo: v.union(
+      v.literal("texto"),
+      v.literal("imagem"),
+      v.literal("audio"),
+      v.literal("documento"),
+      v.literal("sistema"),
+    ),
+    texto: v.optional(v.string()),
+    mediaUrl: v.optional(v.string()),
+    payload: v.optional(v.string()),
+    status: v.union(
+      v.literal("recebida"),
+      v.literal("enviada"),
+      v.literal("entregue"),
+      v.literal("lida"),
+      v.literal("erro"),
+    ),
+    operadorId: v.optional(v.id("operators")),
+    operadorNomeSnapshot: v.optional(v.string()),
+    timestamp: v.string(),
+  })
+    .index("by_conversa", ["conversaId", "timestamp"])
+    .index("by_unit_timestamp", ["unit", "timestamp"])
+    .index("by_whatsapp_message", ["whatsappMessageId"]),
+
+  sessoesCatalogo: defineTable({
+    unit: v.string(),
+    clienteId: v.optional(v.id("clientes")),
+    clienteNomeSnapshot: v.optional(v.string()),
+    clienteTelefoneSnapshot: v.optional(v.string()),
+    telefoneNormalizado: v.optional(v.string()),
+    canalOrigem: v.string(),
+    origemDetalhe: v.optional(v.string()),
+    conversaWhatsAppId: v.optional(v.id("conversasWhatsApp")),
+    pedidoId: v.optional(v.id("pedidos")),
+    status: v.union(
+      v.literal("navegando"),
+      v.literal("carrinho"),
+      v.literal("aguardando"),
+      v.literal("abandonada"),
+      v.literal("assumida"),
+      v.literal("convertida"),
+      v.literal("encerrada"),
+    ),
+    prioridade: v.union(
+      v.literal("info"),
+      v.literal("attention"),
+      v.literal("important"),
+      v.literal("critical"),
+    ),
+    itensSnapshot: v.optional(v.string()),
+    quantidadeItens: v.optional(v.number()),
+    valorEstimado: v.optional(v.number()),
+    enderecoEntregaSnapshot: v.optional(v.string()),
+    observacoes: v.optional(v.string()),
+    responsavelAtualId: v.optional(v.id("operators")),
+    responsavelAtualNomeSnapshot: v.optional(v.string()),
+    ajudaSolicitada: v.boolean(),
+    ajudaSolicitadaEm: v.optional(v.string()),
+    criadaEm: v.string(),
+    atualizadaEm: v.string(),
+    ultimaInteracaoEm: v.optional(v.string()),
+    abandonadaEm: v.optional(v.string()),
+    assumidaEm: v.optional(v.string()),
+    convertidaEm: v.optional(v.string()),
+    encerradaEm: v.optional(v.string()),
+  })
+    .index("by_unit_status", ["unit", "status"])
+    .index("by_unit_atualizada", ["unit", "atualizadaEm"])
+    .index("by_cliente", ["clienteId"])
+    .index("by_telefone", ["unit", "telefoneNormalizado"])
+    .index("by_conversa_whatsapp", ["conversaWhatsAppId"])
+    .index("by_pedido", ["pedidoId"])
+    .index("by_responsavel", ["responsavelAtualId"])
+    .index("by_ajuda", ["unit", "ajudaSolicitada"]),
+
+  transferenciasTrabalho: defineTable({
+    unit: v.string(),
+    origemTipo: v.string(),
+    origemId: v.string(),
+    dePerfil: v.string(),
+    deOperadorId: v.id("operators"),
+    paraPerfil: v.string(),
+    paraOperadorId: v.optional(v.id("operators")),
+    motivo: v.string(),
+    acaoEsperada: v.string(),
+    contexto: v.string(),
+    prioridade: v.union(
+      v.literal("info"),
+      v.literal("attention"),
+      v.literal("important"),
+      v.literal("critical"),
+    ),
+    status: v.union(
+      v.literal("pendente"),
+      v.literal("aceita"),
+      v.literal("concluida"),
+      v.literal("cancelada"),
+    ),
+    criadaEm: v.string(),
+    aceitaEm: v.optional(v.string()),
+    concluidaEm: v.optional(v.string()),
+  })
+    .index("by_unit_status", ["unit", "status"])
+    .index("by_destino_perfil_status", ["unit", "paraPerfil", "status"])
+    .index("by_destino_operador_status", ["paraOperadorId", "status"])
+    .index("by_de_operador", ["deOperadorId"])
+    .index("by_origem", ["origemTipo", "origemId"])
+    .index("by_unit_criada", ["unit", "criadaEm"]),
 });

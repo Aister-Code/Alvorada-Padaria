@@ -11,6 +11,7 @@ import AdminPage from "./pages/admin/page.tsx";
 import AcompanhamentoPage from "./pages/acompanhamento/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import CaixaPage from "./pages/caixa/page.tsx";
+import WhatsAppReceptionPage from "./pages/whatsapp/page.tsx";
 
 export type OperatorSession = {
   operatorId: string;
@@ -19,7 +20,7 @@ export type OperatorSession = {
   units?: string[];
 };
 
-type AppPage = "dashboard" | "usuarios" | "venda" | "acompanhamento" | "caixa" | "delivery";
+type AppPage = "dashboard" | "usuarios" | "venda" | "acompanhamento" | "caixa" | "delivery" | "whatsapp";
 
 const SESSION_KEY = "alvorada_operator_session";
 
@@ -81,6 +82,13 @@ export default function App() {
                   />
                 ) : currentPage === "caixa" ? (
                   <CaixaPage operator={operator} onBack={() => navigate("dashboard")} />
+                ) : currentPage === "whatsapp" ? (
+                  <WhatsAppReceptionPage
+                    operator={operator}
+                    onBack={() => navigate("dashboard")}
+                    onLogout={handleLogout}
+                    onStartOrder={() => navigate("venda")}
+                  />
                 ) : (
                   <DashboardPage
                     operator={operator}

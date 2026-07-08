@@ -51,7 +51,7 @@ type OperatorSession = {
 type Props = {
   operator: OperatorSession;
   onLogout: () => void;
-  onNavigate: (page: "dashboard" | "usuarios" | "venda" | "acompanhamento" | "caixa" | "delivery") => void;
+  onNavigate: (page: "dashboard" | "usuarios" | "venda" | "acompanhamento" | "caixa" | "delivery" | "whatsapp") => void;
 };
 
 type ManagerActionBadge = {
@@ -174,13 +174,15 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
 
   const unit = operator.units?.[0] ?? "alvorada-01";
   const resumo = useQuery(api.venda.delivery.resumoDashboard, { unit });
+  const conversasWhatsApp = useQuery(api.ojc.whatsapp.listarConversasAbertas, { unit });
 
   const modules = getModulesForRole(operator.role);
 
   const isTablet = window.innerWidth >= 768;
   const isManager = operator.role === "gerente";
   const prontoDelivery = resumo?.prontoDelivery ?? 0;
-  const attentionCount = pendingCount + prontoDelivery;
+  const whatsappUnread = conversasWhatsApp?.reduce((sum, conversa) => sum + conversa.naoLidas, 0) ?? 0;
+  const attentionCount = pendingCount + prontoDelivery + whatsappUnread;
   const showHeaderUnit = (operator.units?.length ?? 0) > 1;
 
   const todayItems: TodayAgendaItem[] = [
@@ -248,6 +250,12 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
 
   const managerActions: ManagerAction[] = [
     { label: "Venda", icon: ShoppingBag, onClick: () => onNavigate("venda") },
+    {
+      label: "WhatsApp",
+      icon: MessageCircle,
+      onClick: () => onNavigate("whatsapp"),
+      badge: whatsappUnread > 0 ? { count: whatsappUnread, priority: whatsappUnread > 4 ? "important" : "attention" } : undefined,
+    },
     {
       label: "Delivery",
       icon: Bike,
