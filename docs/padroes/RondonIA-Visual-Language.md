@@ -299,15 +299,17 @@ Regras:
 - Chips em estado normal devem ter baixo contraste.
 - Chips ativos usam oliva com texto claro.
 
-## RVL-014 - Escala Tipografica Global
+## RVL-014 - Escala Operacional
 
-O operador pode escolher a escala da interface.
+A Escala Operacional faz parte do RondonIA Visual Language e do RondonIA Adaptive Workspace.
+
+O operador pode escolher a escala da experiencia operacional.
 
 Opcoes:
 
-- Pequeno.
-- Normal.
-- Grande.
+- `aa`: Escala Pequena.
+- `Aa`: Escala Normal.
+- `AA`: Escala Grande.
 
 Principios:
 
@@ -316,6 +318,9 @@ Principios:
 - O ajuste deve respeitar o DNA visual e nao quebrar a composicao.
 - Popovers, modais e widgets devem acompanhar a escala.
 - A preferencia deve ser salva por operador.
+- O proprio controle no header deve indicar a escala ativa.
+- O seletor deve usar apenas contraste, leve fundo e animacao discreta para indicar a opcao ativa.
+- Nao usar check, radio ou badge para esse controle.
 
 ## RAW-002 - Preferencias por Operador
 
@@ -324,7 +329,7 @@ O RondonIA OS deve preparar preferencias persistentes por operador.
 Preferencias previstas:
 
 - Tema.
-- Tamanho da interface.
+- Escala operacional.
 - Widgets expandidos ou compactos.
 - Favoritos.
 - Configuracoes dos widgets.
