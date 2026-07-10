@@ -84,7 +84,7 @@ const defaultPreferences: OperatorPreferences = {
 const interfaceScaleClasses: Record<InterfaceScale, string> = {
   small: "[--rvl-card-scale:0.92] [--rvl-font-scale:0.94] [--rvl-space-scale:0.92]",
   normal: "[--rvl-card-scale:1] [--rvl-font-scale:1] [--rvl-space-scale:1]",
-  large: "[--rvl-card-scale:1.04] [--rvl-font-scale:1.06] [--rvl-space-scale:0.96]",
+  large: "[--rvl-card-scale:1] [--rvl-font-scale:1.08] [--rvl-space-scale:0.9]",
 };
 
 const badgeClasses: Record<AttentionPriority, string> = {
@@ -146,13 +146,13 @@ function DockActionButton({
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
       className={cn(
-        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 text-[#685c20] transition-colors active:scale-[0.98] dark:text-[#f3c4a2]",
+        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 text-[#1f1f1a] transition-colors active:scale-[0.98] dark:text-[#f7f2ec]",
         variant === "home"
           ? "h-full w-full max-w-[4.9rem] rounded-2xl px-1 py-1"
           : "rounded-xl px-2 py-0.5",
         active
           ? "bg-[#685c20]/10 dark:bg-[#f3c4a2]/12"
-          : "bg-transparent hover:bg-[#685c20]/7 dark:hover:bg-[#f3c4a2]/8"
+          : "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
       )}
     >
       {badge && badge.count > 0 && (
@@ -167,13 +167,13 @@ function DockActionButton({
       )}
       <Icon
         className={cn(
-          "stroke-[1.85]",
+          "stroke-[1.5]",
           variant === "home"
             ? "h-[calc(1.44rem*var(--rvl-font-scale,1))] w-[calc(1.44rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.58rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.58rem*var(--rvl-font-scale,1))] sm:h-[calc(1.68rem*var(--rvl-font-scale,1))] sm:w-[calc(1.68rem*var(--rvl-font-scale,1))]"
             : "h-[calc(1.32rem*var(--rvl-font-scale,1))] w-[calc(1.32rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.45rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.45rem*var(--rvl-font-scale,1))] sm:h-[calc(1.56rem*var(--rvl-font-scale,1))] sm:w-[calc(1.56rem*var(--rvl-font-scale,1))]",
         )}
       />
-      <span className="text-[calc(10px*var(--rvl-font-scale,1))] font-medium leading-none tracking-[0.005em] sm:text-[calc(10.5px*var(--rvl-font-scale,1))]">
+      <span className="text-[calc(10px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em] sm:text-[calc(10.5px*var(--rvl-font-scale,1))]">
         {label}
       </span>
     </button>
@@ -210,7 +210,7 @@ function OperationalDock({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.15, ease: "easeOut" as const }}
           className={cn(
-            "absolute inset-x-0 z-20 rounded-t-3xl bg-[#f3c4a2]/96 p-1.5 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/96 dark:text-[#f3c4a2]",
+            "absolute inset-x-0 z-20 rounded-t-3xl bg-white/96 p-1.5 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#0d0d0b]/96 dark:text-[#f7f2ec]",
             "bottom-[calc(3.42rem*var(--rvl-card-scale,1))]"
           )}
         >
@@ -224,7 +224,7 @@ function OperationalDock({
 
       <div
         className={cn(
-          "relative bg-[#f3c4a2]/96 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/96 dark:text-[#f3c4a2]",
+          "relative bg-white/96 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#0d0d0b]/96 dark:text-[#f7f2ec]",
           variant === "home" ? "px-4 py-1.5" : "px-2 py-1",
         )}
       >
@@ -233,7 +233,7 @@ function OperationalDock({
             type="button"
             onClick={() => onOpenChange(!open)}
             className={cn(
-              "absolute left-1/2 top-1 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full text-[#685c20]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] dark:text-[#f3c4a2]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
+              "absolute left-1/2 top-1 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full text-[#1f1f1a]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] dark:text-[#f7f2ec]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
               hasHiddenSignal &&
                 !open &&
                 (hiddenSignalTone === "critical"
@@ -455,44 +455,44 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
       return (
         <div
           className={cn(
-            "flex h-svh flex-col overflow-hidden bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2]",
+            "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0d0d0b] dark:text-[#f7f2ec]",
             interfaceScaleClasses[preferences.interfaceScale]
           )}
         >
-          <header className="flex shrink-0 items-center gap-3 px-4 py-3 md:px-6">
+          <header className="flex shrink-0 items-center gap-3 px-4 py-[calc(0.75rem*var(--rvl-space-scale,1))] md:px-6">
             <button
               type="button"
               onClick={() => setActiveWidgetView(null)}
               className="cursor-pointer rounded-full p-2 text-current/70 transition-colors hover:text-current focus:outline-none"
               aria-label="Voltar ao Centro de Operações"
             >
-              <ArrowLeft className="h-5 w-5 stroke-[1.8]" />
+              <ArrowLeft className="h-[calc(1.25rem*var(--rvl-font-scale,1))] w-[calc(1.25rem*var(--rvl-font-scale,1))] stroke-[1.8]" />
             </button>
             <div>
-              <h1 className="text-sm font-medium uppercase tracking-[0.12em]">
+              <h1 className="text-[calc(0.875rem*var(--rvl-font-scale,1))] font-medium uppercase tracking-[0.12em]">
                 Agenda
               </h1>
-              <p className="text-[11px] font-light text-current/64">
+              <p className="text-[calc(11px*var(--rvl-font-scale,1))] font-light text-current/64">
                 Centro de Operações
               </p>
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 px-4 pb-4 md:px-6">
-            <section className="flex h-full flex-col rounded-2xl bg-[#f8dcc8] p-4 dark:bg-[#756c2c]">
-              <div className="grid flex-1 content-center gap-2">
+          <main className="min-h-0 flex-1 px-4 pb-[calc(1rem*var(--rvl-space-scale,1))] md:px-6">
+            <section className="flex h-full flex-col rounded-2xl bg-white p-[calc(1rem*var(--rvl-space-scale,1))] dark:bg-[#151513]">
+              <div className="grid flex-1 content-center gap-[calc(0.5rem*var(--rvl-space-scale,1))]">
                 {todayItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={`${item.time}-${item.label}`}
-                      className="grid grid-cols-[1.25rem_1fr_3.25rem] items-center gap-2 rounded-xl bg-[#685c20]/6 px-3 py-2.5 dark:bg-[#f3c4a2]/8"
+                      className="grid grid-cols-[calc(1.25rem*var(--rvl-font-scale,1))_1fr_calc(3.25rem*var(--rvl-font-scale,1))] items-center gap-2 rounded-xl bg-[#1f1f1a]/5 px-3 py-[calc(0.625rem*var(--rvl-space-scale,1))] dark:bg-[#f7f2ec]/8"
                     >
-                      <Icon className="h-4 w-4 text-current/78" />
-                      <span className="text-sm font-light text-current/92">
+                      <Icon className="h-[calc(1rem*var(--rvl-font-scale,1))] w-[calc(1rem*var(--rvl-font-scale,1))] text-current/78" />
+                      <span className="text-[calc(0.875rem*var(--rvl-font-scale,1))] font-light text-current/92">
                         {item.label}
                       </span>
-                      <span className="text-right text-xs tabular-nums text-current/58">
+                      <span className="text-right text-[calc(0.75rem*var(--rvl-font-scale,1))] tabular-nums text-current/58">
                         {item.time}
                       </span>
                     </div>
@@ -508,7 +508,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
     return (
       <div
         className={cn(
-          "flex h-svh flex-col overflow-hidden bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2]",
+          "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0d0d0b] dark:text-[#f7f2ec]",
           interfaceScaleClasses[preferences.interfaceScale]
         )}
       >
@@ -544,6 +544,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
                 <TodayAgendaCard
                   items={todayItems}
                   onConfigure={() => setConfigPanel("journey")}
+                  onViewFullAgenda={() => setActiveWidgetView("journey")}
                   className="h-auto min-h-0"
                   config={{
                     mode: "system",

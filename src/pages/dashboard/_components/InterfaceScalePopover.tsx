@@ -34,7 +34,7 @@ export default function InterfaceScalePopover({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex h-[2.15rem] min-w-[2.15rem] cursor-pointer items-center justify-center rounded-full px-2 text-[12px] font-semibold tracking-[-0.01em] text-[#685c20]/68 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/68 dark:hover:text-[#f3c4a2]"
+        className="flex h-[2.15rem] min-w-[2.15rem] cursor-pointer items-center justify-center rounded-full px-2 text-[calc(12px*var(--rvl-font-scale,1))] font-semibold tracking-[-0.01em] text-[#1f1f1a]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f7f2ec]/68 dark:hover:text-[#f3c4a2]"
         aria-label="Escala Operacional"
         aria-expanded={open}
       >
@@ -52,7 +52,7 @@ export default function InterfaceScalePopover({ value, onChange }: Props) {
                 setOpen(false);
               }}
               className={cn(
-                "flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-xl px-2 text-[12px] font-semibold tracking-[-0.01em] transition-all duration-150 focus:outline-none",
+                "flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-xl px-2 text-[calc(12px*var(--rvl-font-scale,1))] font-semibold tracking-[-0.01em] transition-all duration-150 focus:outline-none",
                 value === option.value
                   ? "bg-[#454116] text-[#fff4e8] dark:bg-[#685c20] dark:text-[#fff4e8]"
                   : "border border-[#fff4e8]/24 bg-[#fff4e8]/8 text-[#fff4e8] hover:bg-[#fff4e8]/14 dark:border-[#685c20]/18 dark:bg-[#685c20]/7 dark:text-[#685c20] dark:hover:bg-[#685c20]/12"

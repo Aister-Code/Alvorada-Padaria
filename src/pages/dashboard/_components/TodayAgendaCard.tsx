@@ -1,5 +1,6 @@
 ﻿import {
   Bell,
+  CalendarClock,
   CalendarPlus,
   Check,
   ChevronDown,
@@ -44,6 +45,7 @@ type Props = {
   items: TodayAgendaItem[];
   className?: string;
   onConfigure?: () => void;
+  onViewFullAgenda?: () => void;
   config?: AgendaConfig;
   canCreateForOthers?: boolean;
   currentOperatorName?: string;
@@ -109,10 +111,42 @@ function emptyAgendaMessage(count: number) {
   return null;
 }
 
+function AgendaPendingRow({
+  tone,
+  label,
+  value,
+}: {
+  tone: "info" | "attention" | "critical" | "exception";
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="grid grid-cols-[0.5rem_1fr_auto] items-center gap-2 rounded-xl px-1.5 py-1 text-[0.65625rem]">
+      <span
+        className={cn(
+          "h-1.5 w-1.5 rounded-full",
+          value <= 0
+            ? "bg-current/28"
+            : tone === "critical"
+              ? "bg-red-600"
+              : tone === "attention"
+                ? "bg-amber-500"
+                : tone === "exception"
+                  ? "bg-sky-500"
+                  : "bg-emerald-500"
+        )}
+      />
+      <span className="min-w-0 truncate font-medium opacity-80">{label}</span>
+      <span className="font-semibold tabular-nums">{value}</span>
+    </div>
+  );
+}
+
 export default function TodayAgendaCard({
   items,
   className,
   onConfigure,
+  onViewFullAgenda,
   config = defaultAgendaConfig,
   canCreateForOthers = false,
   currentOperatorName = "Operador",
@@ -130,6 +164,8 @@ export default function TodayAgendaCard({
   const [createAttachmentOpen, setCreateAttachmentOpen] = useState(false);
   const [createDateTimeOpen, setCreateDateTimeOpen] = useState(false);
   const [createOwnerOpen, setCreateOwnerOpen] = useState(false);
+  const [pendingOpen, setPendingOpen] = useState(false);
+  const [agendaMenuOpen, setAgendaMenuOpen] = useState(false);
   const [showCreateLabel, setShowCreateLabel] = useState(true);
   const [quickConfig, setQuickConfig] = useState<AgendaConfig>(config);
   const [alertConfig, setAlertConfig] = useState<AlertConfig>(defaultAlertConfig);
@@ -141,6 +177,20 @@ export default function TodayAgendaCard({
   const [newAgendaTime, setNewAgendaTime] = useState("");
   const [savingNewAgenda, setSavingNewAgenda] = useState(false);
   const visibleItems = items.slice(0, 3);
+  const hiddenPendingItems = items.slice(visibleItems.length).filter((item) => !item.completed);
+  const overdueItems = items.filter((item) => item.overdue && !item.completed);
+  const hiddenCriticalItems = hiddenPendingItems.filter(
+    (item) => item.overdue || item.priority === "critical"
+  );
+  const pendingAgendaCount = hiddenPendingItems.length + overdueItems.length;
+  const pendingAgendaTone =
+    overdueItems.length > 0 || hiddenCriticalItems.length > 0
+      ? "critical"
+      : hiddenPendingItems.some((item) => item.priority === "attention")
+        ? "attention"
+        : pendingAgendaCount > 0
+          ? "exception"
+          : "info";
   const emptyMessage = emptyAgendaMessage(visibleItems.length);
   const hasQuickChanges =
     JSON.stringify(quickConfig) !== JSON.stringify(config) ||
@@ -154,7 +204,7 @@ export default function TodayAgendaCard({
   }, []);
 
   useEffect(() => {
-    if (!settingsOpen && !createOpen) return;
+    if (!settingsOpen && !createOpen && !pendingOpen && !agendaMenuOpen) return;
 
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
@@ -169,6 +219,9 @@ export default function TodayAgendaCard({
         setCreateOwnerOpen(false);
       }
 
+      if (pendingOpen) setPendingOpen(false);
+      if (agendaMenuOpen) setAgendaMenuOpen(false);
+
       if (settingsOpen && !hasQuickChanges) {
         setSettingsOpen(false);
         setQuickModeOpen(false);
@@ -179,7 +232,7 @@ export default function TodayAgendaCard({
 
     document.addEventListener("pointerdown", handlePointerDown);
     return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [createOpen, hasQuickChanges, settingsOpen]);
+  }, [agendaMenuOpen, createOpen, hasQuickChanges, pendingOpen, settingsOpen]);
 
   const quickSettings: Array<{
     key: keyof Pick<AgendaConfig, "period">;
@@ -312,11 +365,11 @@ export default function TodayAgendaCard({
   return (
     <section
       className={cn(
-        "relative flex h-full min-h-0 flex-col rounded-none bg-[#f8dcc8] px-4 py-3 dark:bg-[#756c2c] md:rounded-2xl",
+        "relative flex h-full min-h-0 flex-col rounded-none bg-white px-4 py-3 text-[#1f1f1a] dark:bg-[#151513] dark:text-[#f7f2ec] md:rounded-2xl",
         className,
       )}
     >
-      <div className="mb-2 flex items-start gap-2 pr-32 text-[#685c20] dark:text-[#f3c4a2]">
+      <div className="mb-2 grid min-h-7 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-[#1f1f1a] dark:text-[#f7f2ec]">
         <div className="min-w-0 text-left">
           <button
             type="button"
@@ -324,27 +377,27 @@ export default function TodayAgendaCard({
               event.stopPropagation();
               setSettingsOpen((value) => !value);
             }}
-            className="flex min-w-0 cursor-pointer items-center gap-1.5 rounded-full pr-1 text-left transition-colors hover:text-[#685c20]/82 dark:hover:text-[#f3c4a2]/84"
+            className="flex h-7 min-w-0 cursor-pointer items-center gap-1.5 rounded-full pr-1 text-left transition-colors hover:text-[#685c20] dark:hover:text-[#f3c4a2]"
             aria-label={settingsOpen ? "Recolher configuração da agenda" : "Mostrar configuração da agenda"}
             aria-expanded={settingsOpen}
           >
-            <span className="text-[0.6875rem] font-medium uppercase tracking-[0.12em]">
+            <span className="text-[calc(0.6875rem*var(--rvl-font-scale,1))] font-medium uppercase tracking-[0.12em]">
               Agenda
             </span>
-            <span className="truncate text-[0.65625rem] font-light normal-case tracking-normal text-[#685c20]/60 dark:text-[#f3c4a2]/62">
+            <span className="truncate text-[calc(0.65625rem*var(--rvl-font-scale,1))] font-light normal-case tracking-normal text-[#1f1f1a]/54 dark:text-[#f7f2ec]/56">
               {quickConfig.summary}
             </span>
             {settingsOpen ? (
-              <ChevronUp className="h-3 w-3 shrink-0 text-[#685c20]/56 dark:text-[#f3c4a2]/60" />
+              <ChevronUp className="h-3 w-3 shrink-0 text-[#1f1f1a]/50 dark:text-[#f7f2ec]/52" />
             ) : (
-              <ChevronDown className="h-3 w-3 shrink-0 text-[#685c20]/56 dark:text-[#f3c4a2]/60" />
+              <ChevronDown className="h-3 w-3 shrink-0 text-[#1f1f1a]/50 dark:text-[#f7f2ec]/52" />
             )}
           </button>
         </div>
         <div
           ref={actionClusterRef}
           className={cn(
-            "absolute right-4 top-3 inline-flex h-6 items-center gap-0.5 overflow-hidden text-[#685c20]/74 transition-colors dark:text-[#f3c4a2]/80",
+            "relative inline-flex h-7 shrink-0 items-center gap-0.5 overflow-visible text-[#1f1f1a]/64 transition-colors dark:text-[#f7f2ec]/68",
             (createOpen || showCreateLabel) && "text-[#685c20] dark:text-[#f3c4a2]"
           )}
           onClick={(event) => event.stopPropagation()}
@@ -360,33 +413,128 @@ export default function TodayAgendaCard({
             onFocus={() => setShowCreateLabel(true)}
             onMouseLeave={() => !createOpen && setShowCreateLabel(false)}
             className={cn(
-              "inline-flex h-full cursor-pointer items-center justify-center gap-1 rounded-full px-1.5 transition-all hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
+              "inline-flex h-full cursor-pointer items-center justify-center gap-1 rounded-full px-1.5 text-[#685c20] transition-all hover:bg-[#685c20]/10 hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2] dark:hover:bg-[#f3c4a2]/12 dark:hover:text-[#f3c4a2]",
               showCreateLabel || createOpen ? "w-[5.9rem]" : "w-6",
+              createOpen && "bg-[#685c20]/10 dark:bg-[#f3c4a2]/12",
             )}
             aria-label="Criar agenda"
             aria-expanded={createOpen}
           >
-            <CalendarPlus className="h-3.5 w-3.5 shrink-0 stroke-[2.05]" />
+            <span className="inline-flex h-[1.18rem] w-[1.18rem] shrink-0 items-center justify-center rounded-full bg-[#685c20]/9 dark:bg-[#f3c4a2]/12">
+              <CalendarPlus className="h-[calc(0.9rem*var(--rvl-font-scale,1))] w-[calc(0.9rem*var(--rvl-font-scale,1))] stroke-[2.2]" />
+            </span>
             <span
               className={cn(
-                "overflow-hidden whitespace-nowrap text-[0.625rem] font-medium transition-opacity",
+                "overflow-hidden whitespace-nowrap text-[calc(0.625rem*var(--rvl-font-scale,1))] font-medium text-[#685c20]/84 transition-opacity dark:text-[#f3c4a2]/86",
                 showCreateLabel || createOpen ? "opacity-100" : "w-0 opacity-0",
               )}
             >
               Criar agenda
             </span>
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPendingOpen((value) => !value);
+              setAgendaMenuOpen(false);
+              setCreateOpen(false);
+            }}
+            className={cn(
+              "relative inline-flex h-full w-6 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
+              pendingAgendaCount > 0 &&
+                (pendingAgendaTone === "critical"
+                  ? "text-red-600 dark:text-red-400"
+                  : pendingAgendaTone === "attention"
+                    ? "text-amber-600 dark:text-amber-300"
+                    : pendingAgendaTone === "exception"
+                      ? "text-sky-600 dark:text-sky-300"
+                      : "text-emerald-600 dark:text-emerald-300"),
+              pendingOpen && "bg-[#685c20]/8 dark:bg-[#f3c4a2]/10"
+            )}
+            aria-label="Pendências da Agenda"
+            aria-expanded={pendingOpen}
+          >
+            <CalendarClock className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[1.95]" />
+          </button>
           {onConfigure && (
             <>
               <button
                 type="button"
-                onClick={onConfigure}
-                className="inline-flex h-full w-6 cursor-pointer items-center justify-center rounded-full text-[#685c20]/76 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/82 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]"
-                aria-label="Configurar Agenda"
+                onClick={() => {
+                  setAgendaMenuOpen((value) => !value);
+                  setPendingOpen(false);
+                  setCreateOpen(false);
+                }}
+                className="inline-flex h-full w-6 cursor-pointer items-center justify-center rounded-full text-[#1f1f1a]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:text-[#f7f2ec]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]"
+                aria-label="Menu da Agenda"
+                aria-expanded={agendaMenuOpen}
               >
-                <MoreVertical className="h-3.5 w-3.5 stroke-[2.15]" />
+                <MoreVertical className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[2.15]" />
               </button>
             </>
+          )}
+          {pendingOpen && (
+            <div className="absolute right-7 top-8 z-30 w-56 rounded-2xl bg-[#685c20] px-3 py-2.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-[0.6875rem] font-semibold">Pendências</span>
+                <span className="text-[0.625rem] font-medium opacity-70">
+                  {pendingAgendaCount > 0 ? pendingAgendaCount : "0"}
+                </span>
+              </div>
+              <div className="space-y-1">
+                <AgendaPendingRow
+                  tone={overdueItems.length > 0 ? "critical" : "info"}
+                  label="Atrasados"
+                  value={overdueItems.length}
+                />
+                <AgendaPendingRow
+                  tone={hiddenPendingItems.length > 0 ? "exception" : "info"}
+                  label="Outros períodos"
+                  value={hiddenPendingItems.length}
+                />
+                <AgendaPendingRow
+                  tone={hiddenCriticalItems.length > 0 ? "critical" : "info"}
+                  label="Críticos"
+                  value={hiddenCriticalItems.length}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingOpen(false);
+                  onViewFullAgenda?.();
+                }}
+                className="mt-2 w-full cursor-pointer rounded-full bg-[#f3c4a2]/14 px-2.5 py-1.5 text-[0.65625rem] font-semibold hover:bg-[#f3c4a2]/20 dark:bg-[#685c20]/10 dark:hover:bg-[#685c20]/16"
+              >
+                Ver agenda completa
+              </button>
+            </div>
+          )}
+          {agendaMenuOpen && (
+            <div className="absolute right-0 top-8 z-30 w-48 rounded-2xl bg-[#685c20] p-1.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
+              <button
+                type="button"
+                onClick={() => {
+                  setAgendaMenuOpen(false);
+                  onViewFullAgenda?.();
+                }}
+                className="grid w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-3 rounded-xl px-2 py-1.5 text-left text-[0.65625rem] font-medium hover:bg-[#f3c4a2]/10 dark:hover:bg-[#685c20]/8"
+              >
+                <span>Ver agenda completa</span>
+                <span className="h-2.5 w-2.5 rounded-[0.2rem] border border-current/38" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAgendaMenuOpen(false);
+                  onConfigure?.();
+                }}
+                className="grid w-full cursor-pointer grid-cols-[1fr_auto] items-center gap-3 rounded-xl px-2 py-1.5 text-left text-[0.65625rem] font-medium hover:bg-[#f3c4a2]/10 dark:hover:bg-[#685c20]/8"
+              >
+                <span>Configurar agenda</span>
+                <span className="h-2.5 w-2.5 rounded-[0.2rem] border border-current/38" aria-hidden="true" />
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -563,7 +711,7 @@ export default function TodayAgendaCard({
               className="grid w-full cursor-pointer grid-cols-[auto_1fr_auto_auto] items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-[#f3c4a2]/8 dark:hover:bg-[#685c20]/8"
               aria-pressed={alertConfig.enabled}
             >
-              <span className={cn("h-2.5 w-2.5 rounded-full", alertStatusClasses[alertConfig.status])} />
+              <span className={cn("h-1.5 w-1.5 rounded-full", alertStatusClasses[alertConfig.status])} />
               <span className="min-w-0 truncate text-[0.65625rem] font-medium text-[#f3c4a2]/72 dark:text-[#685c20]/70">
                 Alerta
               </span>
@@ -918,13 +1066,13 @@ export default function TodayAgendaCard({
             <div key={key}>
               <div
                 className={cn(
-                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.25rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#685c20]/5 dark:hover:bg-[#f3c4a2]/7",
-                  selected && "bg-[#685c20]/6 dark:bg-[#f3c4a2]/8",
+                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.25rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#1f1f1a]/5 dark:hover:bg-[#f7f2ec]/7",
+                  selected && "bg-[#1f1f1a]/6 dark:bg-[#f7f2ec]/8",
                 )}
               >
                 {completed ? (
                   <Check
-                    className="h-3.5 w-3.5 -ml-0.5 text-[#1f1f1a] stroke-[2.6] dark:text-[#1f1f1a]"
+                    className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] -ml-0.5 text-blue-600 stroke-[2.6] dark:text-blue-400"
                     aria-label="Compromisso concluído"
                   />
                 ) : (
@@ -935,7 +1083,7 @@ export default function TodayAgendaCard({
                       toast.info(priorityLabels[priority]);
                     }}
                     className={cn(
-                      "h-2.5 w-2.5 cursor-pointer rounded-full transition-transform hover:scale-125 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current",
+                      "h-1.5 w-1.5 cursor-pointer rounded-full transition-transform hover:scale-125 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current",
                       markerClass,
                     )}
                     aria-label={`Status da agenda: ${priorityLabels[priority]}`}
@@ -951,20 +1099,20 @@ export default function TodayAgendaCard({
                 >
                   <span
                     className={cn(
-                      "truncate text-left text-[0.75rem] font-light text-[#685c20]/90 dark:text-[#f3c4a2]/90",
-                      completed && "text-[#685c20]/48 line-through decoration-[#685c20]/38 decoration-[0.5px] dark:text-[#f3c4a2]/48 dark:decoration-[#f3c4a2]/38"
+                      "truncate text-left text-[calc(0.75rem*var(--rvl-font-scale,1))] font-light text-[#1f1f1a]/88 dark:text-[#f7f2ec]/88",
+                      completed && "text-[#1f1f1a]/44 line-through decoration-[#1f1f1a]/34 decoration-[0.5px] dark:text-[#f7f2ec]/44 dark:decoration-[#f7f2ec]/34"
                     )}
                   >
                     {item.label}
                   </span>
                   <span
                     className={cn(
-                      "inline-flex items-center justify-end gap-0.5 text-right text-[0.65625rem] tabular-nums",
+                      "inline-flex items-center justify-end gap-0.5 text-right text-[calc(0.65625rem*var(--rvl-font-scale,1))] tabular-nums",
                       completed
-                        ? "text-[#685c20]/58 dark:text-[#f3c4a2]/58"
+                        ? "text-[#1f1f1a]/52 dark:text-[#f7f2ec]/52"
                         : item.overdue
                         ? "font-semibold text-red-700 dark:text-red-300"
-                        : "text-[#685c20]/54 dark:text-[#f3c4a2]/54",
+                        : "text-[#1f1f1a]/54 dark:text-[#f7f2ec]/54",
                     )}
                   >
                     {item.alertEnabled && (
@@ -987,18 +1135,18 @@ export default function TodayAgendaCard({
               </div>
               {selected && (
                 <div
-                  className="ml-[1.9rem] mt-1 flex items-center gap-1.5 text-[0.625rem]"
+                  className="ml-[1.9rem] mt-1 flex items-center gap-1.5 text-[calc(0.625rem*var(--rvl-font-scale,1))]"
                   onClick={(event) => event.stopPropagation()}
                 >
                   {completed ? (
                     <>
-                      <span className="text-[#685c20]/54 dark:text-[#f3c4a2]/54">
+                      <span className="text-[#1f1f1a]/54 dark:text-[#f7f2ec]/54">
                         Cumprido · histórico sem edição
                       </span>
                       <button
                         type="button"
                         onClick={() => toast.info("Registro permanente da agenda - consulta permitida.")}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#685c20]/7 px-2 py-1 font-medium text-[#685c20]/78 hover:bg-[#685c20]/10 dark:bg-[#f3c4a2]/8 dark:text-[#f3c4a2]/82 dark:hover:bg-[#f3c4a2]/12"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#1f1f1a]/7 px-2 py-1 font-medium text-[#1f1f1a]/78 hover:bg-[#1f1f1a]/10 dark:bg-[#f7f2ec]/8 dark:text-[#f7f2ec]/82 dark:hover:bg-[#f7f2ec]/12"
                       >
                         Ver registro
                       </button>
@@ -1009,7 +1157,7 @@ export default function TodayAgendaCard({
                         key={action}
                         type="button"
                         onClick={() => toast.info(`${action} agenda - em breve`)}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#685c20]/7 px-2 py-1 font-medium text-[#685c20]/78 hover:bg-[#685c20]/10 dark:bg-[#f3c4a2]/8 dark:text-[#f3c4a2]/82 dark:hover:bg-[#f3c4a2]/12"
+                        className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#1f1f1a]/7 px-2 py-1 font-medium text-[#1f1f1a]/78 hover:bg-[#1f1f1a]/10 dark:bg-[#f7f2ec]/8 dark:text-[#f7f2ec]/82 dark:hover:bg-[#f7f2ec]/12"
                       >
                         {action === "Alertar" && <Bell className="h-3 w-3" />}
                         {action}
@@ -1022,7 +1170,7 @@ export default function TodayAgendaCard({
           );
         })}
         {emptyMessage && (
-          <p className="pt-1 text-center text-[0.6875rem] font-light text-[#685c20]/50 dark:text-[#f3c4a2]/52">
+          <p className="pt-1 text-center text-[calc(0.6875rem*var(--rvl-font-scale,1))] font-light text-[#1f1f1a]/48 dark:text-[#f7f2ec]/50">
             {emptyMessage}
           </p>
         )}

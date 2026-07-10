@@ -66,22 +66,22 @@ export default function DashboardHeader({
   const roleLabel = formatRoleLabel(role);
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-[#f3c4a2]/92 px-4 py-2.5 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/92 dark:text-[#f3c4a2] md:px-6">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-white/92 px-4 py-2.5 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#0d0d0b]/94 dark:text-[#f7f2ec] md:px-6">
       <div className="flex min-w-0 items-center gap-2.5">
         <AlvoradaLogo variant="icon" size="sm" />
         <div className="hidden min-w-0 sm:block">
-          <p className="truncate text-[14.5px] font-semibold leading-[1.05]">
+          <p className="truncate text-[calc(14.5px*var(--rvl-font-scale,1))] font-semibold leading-[1.05]">
             {operatorName}
           </p>
-          <p className="truncate text-[10px] font-light leading-tight text-[#685c20]/68 dark:text-[#f3c4a2]/68">
+          <p className="truncate text-[calc(10px*var(--rvl-font-scale,1))] font-light leading-tight text-[#1f1f1a]/58 dark:text-[#f7f2ec]/58">
             {roleLabel} <span aria-hidden="true">•</span> {unitLabel}
           </p>
         </div>
         <div className="min-w-0 sm:hidden">
-          <p className="text-[14.5px] font-semibold leading-[1.05]">
+          <p className="text-[calc(14.5px*var(--rvl-font-scale,1))] font-semibold leading-[1.05]">
             {operatorName}
           </p>
-          <p className="truncate text-[10px] font-light leading-tight text-[#685c20]/68 dark:text-[#f3c4a2]/68">
+          <p className="truncate text-[calc(10px*var(--rvl-font-scale,1))] font-light leading-tight text-[#1f1f1a]/58 dark:text-[#f7f2ec]/58">
             {roleLabel} <span aria-hidden="true">•</span> {unitLabel}
           </p>
         </div>
@@ -99,10 +99,10 @@ export default function DashboardHeader({
 
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="cursor-pointer rounded-full p-2 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
+          className="cursor-pointer rounded-full p-2 text-[#1f1f1a]/56 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f7f2ec]/58 dark:hover:text-[#f3c4a2]"
           aria-label="Alternar tema"
         >
-          {isDark ? <Sun className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" /> : <Moon className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />}
+          {isDark ? <Sun className="h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))] stroke-[1.8]" /> : <Moon className="h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))] stroke-[1.8]" />}
         </button>
 
         <DashboardMenu

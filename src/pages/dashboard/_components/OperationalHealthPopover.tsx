@@ -60,7 +60,7 @@ export default function OperationalHealthPopover({ items }: Props) {
         aria-expanded={open}
       >
         <Activity className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />
-        <span className={cn("absolute right-1 top-1 h-2.5 w-2.5 rounded-full", levelClasses[level])} />
+        <span className={cn("absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full", levelClasses[level])} />
       </button>
 
       {open && (
@@ -72,7 +72,7 @@ export default function OperationalHealthPopover({ items }: Props) {
                 ISO {score}%
               </p>
             </div>
-            <span className={cn("h-3 w-3 rounded-full", levelClasses[level])} />
+            <span className={cn("h-1.5 w-1.5 rounded-full", levelClasses[level])} />
           </div>
 
           <div className="space-y-2">

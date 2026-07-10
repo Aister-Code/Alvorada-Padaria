@@ -53,6 +53,13 @@ Parâmetros obrigatórios:
 - Modo dia: superfície oliva Pantone 3995 C `#685C20`; leitura em branco quente/cinza quente.
 - Modo noite: superfície Pantone 474 C `#F3C4A2`; leitura em oliva Pantone 3995 C.
 
+### Assinatura da Marca
+
+- Logo no modo dia: oliva Pantone 3995 C `#685C20`.
+- Logo no modo noite: pêssego Pantone 474 C `#F3C4A2`.
+- Laranja Alvorada `#F04A2A` é cor de ação, não cor principal da logo na interface.
+- A marca deve estar presente sem competir com botões, alertas ou estados operacionais.
+
 ## RVL-001 — Campo Editável
 
 Nenhum componente editável pode parecer bloqueado.
