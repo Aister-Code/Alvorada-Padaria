@@ -1,8 +1,8 @@
-# RondonIA Visual Language
+﻿# RondonIA Visual Language
 
 ## Posição no Produto
 
-O RondonIA Visual Language, ou RVL, é a camada visual acima do Design System.
+O RondonIA Visual Language, ou RVL, · a camada visual acima do Design System.
 
 O Design System define componentes, contratos, estados e consistência técnica. O RVL define a expressão visual, a hierarquia, o silêncio da interface e a forma como o DNA da marca aparece no produto.
 
@@ -35,18 +35,23 @@ Parâmetros obrigatórios:
 
 ### Modo Dia
 
-- Fundo: `#D5D4C8`
-- Campos: `#E4E2D7`
-- Foco: `#E8E6DC`
-- Texto: `#5D5822`
-- Ação: `#F04A2A`
+- Plano 0 / Fundo: Pantone 474 C `#F3C4A2`
+- Plano 1 / Campos: derivado do Pantone 474 C `#F6D0B4`
+- Foco: derivado elevado do Pantone 474 C `#F8DCC8`
+- Texto: Pantone 3995 C `#685C20`
+- Ação: Pantone 1655 / Laranja Alvorada `#F04A2A`
 
 ### Modo Noite
 
-- Fundo: `#5D5822`
-- Campos: `#696328`
-- Texto: `#F8C6AA`
-- Ação: `#F04A2A`
+- Plano 0 / Fundo: Pantone 3995 C `#685C20`
+- Plano 1 / Campos: derivado do Pantone 3995 C `#756C2C`
+- Texto: Pantone 474 C `#F3C4A2`
+- Ação: Pantone 1655 / Laranja Alvorada `#F04A2A`
+
+### Plano 2
+
+- Modo dia: superfície oliva Pantone 3995 C `#685C20`; leitura em branco quente/cinza quente.
+- Modo noite: superfície Pantone 474 C `#F3C4A2`; leitura em oliva Pantone 3995 C.
 
 ## RVL-001 — Campo Editável
 
@@ -69,14 +74,14 @@ O botão principal mantém presença por cor, contraste e hierarquia.
 - Sem efeito spray.
 - Estado inativo com aproximadamente 75% de opacidade.
 
-## RVL-003 — Iconografia Operacional
+## RVL-003 · Iconografia Operacional
 
-A iconografia operacional é parte da linguagem principal do RondonIA OS.
+A iconografia operacional · parte da linguagem principal do RondonIA OS.
 
-- Ícone comunica.
+- ícone comunica.
 - Texto confirma.
 - A mesma semântica visual deve se repetir em todo o sistema.
-- Ícones devem ser simples, reconhecíveis e funcionais.
+- ícones devem ser simples, reconhecíveis e funcionais.
 - Não usar iconografia decorativa quando ela não acrescenta leitura operacional.
 
 ## RVL-004 — Saúde Operacional
@@ -84,16 +89,16 @@ A iconografia operacional é parte da linguagem principal do RondonIA OS.
 A Saúde Operacional representa tendência e confiabilidade do ambiente, não apenas um evento instantâneo.
 
 - Usar índice operacional preparado para média por período.
-- A janela recomendada para evolução é média móvel de 5 minutos.
+- A janela recomendada para evolução · média móvel de 5 minutos.
 - Adaptar os itens exibidos por perfil.
 - Sinalizar somente quando houver impacto operacional.
 - Não marcar vermelho por um evento isolado sem confirmação de tendência.
 
 Estados do ISO:
 
-- Verde: 95–100%.
-- Amarelo: 80–94%.
-- Laranja: 60–79%.
+- Verde: 95?100%.
+- Amarelo: 80?94%.
+- Laranja: 60?79%.
 - Vermelho: abaixo de 60%.
 
 ## RVL-005 — Atenção Contextual
@@ -107,7 +112,7 @@ A Atenção Contextual organiza pendências por urgência, importância e perfil
 
 Regras:
 
-- Ícone comunica.
+- ícone comunica.
 - Texto confirma.
 - Não piscar.
 - Não usar som nesta versão.
@@ -115,7 +120,7 @@ Regras:
 - Preparar alarme e vibração apenas para evento crítico quando a tela estiver off.
 - Nunca interromper sem motivo.
 
-## RVL-006 — Responsividade Intencional
+## RVL-006 · Responsividade Intencional
 
 Nenhuma tela principal deve deixar grandes áreas vazias sem intenção de design.
 
@@ -135,10 +140,10 @@ Configurações devem manter o contexto operacional visível.
 - Usar seleção única para filtros mutuamente exclusivos.
 - Usar seleção múltipla quando fizer sentido operacional.
 - Bloquear combinações inválidas.
-- Permitir sugestão do sistema.
+- Permitir sugestáo do sistema.
 - Respeitar perfil, unidade, período e função.
 
-## RVL-007 — Planos Visuais Simplificados
+## RVL-007 · Planos Visuais Simplificados
 
 A linguagem visual do RondonIA OS usa poucos planos para reduzir ruído.
 
@@ -154,7 +159,7 @@ Telas principais operacionais devem caber na viewport do dispositivo elegível.
 - A responsividade deve adaptar proporções, respiros, altura dos cards e acabamento.
 - Popovers, menus e painéis internos podem ter rolagem própria quando necessário.
 
-## RVL-009 — Grid Óptico
+## RVL-009 — Grid ?ptico
 
 Toda tela operacional deve seguir um grid invisível.
 
@@ -170,7 +175,7 @@ Fundo da tela. Modo dia usa off-white quente; modo noite usa oliva profundo.
 
 ### Plano 1 — Operação
 
-Área operacional: Operação Agora, Jornada Hoje, módulos, cards e widgets.
+área operacional: Operação Agora, Jornada Hoje, módulos, cards e widgets.
 
 Todos os elementos operacionais compartilham a mesma superfície. A separação acontece por respiro, composição, hierarquia e tipografia.
 
@@ -195,10 +200,10 @@ Configurações devem parecer ferramentas contextuais, não formulários extenso
 
 A interface conduz o olhar.
 
-- A hierarquia é criada pela composição.
+- A hierarquia · criada pela composição.
 - O operador nunca procura informação.
 - A informação encontra o operador.
-- Ritmo visual é mais importante que quantidade de componentes.
+- Ritmo visual · mais importante que quantidade de componentes.
 - Respiros, massas e proporções substituem linhas divisórias.
 
 ## RVL-013 — Contexto Contrasta
@@ -225,6 +230,8 @@ Princípios:
 
 - A escala não altera apenas a fonte.
 - Fonte, respiros, altura de componentes e área clicável devem adaptar-se proporcionalmente.
+- A escala deve afetar a tela operacional inteira, não apenas um grupo de ícones ou controles.
+- Componentes com medidas fixas devem aderir à escala global por variável, unidade relativa ou camada equivalente.
 - A preferência deve ser salva por operador.
 - O próprio controle no header deve indicar a escala ativa.
 
@@ -235,7 +242,7 @@ Widgets operacionais representam resumos.
 - Não existe ação de expandir widget.
 - Ao tocar em um widget, abrir sua tela correspondente.
 - O retorno acontece pelo botão Back.
-- Os três pontos permanecem apenas para configuração do widget, quando existir.
+- Os tràs pontos permanecem apenas para configuração do widget, quando existir.
 
 ## RVL-016 — Inversão de Temperatura
 
@@ -253,11 +260,11 @@ Controles contextuais devem comunicar estado com legibilidade e descoberta natur
 - Somente itens realmente indisponíveis podem parecer desabilitados.
 Padrão preferencial:
 
-- Lista compacta com valor atual à direita.
+- Lista compacta com valor atual · direita.
 - Dropdown contextual ao tocar.
 - Cada critério aparece em uma linha de controle.
-- Nome do critério à esquerda.
-- Valor atual à direita.
+- Nome do critério · esquerda.
+- Valor atual · direita.
 - Ao tocar na linha, abrir dropdown compacto apenas com as opções daquele critério.
 - O dropdown abre como continuação da própria linha, abaixo dela, sem repetir o nome do critério como cabeçalho interno.
 - Ao selecionar uma opção, o dropdown fecha automaticamente.
@@ -291,15 +298,15 @@ Telas de configuração devem confirmar conclusão da ação.
 - Ao concluir, o botão deve comunicar `✓ Salvo`.
 - Nunca fechar silenciosamente após uma ação de salvar.
 
-## RVL-018.1 — Sugestão do Sistema
+## RVL-018.1 · Sugestáo do Sistema
 
-Configurações contextuais podem oferecer sugestão do sistema como estado ativo.
+Configurações contextuais podem oferecer sugestáo do sistema como estado ativo.
 
 Regras:
 
 - Usar checkbox ou toggle discreto.
 - Quando ativo, aplicar as opções padrão do sistema.
-- Se o operador alterar qualquer opção manualmente, sair automaticamente do modo sugestão.
+- Se o operador alterar qualquer opção manualmente, sair automaticamente do modo sugestáo.
 - Se o operador ativar novamente, restaurar as opções padrão.
 - O estado deve ser legível e não parecer uma ação avulsa.
 
@@ -321,7 +328,7 @@ Modo dia:
 - Superfície do Plano 2: oliva.
 - Texto principal: branco quente.
 - Texto secundário: cinza quente.
-- Ícones: branco quente.
+- ícones: branco quente.
 - Destaques: branco.
 
 Modo noite:
@@ -329,7 +336,7 @@ Modo noite:
 - Superfície do Plano 2: bege quente.
 - Texto principal: oliva.
 - Texto secundário: oliva suavizado.
-- Ícones: oliva.
+- ícones: oliva.
 - Destaques: oliva estrutural.
 
 Regras:
@@ -347,14 +354,14 @@ A comunicação editorial faz parte da experiência operacional.
 - Português correto.
 - Acentuação obrigatória.
 - Legibilidade acima de efeitos visuais.
-- Ícones devem permanecer somente quando agregarem significado.
+- ícones devem permanecer somente quando agregarem significado.
 - Opções disponíveis nunca devem parecer desabilitadas.
 
-## RVL-023 — Indicadores Operacionais
+## RVL-023 · Indicadores Operacionais
 
 Todo indicador operacional deve conter:
 
-1. Ícone.
+1. ícone.
 2. Número.
 3. Label.
 
@@ -390,20 +397,107 @@ Toda tela operacional deve informar claramente:
 
 Regras:
 
+- A primeira linha do Header deve exibir o nome do colaborador vinculado ao cadastro.
+- O nome exibido deve respeitar o nome preferencial do colaborador.
+- Se houver colaboradores com nomes iguais, usar nome + sobrenome para diferenciar.
+- Quando houver nomes iguais, o colaborador mais antigo na empresa mantém preferência pelo nome curto já utilizado.
+- A segunda linha do Header deve exibir `Cargo • Unidade`.
+- Exemplo: `João` na primeira linha e `Gerente • Matriz` na segunda.
+- A regra vale para todos os headers operacionais elegíveis.
 - O Header deve mostrar o modo operacional em uso, não o perfil base.
-- O perfil base pertence à identidade e auditoria, não ao título operacional da tela.
+- O perfil base pertence · identidade e auditoria, não ao título operacional da tela.
 - O contexto deve acompanhar trocas futuras de modo operacional e unidade.
-- Exemplo: `Atendimento • Matriz`.
+- Exemplo: `Atendimento · Matriz`.
 - Nenhum título principal de módulo deve quebrar em mais de duas linhas.
 - Sempre que possível, o título principal deve permanecer em uma linha.
 - Subtítulos operacionais essenciais não devem ser truncados.
 - Se faltar espaço, reduzir levemente fonte, espaçamento ou densidade dos controles antes de cortar contexto essencial.
 
+## RVL-026 — Expansíveis Integrados
+
+Todo controle expansível elegível deve parecer parte do componente que expande.
+
+Regras:
+
+- A alça ou símbolo de expansão deve ficar dentro da superfície do componente.
+- A alça não deve criar faixa extra, aumentar a altura principal ou parecer solta.
+- Em docks operacionais, a alça não ocupa vaga de item e não altera a proporção dos ícones.
+- Em resumos, filtros e linhas retráteis, a alça não cria linha exclusiva nem desloca os indicadores.
+- A alça deve ser opticamente centralizada em relação ao conjunto que controla.
+- O estado recolhido/expandido deve continuar intuitivo por chevron ou símbolo equivalente.
+- Hover/foco seguem a mesma linguagem de superfície suave do componente.
+- A regra vale para componentes atuais e futuros.
+
+## RVL-027 — Status Educativo
+
+Indicadores de status devem comunicar primeiro por forma e cor, com texto apenas sob demanda.
+
+Regras:
+
+- Bolinhas ou marcadores simples bastam quando o estado já está associado a um item.
+- O marcador deve ser clicável ou focável quando houver espaço para explicar seu significado.
+- A explicação deve usar texto curto e operacional.
+- Quando o marcador já comunica o status, ícones próximos devem permanecer neutros para não duplicar leitura.
+- O padrão vale para Agenda, filtros, listas, docks, itens operacionais e todos os elegíveis futuros.
+- Verde indica informação ativa.
+- Amarelo indica atenção.
+- Vermelho indica crítico.
+- Azul indica exceção informativa rara.
+- A cor não deve virar decoração; ela sempre precisa explicar uma condição real.
+
+## RVL-028 — Dock por Contexto
+
+A Dock Operacional pode adaptar sua distribuição conforme o tipo de tela.
+
+Regras:
+
+- Tela inicial do perfil: a dock pode usar distribuição mais aberta, semelhante à navegação Android, quando houver espaço.
+- Telas internas ou de módulo: a dock retorna ao padrão operacional expansível, mais compacto e contextual.
+- A dock inicial prioriza reconhecimento rápido dos destinos principais.
+- A dock interna prioriza controle, contexto e redução de dispersão.
+- A linguagem visual permanece a mesma: ícone, nome curto, badge quando necessário e destaque suave no ativo.
+
+## RVL-029 — Configuração Curta no Expansível
+
+Quando um expansível já comunica o estado de configuração de um widget, ele pode oferecer ajustes rápidos no próprio painel.
+
+Regras:
+
+- O expansível deve mostrar primeiro o estado atual, como `Padrão do sistema`.
+- Ao abrir, deve preferir lista compacta com valor atual à direita.
+- As linhas precisam ter área confortável de toque/clique.
+- Toda linha que abre opções deve exibir indicador de expansível, como chevron.
+- A lista de opções abre no próprio contexto da linha, sem parecer outra tela.
+- Quando houver alternância entre configuração rápida e completa, essa alternância também deve ser expansível/listada, não um texto solto.
+- Ao abrir em contexto, o painel usa Plano 2 para comunicar ferramenta/configuração.
+- O menu de três pontos permanece para configuração completa.
+- O caminho curto nunca deve substituir configurações avançadas quando elas existirem.
+- A interação deve reduzir caminho sem poluir a tela principal.
+- Se nada foi alterado, não repetir ações como `Usar padrão do sistema`.
+- Depois de alteração, exibir ações explícitas como `Cancelar` e `Salvar`.
+- `Voltar ao padrão` aparece apenas como ação secundária quando houver alteração.
+- O padrão vale para Agenda e futuros widgets configuráveis.
+
+## RVL-030 — Alertas Semafóricos Configuráveis
+
+Alertas operacionais devem ser configuráveis no mesmo padrão de configuração curta.
+
+Regras:
+
+- O alerta pode ser aberto pelo ícone/indicador do item relacionado.
+- O estado do alerta usa semáforo proporcional ao prazo, período e tarefa.
+- Verde indica alerta programado sem risco imediato.
+- Amarelo indica proximidade do horário ou atenção.
+- Vermelho indica alerta disparado e não visto, atraso ou criticidade.
+- Azul indica alerta visto ou exceção informativa.
+- O operador deve conseguir cancelar o alerta quando o contexto físico/operacional exigir.
+- Quando houver alerta não visto, a interface deve comunicar isso sem piscar, som ou glow.
+
 ## CAO — Centro de Atenção Operacional
 
 O RondonIA OS não utiliza Centro de Notificações.
 
-O padrão oficial é o Centro de Atenção Operacional, ou CAO.
+O padrão oficial · o Centro de Atenção Operacional, ou CAO.
 
 O CAO organiza:
 
@@ -414,7 +508,7 @@ O CAO organiza:
 
 ## Padrão Login Geral
 
-A tela de Login Geral é a tela piloto do DNA Visual Alvorada v1.
+A tela de Login Geral · a tela piloto do DNA Visual Alvorada v1.
 
 - Usa a logo oficial como principal elemento visual.
 - Usa `OperatorIdField` para identificação de operador.

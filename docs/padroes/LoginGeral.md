@@ -1,4 +1,4 @@
-# Login Geral — Estrutura Oficial
+﻿# Login Geral ? Estrutura Oficial
 
 Tela: `Login Geral`
 
@@ -171,17 +171,17 @@ Regras:
 ## DNA Alvorada v1 aplicado
 
 Modo dia:
-- Fundo: `#D5D4C8`
-- Campos: `#E4E2D7`
-- Foco: `#E8E6DC`
-- Texto: `#5D5822`
-- Acao: `#F04A2A`
+- Plano 0 / Fundo: Pantone 474 C `#F3C4A2`
+- Campos: derivado do Pantone 474 C `#F6D0B4`
+- Foco: derivado elevado do Pantone 474 C `#F8DCC8`
+- Texto: Pantone 3995 C `#685C20`
+- Acao: Laranja Alvorada `#F04A2A`
 
 Modo noite:
-- Fundo: `#5D5822`
-- Campos: `#696328`
-- Texto: `#F8C6AA`
-- Acao: `#F04A2A`
+- Plano 0 / Fundo: Pantone 3995 C `#685C20`
+- Campos: derivado do Pantone 3995 C `#756C2C`
+- Texto: Pantone 474 C `#F3C4A2`
+- Acao: Laranja Alvorada `#F04A2A`
 
 Botao principal:
 - Presenca por cor, contraste e hierarquia.

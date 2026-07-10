@@ -1,7 +1,8 @@
-import { Check, HelpCircle, LogOut, Menu, Repeat2, Settings, User, Warehouse, type LucideIcon } from "lucide-react";
+﻿import { Check, HelpCircle, LogOut, Menu, Repeat2, Settings, User, Warehouse, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
+  contextualItems?: string[];
   availableOperationalModes?: string[];
   currentOperationalMode?: string;
   onOperationalModeChange?: (mode: string) => void;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function DashboardMenu({
+  contextualItems,
   availableOperationalModes,
   currentOperationalMode,
   onOperationalModeChange,
@@ -39,13 +41,14 @@ export default function DashboardMenu({
   };
 
   const hasOperationalModes = Boolean(availableOperationalModes?.length && onOperationalModeChange);
+  const hasContextualHelp = contextualItems?.some((item) => item.toLowerCase() === "ajuda");
 
   return (
     <div ref={menuRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="cursor-pointer rounded-full p-2 text-[#5d5822]/62 transition-colors hover:text-[#5d5822] focus:outline-none dark:text-[#f8c6aa]/62 dark:hover:text-[#f8c6aa]"
+        className="cursor-pointer rounded-full p-2 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
         aria-label="Menu"
         aria-expanded={open}
       >
@@ -53,21 +56,30 @@ export default function DashboardMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-40 w-56 animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#5d5822] p-2 text-[#fff4e8] duration-150 dark:bg-[#f8c6aa] dark:text-[#5d5822]">
+        <div className="absolute right-0 top-10 z-40 w-56 animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#685c20] p-2 text-[#fff4e8] duration-150 dark:bg-[#f3c4a2] dark:text-[#685c20]">
+          {contextualItems?.map((item) => (
+            <MenuItem
+              key={item}
+              icon={Settings}
+              label={item}
+              onClick={() => runAndClose(() => (item === "Ajuda" ? onHelp() : onFutureAction(item)))}
+            />
+          ))}
+          {Boolean(contextualItems?.length) && <div className="my-1 h-px bg-current/10" />}
           <MenuItem icon={Warehouse} label="Trocar unidade" onClick={() => runAndClose(() => onFutureAction("Trocar unidade"))} />
           <MenuItem
             icon={Repeat2}
-            label="Trocar Modo Operacional"
+            label="Trocar modo operacional"
             onClick={() => {
               if (!hasOperationalModes) {
-                runAndClose(() => onFutureAction("Trocar Modo Operacional"));
+                runAndClose(() => onFutureAction("Trocar modo operacional"));
                 return;
               }
               setModeOpen((value) => !value);
             }}
           />
           {modeOpen && hasOperationalModes && (
-            <div className="mb-1 mt-0.5 rounded-xl bg-[#fff4e8]/8 px-1 py-1 dark:bg-[#5d5822]/7">
+            <div className="mb-1 mt-0.5 rounded-xl bg-[#fff4e8]/8 px-1 py-1 dark:bg-[#685c20]/7">
               {availableOperationalModes!.map((mode) => {
                 const active = mode === currentOperationalMode;
                 return (
@@ -75,7 +87,7 @@ export default function DashboardMenu({
                     key={mode}
                     type="button"
                     onClick={() => runAndClose(() => onOperationalModeChange!(mode))}
-                    className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-[11px] font-medium text-[#fff4e8] transition-colors hover:bg-[#fff4e8]/10 focus:outline-none dark:text-[#5d5822] dark:hover:bg-[#5d5822]/8"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-[11px] font-medium text-[#fff4e8] transition-colors hover:bg-[#fff4e8]/10 focus:outline-none dark:text-[#685c20] dark:hover:bg-[#685c20]/8"
                   >
                     <span>{mode}</span>
                     {active && <Check className="h-3.5 w-3.5 stroke-[1.9]" />}
@@ -84,8 +96,8 @@ export default function DashboardMenu({
               })}
             </div>
           )}
-          <MenuItem icon={User} label="Meu Perfil" onClick={() => runAndClose(() => onFutureAction("Meu Perfil"))} />
-          <MenuItem icon={HelpCircle} label="Ajuda" onClick={() => runAndClose(onHelp)} />
+          <MenuItem icon={User} label="Meu perfil" onClick={() => runAndClose(() => onFutureAction("Meu perfil"))} />
+          {!hasContextualHelp && <MenuItem icon={HelpCircle} label="Ajuda" onClick={() => runAndClose(onHelp)} />}
           <MenuItem icon={Settings} label="Configurações" onClick={() => runAndClose(() => onFutureAction("Configurações"))} />
           <MenuItem icon={LogOut} label="Sair" onClick={() => runAndClose(onLogout)} />
         </div>
@@ -107,7 +119,7 @@ function MenuItem({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-medium text-[#fff4e8] transition-colors hover:bg-[#fff4e8]/10 focus:outline-none dark:text-[#5d5822] dark:hover:bg-[#5d5822]/8"
+      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-medium text-[#fff4e8] transition-colors hover:bg-[#fff4e8]/10 focus:outline-none dark:text-[#685c20] dark:hover:bg-[#685c20]/8"
     >
       <Icon className="h-4 w-4 stroke-[1.8]" />
       {label}

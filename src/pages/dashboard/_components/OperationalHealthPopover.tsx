@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+﻿import { Activity } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import {
@@ -31,7 +31,7 @@ const statusDotClasses: Record<HealthStatus, string> = {
   online: "bg-emerald-500",
   warning: "bg-amber-400",
   offline: "bg-red-700",
-  pending: "bg-[#d8c8bb] dark:bg-[#5d5822]/38",
+  pending: "bg-[#d8c8bb] dark:bg-[#685c20]/38",
 };
 
 export default function OperationalHealthPopover({ items }: Props) {
@@ -55,7 +55,7 @@ export default function OperationalHealthPopover({ items }: Props) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="relative cursor-pointer rounded-full p-2 text-[#5d5822]/70 transition-colors hover:text-[#5d5822] focus:outline-none dark:text-[#f8c6aa]/70 dark:hover:text-[#f8c6aa]"
+        className="relative cursor-pointer rounded-full p-2 text-[#685c20]/70 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/70 dark:hover:text-[#f3c4a2]"
         aria-label={`Saúde operacional ISO ${score}%`}
         aria-expanded={open}
       >
@@ -64,7 +64,7 @@ export default function OperationalHealthPopover({ items }: Props) {
       </button>
 
       {open && (
-        <div className="fixed right-4 top-14 z-40 w-[min(16rem,calc(100vw-2rem))] animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#5d5822] p-4 text-[#fff4e8] duration-150 dark:bg-[#f8c6aa] dark:text-[#5d5822]">
+        <div className="fixed right-4 top-14 z-40 w-[min(16rem,calc(100vw-2rem))] animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#685c20] p-4 text-[#fff4e8] duration-150 dark:bg-[#f3c4a2] dark:text-[#685c20]">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium leading-tight">Saúde Operacional</p>
@@ -80,8 +80,8 @@ export default function OperationalHealthPopover({ items }: Props) {
               const Icon = item.icon;
               return (
                 <div key={item.id} className="flex items-center gap-2 text-xs">
-                  <Icon className="h-4 w-4 shrink-0 stroke-[1.8] text-[#fff4e8] dark:text-[#5d5822]" />
-                  <span className="min-w-0 flex-1 truncate font-medium text-[#fff4e8] dark:text-[#5d5822]">{item.label}</span>
+                  <Icon className="h-4 w-4 shrink-0 stroke-[1.8] text-[#fff4e8] dark:text-[#685c20]" />
+                  <span className="min-w-0 flex-1 truncate font-medium text-[#fff4e8] dark:text-[#685c20]">{item.label}</span>
                   <span className="flex items-center gap-1.5 text-[#d8c8bb] dark:text-[#6f6932]">
                     <span className={cn("h-2 w-2 rounded-full", statusDotClasses[item.status])} />
                     {statusLabels[item.status]}

@@ -335,4 +335,46 @@ export default defineSchema({
     .index("by_de_operador", ["deOperadorId"])
     .index("by_origem", ["origemTipo", "origemId"])
     .index("by_unit_criada", ["unit", "criadaEm"]),
+
+  tarefasAgenda: defineTable({
+    unit: v.string(),
+    titulo: v.string(),
+    descricao: v.optional(v.string()),
+    dataReferencia: v.string(),
+    horario: v.optional(v.string()),
+    dataHoraInicio: v.optional(v.string()),
+    modoOperacional: v.string(),
+    operadorResponsavelId: v.id("operators"),
+    operadorResponsavelCodigo: v.string(),
+    operadorResponsavelNomeSnapshot: v.string(),
+    criadoPorOperadorId: v.id("operators"),
+    criadoPorOperadorCodigo: v.string(),
+    criadoPorOperadorNomeSnapshot: v.string(),
+    origemTipo: v.string(),
+    origemId: v.optional(v.string()),
+    prioridade: v.union(
+      v.literal("info"),
+      v.literal("attention"),
+      v.literal("important"),
+      v.literal("critical"),
+    ),
+    status: v.union(
+      v.literal("pendente"),
+      v.literal("em_andamento"),
+      v.literal("concluida"),
+      v.literal("cancelada"),
+      v.literal("atrasada"),
+    ),
+    alertaAtivo: v.boolean(),
+    alertaQuando: v.optional(v.string()),
+    despertadorAtivo: v.boolean(),
+    criadaEm: v.string(),
+    atualizadaEm: v.string(),
+    concluidaEm: v.optional(v.string()),
+    canceladaEm: v.optional(v.string()),
+  })
+    .index("by_unit_data", ["unit", "dataReferencia"])
+    .index("by_responsavel_data", ["operadorResponsavelId", "dataReferencia"])
+    .index("by_unit_status_data", ["unit", "status", "dataReferencia"])
+    .index("by_criado_por", ["criadoPorOperadorId"]),
 });

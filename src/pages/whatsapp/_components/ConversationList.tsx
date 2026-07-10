@@ -1,4 +1,4 @@
-import { MessageCircle, PackageCheck } from "lucide-react";
+﻿import { MessageCircle, PackageCheck } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import type { Id } from "@/convex/_generated/dataModel.d.ts";
 import type { WhatsAppConversation } from "./types.ts";
@@ -33,7 +33,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
     return (
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="h-20 animate-pulse rounded-2xl bg-[#e8e6dc] dark:bg-[#696328]" />
+          <div key={index} className="h-20 animate-pulse rounded-2xl bg-[#f8dcc8] dark:bg-[#756c2c]" />
         ))}
       </div>
     );
@@ -41,7 +41,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
 
   if (conversations.length === 0) {
     return (
-      <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-2xl bg-[#e8e6dc] px-6 text-center text-[#5d5822] dark:bg-[#696328] dark:text-[#f8c6aa]">
+      <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-2xl bg-[#f8dcc8] px-6 text-center text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
         <MessageCircle className="mb-3 h-8 w-8 stroke-[1.6] opacity-60" />
         <p className="text-sm font-medium">Nenhuma conversa aberta</p>
         <p className="mt-1 max-w-xs text-xs text-current/62">
@@ -63,8 +63,8 @@ export default function ConversationList({ conversations, selectedId, onSelect }
             className={cn(
               "w-full cursor-pointer rounded-2xl px-3 py-3 text-left transition-colors",
               selected
-                ? "bg-[#5d5822] text-[#fff4e8] dark:bg-[#f8c6aa] dark:text-[#5d5822]"
-                : "bg-[#e8e6dc] text-[#5d5822] hover:bg-[#e8e6dc]/78 dark:bg-[#696328] dark:text-[#f8c6aa] dark:hover:bg-[#696328]/82",
+                ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
+                : "bg-[#f8dcc8] text-[#685c20] hover:bg-[#f8dcc8]/78 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:hover:bg-[#756c2c]/82",
             )}
           >
             <div className="flex items-start gap-2.5">

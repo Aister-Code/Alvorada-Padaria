@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils.ts";
+﻿import { cn } from "@/lib/utils.ts";
 import type { WhatsAppMessage } from "./types.ts";
 
 type Props = {
@@ -41,8 +41,8 @@ export default function MessageTimeline({ messages }: Props) {
               className={cn(
                 "max-w-[82%] rounded-2xl px-3 py-2",
                 outgoing
-                  ? "bg-[#5d5822] text-[#fff4e8] dark:bg-[#f8c6aa] dark:text-[#5d5822]"
-                  : "bg-[#5d5822]/8 text-[#5d5822] dark:bg-[#f8c6aa]/8 dark:text-[#f8c6aa]",
+                  ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
+                  : "bg-[#685c20]/8 text-[#685c20] dark:bg-[#f3c4a2]/8 dark:text-[#f3c4a2]",
               )}
             >
               <p className="whitespace-pre-wrap text-sm leading-snug">

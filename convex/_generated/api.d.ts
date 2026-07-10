@@ -9,6 +9,7 @@
  */
 
 import type * as admin_index from "../admin/index.js";
+import type * as agenda_tarefas from "../agenda/tarefas.js";
 import type * as auth_operators from "../auth/operators.js";
 import type * as auth_pinReset from "../auth/pinReset.js";
 import type * as caixa_vendas from "../caixa/vendas.js";
@@ -32,6 +33,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   "admin/index": typeof admin_index;
+  "agenda/tarefas": typeof agenda_tarefas;
   "auth/operators": typeof auth_operators;
   "auth/pinReset": typeof auth_pinReset;
   "caixa/vendas": typeof caixa_vendas;

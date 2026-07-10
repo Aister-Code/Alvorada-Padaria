@@ -228,3 +228,107 @@ Regra: orientar sem punir, preservando contexto e sugerindo transferência quand
 A Escola RondonIA governa treinamento por tela, módulo, perfil e maturidade.
 
 Documento: `docs/arquitetura/Escola-RondonIA.md`.
+
+## Relatórios Contextuais
+
+Relatórios não são módulo principal quando servem apenas ao histórico do contexto ativo.
+
+Regra:
+
+- Toda tela ou contexto que puder gerar histórico deve oferecer `Relatórios` no menu contextual da tela ativa.
+- O painel de relatórios deve abrir como contexto, não como tela cheia, salvo quando a complexidade justificar.
+- A primeira visão deve ser simples, com filtros curtos por período, atividade, operador/atendente, canal, status e transferências quando aplicável.
+- Relatório contextual não substitui módulos de Gestão, Financeiro ou Administração.
+
+Na Central de Atendimento, `Relatórios` pertence ao menu de `Conversas`.
+
+## Central de Atendimento — Padrão Conversas
+
+A tela principal da Central de Atendimento deve seguir linguagem WhatsApp/RondonIA:
+
+- Header mostra apenas o contexto ativo, por exemplo `CONVERSAS`.
+- Subtítulo de módulo aparece somente na abertura do módulo, não nas telas internas.
+- Dock inferior representa módulos operacionais, não abas internas.
+- Contextos internos como Pedidos, Clientes e Agenda ficam como atalhos compactos da área Atendimento.
+- Filtros superiores não usam caixas fixas; cor e número aparecem somente quando houver atividade.
+- Cada conversa deve caber em até três linhas: identificação, mensagem pendente e ações compactas/chat.
+- Origem do contato é comunicada no avatar; urgência é comunicada no contorno.
+
+## Consolidação Central de Atendimento — Conversas, Repasses e Recebimento Assistido
+
+Padrões registrados:
+
+- Resumo Retrátil: a faixa superior da Central de Atendimento deve ficar fechada por padrão, exibindo apenas ícones, números quando existirem e cor somente quando houver atividade.
+- Carrinhos, Cardápio e Produtos são conceitos diferentes:
+  - Carrinhos: acompanhamento operacional de carrinhos/sessões iniciadas, paradas ou pedindo ajuda.
+  - Cardápio: ação enviada ao cliente dentro da conversa.
+  - Produtos: consulta interna do atendente para preço, orçamento e composição futura de pedido.
+- Repasses substituem `Transferências` na linguagem operacional da Central.
+- Encaminhar é a ação direta na conversa para repassar trabalho a outro perfil/setor.
+- Relatórios são contextuais à tela ativa e não ocupam vaga de módulo principal.
+
+### Orçamento
+
+Orçamento é ferramenta do Atendimento.
+
+Fluxo previsto:
+
+1. Atendente consulta Produtos.
+2. Monta orçamento.
+3. Envia orçamento ao cliente.
+4. Se o cliente aceitar, converte em pedido ou adiciona a pedido existente quando permitido.
+5. Se o pedido existente não puder ser editado, cria Pedido Complementar.
+
+### Pedido Complementar e Entrega Agrupada
+
+Se o cliente fizer novo pedido após pedido anterior:
+
+- Pedido anterior editável: adicionar ao pedido existente.
+- Pedido anterior não editável: criar Pedido Complementar.
+
+Se o pedido anterior ainda não saiu para entrega, perguntar se o cliente aceita entregar junto.
+
+Se aceitar:
+
+- manter pedidos separados;
+- criar vínculo de Entrega Agrupada;
+- avisar Conferência, Delivery e Motoboy.
+
+Avisos previstos:
+
+- Conferência: `Aguardar pedido complementar.`
+- Delivery: `Sai junto com pedido #...`
+- Motoboy: `Levar pedidos vinculados juntos.`
+
+Pedido complementar segue ROR própria. Cestinha só quando a rota exigir.
+
+### Recebimento Assistido
+
+Atendente pode registrar recebimento assistido, mas Caixa confirma.
+
+Fluxo:
+
+1. Operador informa/recebe valor.
+2. Sistema cria pendência para Caixa.
+3. Caixa confere.
+4. Caixa confirma pagamento, troco, vale ou ajuste.
+5. Venda é finalizada pelo Caixa.
+
+Aplicável em Atendimento, Balcão, Mesa, Delivery, Motoboy e Gerente em modo operacional.
+
+Pendência para Caixa deve carregar: pedidoId, clienteId, origem, operadorQueRecebeu, valorInformado, formaInformada, comprovante opcional, precisaTroco, valorTroco opcional, observação, destinoCaixa e status.
+
+Status previstos: pendente_conferencia, conferido, recusado, troco_entregue, acerto_pendente e concluido.
+
+## Ajuste Final — Conversas WhatsApp/RondonIA
+
+Regras complementares aprovadas:
+
+- O Resumo Superior é dinâmico: IA e Humano permanecem fixos; Carrinhos, Repasses e outros indicadores sobem ou descem conforme quantidade e prioridade.
+- A linha superior é retrátil; quando fechada, mostra somente ícones e números quando houver atividade.
+- A linha inferior permanece sempre visível.
+- O destaque/pulso acontece somente no ícone que recebeu nova atividade.
+- A alça retrátil da dock deve sinalizar alertas ocultos quando módulos recolhidos tiverem pendência, atenção ou crítica.
+- O avatar da conversa deve ficar centralizado verticalmente em relação às três linhas do item.
+- O carrinho compacto fica à esquerda do campo de mensagem e mostra apenas quantidade no estado compacto.
+- O Cardápio mostra símbolo + texto quando o chat está fechado e apenas símbolo quando o chat está aberto.

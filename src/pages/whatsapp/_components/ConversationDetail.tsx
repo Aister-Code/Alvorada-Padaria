@@ -1,4 +1,4 @@
-import { ArrowLeft, MessageCircle, PackagePlus, Send, UserCheck } from "lucide-react";
+﻿import { ArrowLeft, MessageCircle, PackagePlus, Send, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import type { WhatsAppConversation, WhatsAppMessage } from "./types.ts";
@@ -39,7 +39,7 @@ export default function ConversationDetail({
 
   if (!conversation) {
     return (
-      <section className="flex h-full min-h-0 flex-col items-center justify-center rounded-2xl bg-[#e8e6dc] px-6 text-center text-[#5d5822] dark:bg-[#696328] dark:text-[#f8c6aa]">
+      <section className="flex h-full min-h-0 flex-col items-center justify-center rounded-2xl bg-[#f8dcc8] px-6 text-center text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
         <MessageCircle className="mb-3 h-9 w-9 stroke-[1.6] opacity-60" />
         <p className="text-sm font-medium">Selecione uma conversa</p>
         <p className="mt-1 max-w-xs text-xs text-current/62">
@@ -60,7 +60,7 @@ export default function ConversationDetail({
   };
 
   return (
-    <section className="flex h-full min-h-0 flex-col rounded-2xl bg-[#e8e6dc] text-[#5d5822] dark:bg-[#696328] dark:text-[#f8c6aa]">
+    <section className="flex h-full min-h-0 flex-col rounded-2xl bg-[#f8dcc8] text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
       <header className="flex shrink-0 items-center gap-3 px-3 py-3">
         {onBack && (
           <button
@@ -85,7 +85,7 @@ export default function ConversationDetail({
         </span>
       </header>
 
-      <div className="mx-3 mb-2 rounded-2xl bg-[#5d5822]/7 px-3 py-2 dark:bg-[#f8c6aa]/7">
+      <div className="mx-3 mb-2 rounded-2xl bg-[#685c20]/7 px-3 py-2 dark:bg-[#f3c4a2]/7">
         <div className="flex items-start gap-2">
           <NextIcon className="mt-0.5 h-4 w-4 shrink-0 stroke-[1.8]" />
           <div className="min-w-0">
@@ -105,7 +105,7 @@ export default function ConversationDetail({
           <button
             type="button"
             onClick={onAssume}
-            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#5d5822]/8 px-2 py-2 text-[11px] font-semibold hover:bg-[#5d5822]/12 dark:bg-[#f8c6aa]/8 dark:hover:bg-[#f8c6aa]/12"
+            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#685c20]/8 px-2 py-2 text-[11px] font-semibold hover:bg-[#685c20]/12 dark:bg-[#f3c4a2]/8 dark:hover:bg-[#f3c4a2]/12"
           >
             <UserCheck className="h-3.5 w-3.5" />
             Assumir
@@ -113,7 +113,7 @@ export default function ConversationDetail({
           <button
             type="button"
             onClick={onMarkRead}
-            className="cursor-pointer rounded-xl bg-[#5d5822]/8 px-2 py-2 text-[11px] font-semibold hover:bg-[#5d5822]/12 dark:bg-[#f8c6aa]/8 dark:hover:bg-[#f8c6aa]/12"
+            className="cursor-pointer rounded-xl bg-[#685c20]/8 px-2 py-2 text-[11px] font-semibold hover:bg-[#685c20]/12 dark:bg-[#f3c4a2]/8 dark:hover:bg-[#f3c4a2]/12"
           >
             Lida
           </button>
@@ -133,7 +133,7 @@ export default function ConversationDetail({
           </button>
         </div>
 
-        <div className="flex items-center gap-2 rounded-2xl bg-[#5d5822]/8 px-2 py-2 dark:bg-[#f8c6aa]/8">
+        <div className="flex items-center gap-2 rounded-2xl bg-[#685c20]/8 px-2 py-2 dark:bg-[#f3c4a2]/8">
           <input
             value={text}
             onChange={(event) => setText(event.target.value)}
@@ -148,7 +148,7 @@ export default function ConversationDetail({
             type="button"
             onClick={handleSubmit}
             disabled={sending || !text.trim()}
-            className="cursor-pointer rounded-full bg-[#5d5822] p-2 text-[#fff4e8] disabled:cursor-default disabled:opacity-45 dark:bg-[#f8c6aa] dark:text-[#5d5822]"
+            className="cursor-pointer rounded-full bg-[#685c20] p-2 text-[#fff4e8] disabled:cursor-default disabled:opacity-45 dark:bg-[#f3c4a2] dark:text-[#685c20]"
             aria-label="Enviar resposta simulada"
           >
             <Send className="h-4 w-4" />

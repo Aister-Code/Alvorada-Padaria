@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+﻿import { Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import AlvoradaLogo from "@/components/branding/AlvoradaLogo.tsx";
@@ -31,11 +31,29 @@ function formatUnitLabel(value: string) {
     .join(" ");
 }
 
+function formatRoleLabel(value: string) {
+  const normalized = value.trim().toLowerCase();
+  const labels: Record<string, string> = {
+    admin: "Administração",
+    superadmin: "Administração",
+    gerente: "Gerente",
+    atendimento: "Atendimento",
+    atendente: "Atendimento",
+    caixa: "Caixa",
+    producao: "Produção",
+    produção: "Produção",
+    delivery: "Delivery",
+    estoque: "Estoque",
+    financeiro: "Financeiro",
+  };
+
+  return labels[normalized] ?? formatUnitLabel(value);
+}
+
 export default function DashboardHeader({
   operatorName,
   role,
   unit,
-  showUnit = false,
   healthItems = [],
   interfaceScale,
   onInterfaceScaleChange,
@@ -45,30 +63,27 @@ export default function DashboardHeader({
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const unitLabel = formatUnitLabel(unit);
+  const roleLabel = formatRoleLabel(role);
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-[#d5d4c8]/92 px-4 py-2.5 text-[#5d5822] backdrop-blur-sm dark:bg-[#5d5822]/92 dark:text-[#f8c6aa] md:px-6">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-[#f3c4a2]/92 px-4 py-2.5 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/92 dark:text-[#f3c4a2] md:px-6">
       <div className="flex min-w-0 items-center gap-2.5">
         <AlvoradaLogo variant="icon" size="sm" />
         <div className="hidden min-w-0 sm:block">
           <p className="truncate text-[14.5px] font-semibold leading-[1.05]">
             {operatorName}
           </p>
-          {showUnit && (
-            <p className="truncate text-[10px] font-light leading-tight text-[#5d5822]/68 dark:text-[#f8c6aa]/68">
-              {unitLabel}
-            </p>
-          )}
+          <p className="truncate text-[10px] font-light leading-tight text-[#685c20]/68 dark:text-[#f3c4a2]/68">
+            {roleLabel} <span aria-hidden="true">•</span> {unitLabel}
+          </p>
         </div>
         <div className="min-w-0 sm:hidden">
           <p className="text-[14.5px] font-semibold leading-[1.05]">
             {operatorName}
           </p>
-          {showUnit && (
-            <p className="truncate text-[10px] font-light leading-tight text-[#5d5822]/68 dark:text-[#f8c6aa]/68">
-              {unitLabel}
-            </p>
-          )}
+          <p className="truncate text-[10px] font-light leading-tight text-[#685c20]/68 dark:text-[#f3c4a2]/68">
+            {roleLabel} <span aria-hidden="true">•</span> {unitLabel}
+          </p>
         </div>
       </div>
 
@@ -84,7 +99,7 @@ export default function DashboardHeader({
 
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="cursor-pointer rounded-full p-2 text-[#5d5822]/62 transition-colors hover:text-[#5d5822] focus:outline-none dark:text-[#f8c6aa]/62 dark:hover:text-[#f8c6aa]"
+          className="cursor-pointer rounded-full p-2 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
           aria-label="Alternar tema"
         >
           {isDark ? <Sun className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" /> : <Moon className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />}

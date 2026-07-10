@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "convex/react";
+﻿import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { motion } from "motion/react";
 import {
@@ -10,6 +10,8 @@ import {
   BarChart3,
   Bike,
   ChefHat,
+  ChevronDown,
+  ChevronUp,
   CheckCircle2,
   Database,
   MessageCircle,
@@ -20,7 +22,6 @@ import {
   Settings,
   ShoppingBag,
   Truck,
-  TriangleAlert,
   Users,
   Wifi,
   type LucideIcon,
@@ -29,9 +30,7 @@ import { toast } from "sonner";
 import DashboardHeader, { type AttentionPriority } from "./_components/DashboardHeader.tsx";
 import SummaryCard from "./_components/SummaryCard.tsx";
 import ModuleCard from "./_components/ModuleCard.tsx";
-import OperationMetricCard from "./_components/OperationMetricCard.tsx";
 import TodayAgendaCard, { type TodayAgendaItem } from "./_components/TodayAgendaCard.tsx";
-import WidgetConfigButton from "./_components/WidgetConfigButton.tsx";
 import WidgetConfigPanel from "./_components/WidgetConfigPanel.tsx";
 import type { InterfaceScale } from "./_components/InterfaceScalePopover.tsx";
 import { getModulesForRole } from "./_lib/modules.ts";
@@ -64,7 +63,10 @@ type ManagerAction = {
   icon: LucideIcon;
   onClick?: () => void;
   badge?: ManagerActionBadge;
+  active?: boolean;
 };
+
+type DockVariant = "home" | "compact";
 
 type OperatorPreferences = {
   theme?: string;
@@ -82,12 +84,12 @@ const defaultPreferences: OperatorPreferences = {
 const interfaceScaleClasses: Record<InterfaceScale, string> = {
   small: "[--rvl-card-scale:0.92] [--rvl-font-scale:0.94] [--rvl-space-scale:0.92]",
   normal: "[--rvl-card-scale:1] [--rvl-font-scale:1] [--rvl-space-scale:1]",
-  large: "[--rvl-card-scale:1.1] [--rvl-font-scale:1.08] [--rvl-space-scale:1.08]",
+  large: "[--rvl-card-scale:1.04] [--rvl-font-scale:1.06] [--rvl-space-scale:0.96]",
 };
 
 const badgeClasses: Record<AttentionPriority, string> = {
   info: "bg-emerald-500 text-white",
-  attention: "bg-amber-400 text-[#5d5822]",
+  attention: "bg-amber-400 text-[#685c20]",
   important: "bg-[#f04a2a] text-white",
   critical: "bg-red-700 text-white",
 };
@@ -132,11 +134,26 @@ function getDeliveryPriority(deliveryReady: number): AttentionPriority | undefin
   return "critical";
 }
 
-function ManagerActionButton({ label, icon: Icon, onClick, badge }: ManagerAction) {
+function DockActionButton({
+  label,
+  icon: Icon,
+  onClick,
+  badge,
+  active,
+  variant = "compact",
+}: ManagerAction & { variant?: DockVariant }) {
   return (
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
-      className="relative flex h-full min-h-[calc(3.85rem*var(--rvl-card-scale,1))] min-w-0 cursor-pointer flex-col items-center justify-center gap-[calc(0.26rem*var(--rvl-space-scale,1))] rounded-2xl bg-[#e8e6dc] px-1.5 py-2 text-[#5d5822] transition-all active:scale-[0.98] dark:bg-[#696328] dark:text-[#f8c6aa] min-[380px]:min-h-[calc(4.1rem*var(--rvl-card-scale,1))] sm:min-h-[calc(4.55rem*var(--rvl-card-scale,1))]"
+      className={cn(
+        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 text-[#685c20] transition-colors active:scale-[0.98] dark:text-[#f3c4a2]",
+        variant === "home"
+          ? "h-full w-full max-w-[4.9rem] rounded-2xl px-1 py-1"
+          : "rounded-xl px-2 py-0.5",
+        active
+          ? "bg-[#685c20]/10 dark:bg-[#f3c4a2]/12"
+          : "bg-transparent hover:bg-[#685c20]/7 dark:hover:bg-[#f3c4a2]/8"
+      )}
     >
       {badge && badge.count > 0 && (
         <span
@@ -148,17 +165,123 @@ function ManagerActionButton({ label, icon: Icon, onClick, badge }: ManagerActio
           {badge.count > 9 ? "9+" : badge.count}
         </span>
       )}
-      <Icon className="h-[calc(1.42rem*var(--rvl-font-scale,1))] w-[calc(1.42rem*var(--rvl-font-scale,1))] stroke-[1.8] min-[380px]:h-[calc(1.62rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.62rem*var(--rvl-font-scale,1))] sm:h-[calc(1.82rem*var(--rvl-font-scale,1))] sm:w-[calc(1.82rem*var(--rvl-font-scale,1))]" />
-      <span className="text-[calc(9.8px*var(--rvl-font-scale,1))] font-medium leading-none tracking-[0.005em] sm:text-[calc(10.8px*var(--rvl-font-scale,1))]">
+      <Icon
+        className={cn(
+          "stroke-[1.85]",
+          variant === "home"
+            ? "h-[calc(1.44rem*var(--rvl-font-scale,1))] w-[calc(1.44rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.58rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.58rem*var(--rvl-font-scale,1))] sm:h-[calc(1.68rem*var(--rvl-font-scale,1))] sm:w-[calc(1.68rem*var(--rvl-font-scale,1))]"
+            : "h-[calc(1.32rem*var(--rvl-font-scale,1))] w-[calc(1.32rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.45rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.45rem*var(--rvl-font-scale,1))] sm:h-[calc(1.56rem*var(--rvl-font-scale,1))] sm:w-[calc(1.56rem*var(--rvl-font-scale,1))]",
+        )}
+      />
+      <span className="text-[calc(10px*var(--rvl-font-scale,1))] font-medium leading-none tracking-[0.005em] sm:text-[calc(10.5px*var(--rvl-font-scale,1))]">
         {label}
       </span>
     </button>
   );
 }
 
+function OperationalDock({
+  primaryActions,
+  secondaryActions,
+  open,
+  onOpenChange,
+  hiddenSignalCount,
+  hiddenSignalTone,
+  variant = "compact",
+}: {
+  primaryActions: ManagerAction[];
+  secondaryActions: ManagerAction[];
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  hiddenSignalCount: number;
+  hiddenSignalTone: AttentionPriority;
+  variant?: DockVariant;
+}) {
+  const hasHiddenSignal = hiddenSignalCount > 0;
+  const visibleActions =
+    variant === "home" ? [...primaryActions, ...secondaryActions] : primaryActions;
+
+  return (
+    <section className="relative shrink-0">
+      {variant !== "home" && open && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 8 }}
+          transition={{ duration: 0.15, ease: "easeOut" as const }}
+          className={cn(
+            "absolute inset-x-0 z-20 rounded-t-3xl bg-[#f3c4a2]/96 p-1.5 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/96 dark:text-[#f3c4a2]",
+            "bottom-[calc(3.42rem*var(--rvl-card-scale,1))]"
+          )}
+        >
+          <div className="grid grid-cols-5 gap-1.5">
+            {secondaryActions.map((action) => (
+              <DockActionButton key={action.label} {...action} variant="compact" />
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      <div
+        className={cn(
+          "relative bg-[#f3c4a2]/96 text-[#685c20] backdrop-blur-sm dark:bg-[#685c20]/96 dark:text-[#f3c4a2]",
+          variant === "home" ? "px-4 py-1.5" : "px-2 py-1",
+        )}
+      >
+        {variant !== "home" && (
+          <button
+            type="button"
+            onClick={() => onOpenChange(!open)}
+            className={cn(
+              "absolute left-1/2 top-1 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full text-[#685c20]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] dark:text-[#f3c4a2]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
+              hasHiddenSignal &&
+                !open &&
+                (hiddenSignalTone === "critical"
+                  ? "bg-red-600/16 text-red-700 dark:bg-red-300/16 dark:text-red-200"
+                  : hiddenSignalTone === "important"
+                    ? "bg-amber-500/18 text-amber-800 dark:bg-amber-300/18 dark:text-amber-200"
+                    : "bg-emerald-500/14 text-emerald-800 dark:bg-emerald-300/14 dark:text-emerald-200")
+            )}
+            aria-label={open ? "Recolher atalhos" : "Mostrar atalhos"}
+          >
+            {open ? <ChevronDown className="h-4 w-4 stroke-[1.9]" /> : <ChevronUp className="h-4 w-4 stroke-[1.9]" />}
+            {hasHiddenSignal && !open && (
+              <span
+                className={cn(
+                  "absolute right-0 top-0 h-2 w-2 rounded-full",
+                  hiddenSignalTone === "critical"
+                    ? "bg-red-600"
+                    : hiddenSignalTone === "important" || hiddenSignalTone === "attention"
+                      ? "bg-amber-500"
+                      : "bg-emerald-500"
+                )}
+              />
+            )}
+          </button>
+        )}
+        <div
+          className={cn(
+            "grid",
+            variant === "home"
+              ? "grid-cols-5 place-items-center gap-y-1 min-[720px]:grid-cols-9"
+              : "h-[calc(2.85rem*var(--rvl-card-scale,1))] gap-1.5 sm:h-[calc(3.05rem*var(--rvl-card-scale,1))]"
+          )}
+        >
+          {visibleActions.map((action) => (
+            <DockActionButton key={action.label} {...action} variant={variant} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function DashboardPage({ operator, onLogout, onNavigate }: Props) {
-  const [configPanel, setConfigPanel] = useState<"journey" | "operation" | null>(null);
+  const [configPanel, setConfigPanel] = useState<"journey" | null>(null);
   const [activeWidgetView, setActiveWidgetView] = useState<"journey" | null>(null);
+  const [dockOpen, setDockOpen] = useState(false);
+  const [dockTouched, setDockTouched] = useState(false);
+  const [dockSuggestionShown, setDockSuggestionShown] = useState(false);
   const [preferences, setPreferences] = useState<OperatorPreferences>(() =>
     loadOperatorPreferences(operator.operatorId)
   );
@@ -175,6 +298,13 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
   const unit = operator.units?.[0] ?? "alvorada-01";
   const resumo = useQuery(api.venda.delivery.resumoDashboard, { unit });
   const conversasWhatsApp = useQuery(api.ojc.whatsapp.listarConversasAbertas, { unit });
+  const agendaTasks = useQuery(api.agenda.tarefas.listarTarefasAgenda, {
+    unit,
+    operadorId: operator.operatorId,
+    modoOperacional: operator.role,
+    limite: 20,
+  });
+  const criarTarefaAgenda = useMutation(api.agenda.tarefas.criarTarefaAgenda);
 
   const modules = getModulesForRole(operator.role);
 
@@ -182,17 +312,34 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
   const isManager = operator.role === "gerente";
   const prontoDelivery = resumo?.prontoDelivery ?? 0;
   const whatsappUnread = conversasWhatsApp?.reduce((sum, conversa) => sum + conversa.naoLidas, 0) ?? 0;
-  const attentionCount = pendingCount + prontoDelivery + whatsappUnread;
   const showHeaderUnit = (operator.units?.length ?? 0) > 1;
 
-  const todayItems: TodayAgendaItem[] = [
-    { time: "09:00", label: "Fornecedor", icon: Package },
-    { time: "10:30", label: "Conferir pedidos", icon: ReceiptText },
-    { time: "14:00", label: "Revisar estoque", icon: BarChart3 },
-    { time: "15:30", label: "Organizar produção", icon: ChefHat },
-    { time: "17:00", label: "Checar entregas", icon: Bike },
-    { time: "18:30", label: "Fechamento parcial", icon: Banknote },
+  const fallbackTodayItems: TodayAgendaItem[] = [
+    { time: "09:00", label: "Fornecedor", icon: Package, priority: "info", completed: true },
+    { time: "10:30", label: "Conferir pedidos", icon: ReceiptText, priority: "attention", alertEnabled: true },
+    { time: "14:00", label: "Revisar estoque", icon: BarChart3, priority: "info" },
+    { time: "15:30", label: "Organizar produção", icon: ChefHat, priority: "attention" },
+    { time: "17:00", label: "Checar entregas", icon: Bike, priority: "exception" },
+    { time: "18:30", label: "Fechamento parcial", icon: Banknote, priority: "critical", alertEnabled: true },
   ];
+
+  const todayItems: TodayAgendaItem[] =
+    agendaTasks && agendaTasks.length > 0
+      ? agendaTasks.map((task) => ({
+          time: task.horario ?? "--:--",
+          label: task.titulo,
+          icon: ReceiptText,
+          priority:
+            task.prioridade === "critical"
+              ? "critical"
+              : task.prioridade === "attention" || task.prioridade === "important"
+                ? "attention"
+                : "info",
+          alertEnabled: task.alertaAtivo,
+          completed: task.status === "concluida",
+          overdue: task.status === "atrasada",
+        }))
+      : fallbackTodayItems;
 
   const healthItems: HealthItem[] = [
     {
@@ -248,38 +395,67 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
 
   const visibleHealthItems = getVisibleHealthItems(healthItems, operator.role);
 
-  const managerActions: ManagerAction[] = [
+  const primaryDockActions: ManagerAction[] = [
     { label: "Venda", icon: ShoppingBag, onClick: () => onNavigate("venda") },
     {
-      label: "WhatsApp",
+      label: "Atend.",
       icon: MessageCircle,
       onClick: () => onNavigate("whatsapp"),
       badge: whatsappUnread > 0 ? { count: whatsappUnread, priority: whatsappUnread > 4 ? "important" : "attention" } : undefined,
     },
+    { label: "Produção", icon: ChefHat, onClick: () => onNavigate("acompanhamento") },
+    { label: "Gestão", icon: BarChart3 },
+  ];
+
+  const secondaryDockActions: ManagerAction[] = [
     {
       label: "Delivery",
       icon: Bike,
       onClick: () => onNavigate("delivery"),
       badge: prontoDelivery > 0 ? { count: prontoDelivery, priority: getDeliveryPriority(prontoDelivery) ?? "info" } : undefined,
     },
-    { label: "Produção", icon: ChefHat, onClick: () => onNavigate("acompanhamento") },
     { label: "Caixa", icon: Banknote, onClick: () => onNavigate("caixa") },
+    { label: "Estoque", icon: Package },
     {
       label: "Usuários",
       icon: Users,
       onClick: () => onNavigate("usuarios"),
       badge: pendingCount > 0 ? { count: pendingCount, priority: "attention" } : undefined,
     },
-    { label: "Estoque", icon: Package },
-    { label: "Gestão", icon: BarChart3 },
+    { label: "Config.", icon: Settings },
   ];
+
+  const primaryAlertCount = primaryDockActions.reduce((sum, action) => sum + (action.badge?.count ?? 0), 0);
+  const hiddenAlertCount = secondaryDockActions.reduce((sum, action) => sum + (action.badge?.count ?? 0), 0);
+  const canCreateAgendaForOthers = ["gerente", "admin", "superadmin"].includes(operator.role);
+  const hiddenSignalTone = secondaryDockActions.some((action) => action.badge?.priority === "critical")
+    ? "critical"
+    : secondaryDockActions.some((action) => action.badge?.priority === "important" || action.badge?.priority === "attention")
+      ? "attention"
+      : "info";
+
+  useEffect(() => {
+    if (!isManager || dockTouched || hiddenAlertCount <= 0) return;
+    setDockOpen(true);
+  }, [dockTouched, hiddenAlertCount, isManager]);
+
+  useEffect(() => {
+    if (!isManager || dockSuggestionShown || hiddenAlertCount <= primaryAlertCount || hiddenAlertCount <= 0) return;
+    toast.info("Há mais pendências nos atalhos recolhidos. Você pode fixar esses módulos futuramente.");
+    setDockSuggestionShown(true);
+  }, [dockSuggestionShown, hiddenAlertCount, isManager, primaryAlertCount]);
+
+  const handleDockOpenChange = (open: boolean) => {
+    setDockTouched(true);
+    setDockOpen(open);
+  };
 
   if (isManager) {
     if (activeWidgetView === "journey") {
       return (
         <div
           className={cn(
-            "flex h-svh flex-col overflow-hidden bg-[#d5d4c8] text-[#5d5822] dark:bg-[#5d5822] dark:text-[#f8c6aa]",
+            "flex h-svh flex-col overflow-hidden bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2]",
             interfaceScaleClasses[preferences.interfaceScale]
           )}
         >
@@ -294,7 +470,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
             </button>
             <div>
               <h1 className="text-sm font-medium uppercase tracking-[0.12em]">
-                Jornada Hoje
+                Agenda
               </h1>
               <p className="text-[11px] font-light text-current/64">
                 Centro de Operações
@@ -303,14 +479,14 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           </header>
 
           <main className="min-h-0 flex-1 px-4 pb-4 md:px-6">
-            <section className="flex h-full flex-col rounded-2xl bg-[#e8e6dc] p-4 dark:bg-[#696328]">
+            <section className="flex h-full flex-col rounded-2xl bg-[#f8dcc8] p-4 dark:bg-[#756c2c]">
               <div className="grid flex-1 content-center gap-2">
                 {todayItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={`${item.time}-${item.label}`}
-                      className="grid grid-cols-[1.25rem_1fr_3.25rem] items-center gap-2 rounded-xl bg-[#5d5822]/6 px-3 py-2.5 dark:bg-[#f8c6aa]/8"
+                      className="grid grid-cols-[1.25rem_1fr_3.25rem] items-center gap-2 rounded-xl bg-[#685c20]/6 px-3 py-2.5 dark:bg-[#f3c4a2]/8"
                     >
                       <Icon className="h-4 w-4 text-current/78" />
                       <span className="text-sm font-light text-current/92">
@@ -332,7 +508,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
     return (
       <div
         className={cn(
-          "flex h-svh flex-col overflow-hidden bg-[#d5d4c8] text-[#5d5822] dark:bg-[#5d5822] dark:text-[#f8c6aa]",
+          "flex h-svh flex-col overflow-hidden bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2]",
           interfaceScaleClasses[preferences.interfaceScale]
         )}
       >
@@ -348,55 +524,8 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
         />
 
         <main className="flex min-h-0 flex-1 overflow-hidden">
-          <div className="mx-auto flex h-full w-full max-w-5xl flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-4 pb-3 pt-2 md:px-6 md:py-4">
+          <div className="mx-auto flex h-full w-full max-w-none flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-0 pb-3 pt-2 md:py-4">
             <div className="flex min-h-0 flex-1 flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))]">
-              <section
-                role="button"
-                tabIndex={0}
-                onClick={() => onNavigate("acompanhamento")}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    onNavigate("acompanhamento");
-                  }
-                }}
-                className="relative flex min-h-0 flex-1 cursor-pointer flex-col rounded-2xl bg-[#e8e6dc] px-2.5 pb-2 pt-2.5 transition-transform active:scale-[0.995] dark:bg-[#696328]"
-              >
-                <div className="mb-2.5 flex items-center pr-9 text-[#5d5822] dark:text-[#f8c6aa]">
-                  <h2 className="text-[11px] font-medium uppercase tracking-[0.12em]">
-                    Operação Agora
-                  </h2>
-                </div>
-                <div
-                  className="absolute right-2.5 top-2.5 flex items-center gap-0.5 text-[#5d5822]/58 dark:text-[#f8c6aa]/58"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <WidgetConfigButton
-                    label="Configurar Operação Agora"
-                    onClick={() => setConfigPanel("operation")}
-                  />
-                </div>
-
-                <motion.section
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, ease: "easeOut" as const }}
-                  className="grid min-h-0 flex-1 grid-cols-2 content-center gap-2 md:gap-3"
-                >
-                  <OperationMetricCard
-                    label="Pedidos"
-                    value={resumo === undefined ? "-" : String(resumo.emAndamento)}
-                    icon={ReceiptText}
-                  />
-                  <OperationMetricCard
-                    label="Atenção"
-                    value={String(attentionCount)}
-                    icon={TriangleAlert}
-                    tone={attentionCount > 0 ? "warning" : "default"}
-                  />
-                </motion.section>
-              </section>
-
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -410,50 +539,70 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
                     setActiveWidgetView("journey");
                   }
                 }}
-                className="min-h-0 flex-1 cursor-pointer transition-transform active:scale-[0.995]"
+                className="shrink-0 cursor-pointer transition-transform active:scale-[0.995]"
               >
                 <TodayAgendaCard
                   items={todayItems}
                   onConfigure={() => setConfigPanel("journey")}
+                  className="h-auto min-h-0"
+                  config={{
+                    mode: "system",
+                    summary: "Padrão do sistema",
+                    period: "Hoje",
+                    scope: "Gerente · Matriz",
+                    alerts: "Opcionais",
+                    alarm: "Desligado",
+                  }}
+                  canCreateForOthers={canCreateAgendaForOthers}
+                  currentOperatorName={operator.name}
+                  onCreateAgenda={async (payload) => {
+                    await criarTarefaAgenda({
+                      unit,
+                      titulo: payload.titulo,
+                      dataReferencia: payload.dataReferencia,
+                      horario: payload.horario,
+                      modoOperacional: operator.role,
+                      criadoPorOperatorId: operator.operatorId,
+                      prioridade: payload.prioridade,
+                      alertaAtivo: payload.alertaAtivo,
+                      alertaQuando: payload.alertaQuando,
+                      despertadorAtivo: payload.despertadorAtivo,
+                    });
+                  }}
                 />
               </motion.div>
+              <div className="min-h-0 flex-1" aria-hidden="true" />
             </div>
 
-            <motion.section
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: 0.08, ease: "easeOut" as const }}
-              className="grid h-[calc(8.9rem*var(--rvl-card-scale,1))] shrink-0 grid-cols-4 grid-rows-2 gap-2 rounded-2xl bg-[#e8e6dc] p-1.5 dark:bg-[#696328] min-[420px]:h-[calc(9.5rem*var(--rvl-card-scale,1))] md:h-[calc(10.25rem*var(--rvl-card-scale,1))] md:gap-3"
             >
-              {managerActions.map((action) => (
-                <ManagerActionButton key={action.label} {...action} />
-              ))}
-            </motion.section>
+              <OperationalDock
+                primaryActions={primaryDockActions}
+                secondaryActions={secondaryDockActions}
+                open={dockOpen}
+                onOpenChange={handleDockOpenChange}
+                hiddenSignalCount={hiddenAlertCount}
+                hiddenSignalTone={hiddenSignalTone}
+                variant="home"
+              />
+            </motion.div>
           </div>
         </main>
 
         <WidgetConfigPanel
           open={configPanel === "journey"}
-          title="Configurar Jornada Hoje"
+          title="Configurar Agenda"
           fields={[
             { label: "Período", description: "Janela operacional exibida no widget.", control: "single", options: ["Hoje", "Turno", "Semana", "Próximas 24h", "Personalizado"] },
-            { label: "Colaborador", description: "Filtro futuro por pessoa ou função.", control: "multi", options: ["Todos", "Equipe", "Individual", "Gerente", "Caixa", "Atendimento", "Produção"] },
-            { label: "Tarefa", description: "Tipo de compromisso ou lembrete.", control: "multi", options: ["Operação", "Estoque", "Fornecedor", "Limpeza", "Manutenção", "Treinamento", "Financeiro"] },
-            { label: "Origem", description: "Fonte do compromisso operacional.", control: "single", options: ["Sistema", "Manual", "Integração", "Recorrente", "Importado"] },
-            { label: "Prioridade", description: "Classificação contextual da jornada.", control: "multi", options: ["Info", "Atenção", "Importante", "Crítica"] },
-            { label: "Unidade", description: "Unidade operacional relacionada.", control: "single", options: ["Atual", "Todas", "Matriz", "Filial", "Delivery"] },
-          ]}
-          onClose={() => setConfigPanel(null)}
-        />
-
-        <WidgetConfigPanel
-          open={configPanel === "operation"}
-          title="Configurar Operação Agora"
-          fields={[
-            { label: "Período", description: "Intervalo usado nos indicadores superiores.", control: "single", options: ["Agora", "Turno", "Hoje", "Última hora", "Personalizado"] },
-            { label: "Unidade", description: "Filtro futuro por unidade operacional.", control: "single", options: ["Atual", "Todas", "Matriz", "Filial", "Delivery"] },
-            { label: "Equipe", description: "Recorte futuro por equipe ou turno.", control: "multi", options: ["Todos", "Caixa", "Produção", "Atendimento", "Delivery", "Estoque", "Gerência"] },
-            { label: "Status", description: "Estados operacionais considerados nos indicadores.", control: "multi", options: ["Ativos", "Pendentes", "Atenção", "Importantes", "Críticos", "Concluídos"] },
+            { label: "Colaborador", description: "Filtro futuro por pessoa ou função.", control: "single", options: ["Sem filtro", "Todos", "Equipe", "Individual", "Gerente", "Caixa", "Atendimento", "Produção"] },
+            { label: "Tarefa", description: "Tipo de compromisso ou lembrete.", control: "single", options: ["Sem filtro", "Operação", "Estoque", "Fornecedor", "Limpeza", "Manutenção", "Treinamento", "Financeiro"] },
+            { label: "Buscar em", description: "Conteúdos pesquisáveis no histórico da agenda.", control: "single", options: ["Sem filtro", "Todos", "Texto", "Áudio", "Imagem", "Vídeo", "Responsável"] },
+            { label: "Origem", description: "Fonte do compromisso operacional.", control: "single", options: ["Sem filtro", "Sistema", "Manual", "Integração", "Recorrente", "Importado"] },
+            { label: "Prioridade", description: "Classificação contextual da jornada.", control: "single", options: ["Sem filtro", "Info", "Atenção", "Importante", "Crítica"] },
+            { label: "Unidade", description: "Unidade operacional relacionada.", control: "single", options: ["Sem filtro", "Atual", "Todas", "Matriz", "Filial", "Delivery"] },
           ]}
           onClose={() => setConfigPanel(null)}
         />

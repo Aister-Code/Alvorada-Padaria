@@ -206,3 +206,109 @@ Se o operador tentar executar função fora do seu módulo ou modo operacional, 
 - `Esta etapa deve ser assumida pelo modo operacional correto.`
 
 A orientação deve preservar contexto e sugerir transferência quando aplicável.
+
+## Padrão Conversas WhatsApp/RondonIA
+
+Este módulo usa `Conversas` como contexto principal da área Atendimento.
+
+Regras específicas:
+
+- Header interno mostra apenas o contexto ativo: `CONVERSAS`, `PEDIDOS`, `CLIENTES` ou `AGENDA`.
+- Dock inferior mantém os módulos operacionais do usuário. Para gerente: Venda, Atendimento, Produção e Gestão.
+- `Atendimento` fica selecionado quando o operador está na Central.
+- Pedidos, Clientes e Agenda são atalhos internos compactos, não itens da dock.
+- Filtros de Conversas: IA, Humano, Ajuda, Transf. e Todas.
+- Filtros não usam cápsula fixa; número e cor aparecem somente quando houver atividade.
+- `Todas` permanece neutro.
+- `Transf.` inclui recebidas pendentes e enviadas aguardando aceite, nunca concluídas.
+- Item de conversa deve ter no máximo três linhas.
+- Avatar comunica origem do contato; contorno comunica urgência.
+- Transferir fica sempre no extremo direito da primeira linha.
+- Catálogo fica sempre disponível na conversa, fora do botão `+`.
+- O botão `+` é reservado para ações auxiliares universais.
+- Carrinho aparece compacto e abre contexto dedicado.
+- Relatórios ficam no menu contextual de Conversas.
+
+Checklist adicional:
+
+- Não usar `Jornada`, `OJC`, `RAW`, `CAO`, `Customer Memory` ou termos técnicos na UI.
+- Usar `Conversas`, `Cliente novo`, `Carrinho`, `Pedido`, `Catálogo`, `Transferir`, `Ajuda`, `IA`, `Humano` e `Relatórios`.
+
+## Consolidação Central de Atendimento — Conversas, Repasses e Recebimento Assistido
+
+Padrões registrados:
+
+- Resumo Retrátil: a faixa superior da Central de Atendimento deve ficar fechada por padrão, exibindo apenas ícones, números quando existirem e cor somente quando houver atividade.
+- Carrinhos, Cardápio e Produtos são conceitos diferentes:
+  - Carrinhos: acompanhamento operacional de carrinhos/sessões iniciadas, paradas ou pedindo ajuda.
+  - Cardápio: ação enviada ao cliente dentro da conversa.
+  - Produtos: consulta interna do atendente para preço, orçamento e composição futura de pedido.
+- Repasses substituem `Transferências` na linguagem operacional da Central.
+- Encaminhar é a ação direta na conversa para repassar trabalho a outro perfil/setor.
+- Relatórios são contextuais à tela ativa e não ocupam vaga de módulo principal.
+
+### Orçamento
+
+Orçamento é ferramenta do Atendimento.
+
+Fluxo previsto:
+
+1. Atendente consulta Produtos.
+2. Monta orçamento.
+3. Envia orçamento ao cliente.
+4. Se o cliente aceitar, converte em pedido ou adiciona a pedido existente quando permitido.
+5. Se o pedido existente não puder ser editado, cria Pedido Complementar.
+
+### Pedido Complementar e Entrega Agrupada
+
+Se o cliente fizer novo pedido após pedido anterior:
+
+- Pedido anterior editável: adicionar ao pedido existente.
+- Pedido anterior não editável: criar Pedido Complementar.
+
+Se o pedido anterior ainda não saiu para entrega, perguntar se o cliente aceita entregar junto.
+
+Se aceitar:
+
+- manter pedidos separados;
+- criar vínculo de Entrega Agrupada;
+- avisar Conferência, Delivery e Motoboy.
+
+Avisos previstos:
+
+- Conferência: `Aguardar pedido complementar.`
+- Delivery: `Sai junto com pedido #...`
+- Motoboy: `Levar pedidos vinculados juntos.`
+
+Pedido complementar segue ROR própria. Cestinha só quando a rota exigir.
+
+### Recebimento Assistido
+
+Atendente pode registrar recebimento assistido, mas Caixa confirma.
+
+Fluxo:
+
+1. Operador informa/recebe valor.
+2. Sistema cria pendência para Caixa.
+3. Caixa confere.
+4. Caixa confirma pagamento, troco, vale ou ajuste.
+5. Venda é finalizada pelo Caixa.
+
+Aplicável em Atendimento, Balcão, Mesa, Delivery, Motoboy e Gerente em modo operacional.
+
+Pendência para Caixa deve carregar: pedidoId, clienteId, origem, operadorQueRecebeu, valorInformado, formaInformada, comprovante opcional, precisaTroco, valorTroco opcional, observação, destinoCaixa e status.
+
+Status previstos: pendente_conferencia, conferido, recusado, troco_entregue, acerto_pendente e concluido.
+
+## Ajuste Final — Conversas WhatsApp/RondonIA
+
+Regras complementares aprovadas:
+
+- O Resumo Superior é dinâmico: IA e Humano permanecem fixos; Carrinhos, Repasses e outros indicadores sobem ou descem conforme quantidade e prioridade.
+- A linha superior é retrátil; quando fechada, mostra somente ícones e números quando houver atividade.
+- A linha inferior permanece sempre visível.
+- O destaque/pulso acontece somente no ícone que recebeu nova atividade.
+- A alça retrátil da dock deve sinalizar alertas ocultos quando módulos recolhidos tiverem pendência, atenção ou crítica.
+- O avatar da conversa deve ficar centralizado verticalmente em relação às três linhas do item.
+- O carrinho compacto fica à esquerda do campo de mensagem e mostra apenas quantidade no estado compacto.
+- O Cardápio mostra símbolo + texto quando o chat está fechado e apenas símbolo quando o chat está aberto.

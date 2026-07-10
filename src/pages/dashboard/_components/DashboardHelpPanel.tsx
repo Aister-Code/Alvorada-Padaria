@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+﻿import { X } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -13,7 +13,7 @@ export default function DashboardHelpPanel({ open, role, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/25">
-      <aside className="ml-auto flex h-svh w-full max-w-sm flex-col bg-[#5d5822] px-5 py-5 text-[#fff4e8] dark:bg-[#f8c6aa] dark:text-[#5d5822]">
+      <aside className="ml-auto flex h-svh w-full max-w-sm flex-col bg-[#685c20] px-5 py-5 text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]">
         <div className="mb-6 flex items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-semibold leading-tight">Ajuda</h2>
@@ -24,7 +24,7 @@ export default function DashboardHelpPanel({ open, role, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded-full p-2 text-[#fff4e8] transition-colors hover:text-white focus:outline-none dark:text-[#5d5822] dark:hover:text-[#3f3b12]"
+            className="cursor-pointer rounded-full p-2 text-[#fff4e8] transition-colors hover:text-white focus:outline-none dark:text-[#685c20] dark:hover:text-[#3f3b12]"
             aria-label="Fechar ajuda"
           >
             <X className="h-4 w-4" />
@@ -47,8 +47,8 @@ export default function DashboardHelpPanel({ open, role, onClose }: Props) {
 
 function HelpItem({ title, description }: { title: string; description: string }) {
   return (
-    <div className="rounded-2xl border border-[#fff4e8]/18 bg-[#fff4e8]/8 px-4 py-3 dark:border-[#5d5822]/14 dark:bg-[#5d5822]/7">
-      <p className="text-sm font-semibold leading-tight text-[#fff4e8] dark:text-[#5d5822]">{title}</p>
+    <div className="rounded-2xl border border-[#fff4e8]/18 bg-[#fff4e8]/8 px-4 py-3 dark:border-[#685c20]/14 dark:bg-[#685c20]/7">
+      <p className="text-sm font-semibold leading-tight text-[#fff4e8] dark:text-[#685c20]">{title}</p>
       <p className="mt-1 text-xs font-medium leading-relaxed text-[#d8c8bb] dark:text-[#6f6932]">
         {description}
       </p>

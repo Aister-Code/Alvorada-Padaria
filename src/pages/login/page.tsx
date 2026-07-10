@@ -127,12 +127,12 @@ export default function LoginPage({ onOperatorLogin }: Props) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#d5d4c8] text-[#5d5822] dark:bg-[#5d5822] dark:text-[#f8c6aa] px-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2] px-6 relative overflow-hidden">
 
       {/* Alternância Claro/Escuro — segundo plano, canto superior direito */}
       <button
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="absolute top-5 right-5 p-2 text-[#5d5822]/45 hover:text-[#5d5822] transition-colors cursor-pointer dark:text-[#f8c6aa]/45 dark:hover:text-[#f8c6aa]"
+        className="absolute top-5 right-5 p-2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
         aria-label="Alternar tema"
       >
         {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -153,7 +153,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Usuário */}
         <div className="w-[18rem] max-w-full space-y-1 mb-3.5">
-          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#5d5822]/86 dark:text-[#f8c6aa]/80">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#685c20]/86 dark:text-[#f3c4a2]/80">
             Usuário
           </label>
           <OperatorIdField
@@ -176,7 +176,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Senha */}
         <div className="w-[18rem] max-w-full space-y-1 mb-5">
-          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#5d5822]/86 dark:text-[#f8c6aa]/80">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#685c20]/86 dark:text-[#f3c4a2]/80">
             Senha
           </label>
           <div className="relative">
@@ -192,13 +192,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                 setPin(e.target.value.replace(/\D/g, "").slice(0, 4));
                 setError("");
               }}
-              className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#e4e2d7] text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] text-[#5d5822] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#5d5822]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#e8e6dc] focus:border-[#5d5822]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f8c6aa]/40 dark:bg-[#696328] dark:text-[#f8c6aa] dark:shadow-none dark:placeholder:text-[#f8c6aa]/25 dark:focus:bg-[#696328]"
+              className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
             />
             <button
               type="button"
               tabIndex={-1}
               onClick={() => setShowPin((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5d5822]/45 hover:text-[#5d5822] transition-colors cursor-pointer dark:text-[#f8c6aa]/45 dark:hover:text-[#f8c6aa]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
               aria-label={showPin ? "Ocultar senha" : "Mostrar senha"}
             >
               {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -244,7 +244,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
             setShowResetPin(false);
             setShowResetPin2(false);
           }}
-          className="cursor-pointer text-xs font-light text-[#5d5822]/68 hover:text-[#5d5822] underline underline-offset-4 transition-colors dark:text-[#f8c6aa]/50 dark:hover:text-[#f8c6aa]"
+          className="cursor-pointer text-xs font-light text-[#685c20]/68 hover:text-[#685c20] underline underline-offset-4 transition-colors dark:text-[#f3c4a2]/50 dark:hover:text-[#f3c4a2]"
         >
           Esqueci a senha
         </button>
@@ -257,7 +257,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#5d5822]/55 flex items-center justify-center px-6 z-50"
+            className="fixed inset-0 bg-[#685c20]/55 flex items-center justify-center px-6 z-50"
             onClick={() => setShowResetModal(false)}
           >
             <motion.div
@@ -266,23 +266,23 @@ export default function LoginPage({ onOperatorLogin }: Props) {
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.2, ease: "easeOut" as const }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xs rounded-2xl border border-transparent bg-[#d5d4c8] p-6 shadow-[0_24px_60px_rgba(7,24,13,0.22)] dark:bg-[#696328] dark:shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+              className="w-full max-w-xs rounded-2xl border border-transparent bg-[#f3c4a2] p-6 shadow-[0_24px_60px_rgba(7,24,13,0.22)] dark:bg-[#756c2c] dark:shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
             >
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-semibold tracking-wide text-[#5d5822] dark:text-[#f8c6aa]">Redefinir PIN</h2>
-                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#5d5822]/68 hover:text-[#5d5822] transition-colors dark:text-[#f8c6aa]/68 dark:hover:text-[#f8c6aa]">
+                <h2 className="text-sm font-semibold tracking-wide text-[#685c20] dark:text-[#f3c4a2]">Redefinir PIN</h2>
+                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#685c20]/68 hover:text-[#685c20] transition-colors dark:text-[#f3c4a2]/68 dark:hover:text-[#f3c4a2]">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-xs font-medium text-[#5d5822]/70 dark:text-[#f8c6aa]/72 mb-5 leading-relaxed">
+              <p className="text-xs font-medium text-[#685c20]/70 dark:text-[#f3c4a2]/72 mb-5 leading-relaxed">
                 Informe seu ID e o novo PIN. Após envio, aguarde aprovação do gerente.
               </p>
 
               <div className="space-y-3">
                 {/* ID do operador */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
                     Usuário
                   </label>
                   <OperatorIdField
@@ -310,7 +310,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Novo PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
                     Novo PIN
                   </label>
                   <div className="relative">
@@ -329,13 +329,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                           resetPin2Ref.current?.focus();
                         }
                       }}
-                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#e4e2d7] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#5d5822] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#5d5822]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#e8e6dc] focus:border-[#5d5822]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f8c6aa]/40 dark:bg-[#696328] dark:text-[#f8c6aa] dark:shadow-none dark:placeholder:text-[#f8c6aa]/25 dark:focus:bg-[#696328]"
+                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowResetPin((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5d5822]/45 hover:text-[#5d5822] transition-colors cursor-pointer dark:text-[#f8c6aa]/45 dark:hover:text-[#f8c6aa]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
                       aria-label={showResetPin ? "Ocultar novo PIN" : "Mostrar novo PIN"}
                     >
                       {showResetPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -345,7 +345,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Confirmar PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#5d5822]/86 dark:text-[#f8c6aa]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
                     Confirmar PIN
                   </label>
                   <div className="relative">
@@ -364,13 +364,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                           void handleRequestReset();
                         }
                       }}
-                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#e4e2d7] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#5d5822] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#5d5822]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#e8e6dc] focus:border-[#5d5822]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f8c6aa]/40 dark:bg-[#696328] dark:text-[#f8c6aa] dark:shadow-none dark:placeholder:text-[#f8c6aa]/25 dark:focus:bg-[#696328]"
+                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowResetPin2((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5d5822]/45 hover:text-[#5d5822] transition-colors cursor-pointer dark:text-[#f8c6aa]/45 dark:hover:text-[#f8c6aa]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
                       aria-label={showResetPin2 ? "Ocultar confirmação do PIN" : "Mostrar confirmação do PIN"}
                     >
                       {showResetPin2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -392,7 +392,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
       </AnimatePresence>
 
       {/* Rodapé RondônIA Apps */}
-      <p className="absolute bottom-5 text-[9px] text-[#5d5822]/52 tracking-[0.25em] select-none dark:text-[#f8c6aa]/30">
+      <p className="absolute bottom-5 text-[9px] text-[#685c20]/52 tracking-[0.25em] select-none dark:text-[#f3c4a2]/30">
         RondônIA Apps
       </p>
     </div>
