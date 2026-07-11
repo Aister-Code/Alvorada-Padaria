@@ -42,7 +42,7 @@ export default function MessageTimeline({ messages }: Props) {
                 "max-w-[82%] rounded-2xl px-3 py-2",
                 outgoing
                   ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
-                  : "bg-[#685c20]/8 text-[#685c20] dark:bg-[#f3c4a2]/8 dark:text-[#f3c4a2]",
+                  : "bg-[#685c20]/8 text-[#685c20] dark:bg-[#f7f2ec]/8 dark:text-[#f3c4a2]",
               )}
             >
               <p className="whitespace-pre-wrap text-sm leading-snug">

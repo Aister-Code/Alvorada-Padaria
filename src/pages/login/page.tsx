@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, Sun, Moon, X } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
@@ -127,12 +127,12 @@ export default function LoginPage({ onOperatorLogin }: Props) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2] px-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0d0d0b] dark:text-[#f7f2ec] px-6 relative overflow-hidden">
 
       {/* Alternância Claro/Escuro — segundo plano, canto superior direito */}
       <button
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="absolute top-5 right-5 p-2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
+        className="absolute top-5 right-5 p-2 text-[#1f1f1a]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f7f2ec]/45 dark:hover:text-[#f3c4a2]"
         aria-label="Alternar tema"
       >
         {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -153,7 +153,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Usuário */}
         <div className="w-[18rem] max-w-full space-y-1 mb-3.5">
-          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#685c20]/86 dark:text-[#f3c4a2]/80">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#1f1f1a]/78 dark:text-[#f7f2ec]/76">
             Usuário
           </label>
           <OperatorIdField
@@ -176,7 +176,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
         {/* Campo Senha */}
         <div className="w-[18rem] max-w-full space-y-1 mb-5">
-          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#685c20]/86 dark:text-[#f3c4a2]/80">
+          <label className="block px-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[#1f1f1a]/78 dark:text-[#f7f2ec]/76">
             Senha
           </label>
           <div className="relative">
@@ -192,13 +192,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                 setPin(e.target.value.replace(/\D/g, "").slice(0, 4));
                 setError("");
               }}
-              className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
+              className="w-full h-11 px-11 rounded-xl border border-transparent bg-white text-center text-xl font-serif tracking-[0.22em] indent-[0.22em] text-[#1f1f1a] shadow-none placeholder:text-[#1f1f1a]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-white focus:border-[#685c20]/30 focus:outline-none focus:shadow-none dark:focus:border-[#f3c4a2]/30 dark:bg-[#151513] dark:text-[#f7f2ec] dark:shadow-none dark:placeholder:text-[#f7f2ec]/25 dark:focus:bg-[#151513]"
             />
             <button
               type="button"
               tabIndex={-1}
               onClick={() => setShowPin((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#1f1f1a]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f7f2ec]/45 dark:hover:text-[#f3c4a2]"
               aria-label={showPin ? "Ocultar senha" : "Mostrar senha"}
             >
               {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -244,7 +244,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
             setShowResetPin(false);
             setShowResetPin2(false);
           }}
-          className="cursor-pointer text-xs font-light text-[#685c20]/68 hover:text-[#685c20] underline underline-offset-4 transition-colors dark:text-[#f3c4a2]/50 dark:hover:text-[#f3c4a2]"
+          className="cursor-pointer text-xs font-light text-[#1f1f1a]/58 hover:text-[#685c20] underline underline-offset-4 transition-colors dark:text-[#f7f2ec]/50 dark:hover:text-[#f3c4a2]"
         >
           Esqueci a senha
         </button>
@@ -266,23 +266,23 @@ export default function LoginPage({ onOperatorLogin }: Props) {
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.2, ease: "easeOut" as const }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xs rounded-2xl border border-transparent bg-[#f3c4a2] p-6 shadow-[0_24px_60px_rgba(7,24,13,0.22)] dark:bg-[#756c2c] dark:shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+              className="w-full max-w-xs rounded-2xl border border-transparent bg-[#685c20] p-6 shadow-none dark:bg-[#f3c4a2] dark:shadow-none"
             >
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-semibold tracking-wide text-[#685c20] dark:text-[#f3c4a2]">Redefinir PIN</h2>
-                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#685c20]/68 hover:text-[#685c20] transition-colors dark:text-[#f3c4a2]/68 dark:hover:text-[#f3c4a2]">
+                <h2 className="text-sm font-semibold tracking-wide text-[#fff4e8] dark:text-[#685c20]">Redefinir PIN</h2>
+                <button onClick={() => setShowResetModal(false)} className="cursor-pointer text-[#fff4e8]/68 hover:text-[#fff4e8] transition-colors dark:text-[#685c20]/68 dark:hover:text-[#685c20]">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-xs font-medium text-[#685c20]/70 dark:text-[#f3c4a2]/72 mb-5 leading-relaxed">
+              <p className="text-xs font-medium text-[#fff4e8]/70 dark:text-[#685c20]/72 mb-5 leading-relaxed">
                 Informe seu ID e o novo PIN. Após envio, aguarde aprovação do gerente.
               </p>
 
               <div className="space-y-3">
                 {/* ID do operador */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#fff4e8]/80 dark:text-[#685c20]/80 tracking-widest uppercase">
                     Usuário
                   </label>
                   <OperatorIdField
@@ -310,7 +310,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Novo PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#fff4e8]/80 dark:text-[#685c20]/80 tracking-widest uppercase">
                     Novo PIN
                   </label>
                   <div className="relative">
@@ -329,13 +329,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                           resetPin2Ref.current?.focus();
                         }
                       }}
-                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
+                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#fff4e8]/12 text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#fff4e8] shadow-none placeholder:text-[#fff4e8]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#fff4e8]/14 focus:border-[#fff4e8]/30 focus:outline-none focus:shadow-none dark:focus:border-[#685c20]/30 dark:bg-[#685c20]/10 dark:text-[#685c20] dark:shadow-none dark:placeholder:text-[#685c20]/25 dark:focus:bg-[#685c20]/12"
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowResetPin((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#fff4e8]/45 hover:text-[#fff4e8] transition-colors cursor-pointer dark:text-[#685c20]/45 dark:hover:text-[#685c20]"
                       aria-label={showResetPin ? "Ocultar novo PIN" : "Mostrar novo PIN"}
                     >
                       {showResetPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -345,7 +345,7 @@ export default function LoginPage({ onOperatorLogin }: Props) {
 
                 {/* Confirmar PIN */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-medium text-[#685c20]/86 dark:text-[#f3c4a2]/80 tracking-widest uppercase">
+                  <label className="block text-[10px] font-medium text-[#fff4e8]/80 dark:text-[#685c20]/80 tracking-widest uppercase">
                     Confirmar PIN
                   </label>
                   <div className="relative">
@@ -364,13 +364,13 @@ export default function LoginPage({ onOperatorLogin }: Props) {
                           void handleRequestReset();
                         }
                       }}
-                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#f6d0b4] text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#685c20] shadow-[0_1px_8px_rgba(78,91,29,0.045)] placeholder:text-[#685c20]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#f8dcc8] focus:border-[#685c20]/35 focus:outline-none focus:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:shadow-none dark:placeholder:text-[#f3c4a2]/25 dark:focus:bg-[#756c2c]"
+                      className="w-full h-11 px-11 rounded-xl border border-transparent bg-[#fff4e8]/12 text-center text-xl tracking-[0.5em] indent-[0.5em] text-[#fff4e8] shadow-none placeholder:text-[#fff4e8]/25 placeholder:tracking-normal placeholder:indent-0 transition-all focus:bg-[#fff4e8]/14 focus:border-[#fff4e8]/30 focus:outline-none focus:shadow-none dark:focus:border-[#685c20]/30 dark:bg-[#685c20]/10 dark:text-[#685c20] dark:shadow-none dark:placeholder:text-[#685c20]/25 dark:focus:bg-[#685c20]/12"
                     />
                     <button
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowResetPin2((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#685c20]/45 hover:text-[#685c20] transition-colors cursor-pointer dark:text-[#f3c4a2]/45 dark:hover:text-[#f3c4a2]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#fff4e8]/45 hover:text-[#fff4e8] transition-colors cursor-pointer dark:text-[#685c20]/45 dark:hover:text-[#685c20]"
                       aria-label={showResetPin2 ? "Ocultar confirmação do PIN" : "Mostrar confirmação do PIN"}
                     >
                       {showResetPin2 ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -392,24 +392,9 @@ export default function LoginPage({ onOperatorLogin }: Props) {
       </AnimatePresence>
 
       {/* Rodapé RondônIA Apps */}
-      <p className="absolute bottom-5 text-[9px] text-[#685c20]/52 tracking-[0.25em] select-none dark:text-[#f3c4a2]/30">
+      <p className="absolute bottom-5 text-[9px] text-[#1f1f1a]/38 tracking-[0.25em] select-none dark:text-[#f7f2ec]/32">
         RondônIA Apps
       </p>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,40 +3,39 @@ import { useMutation, useQuery } from "convex/react";
 import { useTheme } from "next-themes";
 import {
   ArrowLeft,
-  Activity,
+  Banknote,
+  BarChart3,
+  Bike,
   BookOpen,
   CalendarDays,
+  ChefHat,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   ChevronUp,
   CircleHelp,
   Clock,
-  CreditCard,
-  Database,
   Camera,
   FileText,
   Globe2,
   History,
   Heart,
   Hourglass,
+  Inbox,
   MessageCircle,
   Moon,
   Package,
-  PackagePlus,
   Phone,
-  Printer,
   ReceiptText,
-  RefreshCw,
   Send,
   Settings,
+  ShoppingCart,
   Shuffle,
   Sparkles,
   Sun,
   Tag,
   UserCheck,
   Users,
-  Wifi,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -47,9 +46,11 @@ import type { OperatorSession } from "@/App.tsx";
 import { cn } from "@/lib/utils.ts";
 import DashboardHelpPanel from "../dashboard/_components/DashboardHelpPanel.tsx";
 import DashboardMenu from "../dashboard/_components/DashboardMenu.tsx";
-import InterfaceScalePopover, { type InterfaceScale } from "../dashboard/_components/InterfaceScalePopover.tsx";
-import OperationalHealthPopover from "../dashboard/_components/OperationalHealthPopover.tsx";
-import type { HealthItem } from "../dashboard/_lib/operationalHealth.ts";
+import type { InterfaceScale } from "../dashboard/_components/InterfaceScalePopover.tsx";
+import {
+  buildOperationalHealthInventory,
+  getVisibleHealthItems,
+} from "../dashboard/_lib/operationalHealth.ts";
 import type { WhatsAppConversation, WhatsAppMessage } from "./_components/types.ts";
 
 type Props = {
@@ -152,8 +153,8 @@ const filterLabels: Record<FilterId, string> = {
 const filterIcons: Record<FilterId, LucideIcon> = {
   ia: Sparkles,
   humano: UserCheck,
-  todas: MessageCircle,
-  carrinhos: Package,
+  todas: Inbox,
+  carrinhos: ShoppingCart,
   transferencias: Shuffle,
 };
 
@@ -419,7 +420,7 @@ function saveOperatorPreferences(operatorId: string, preferences: OperatorPrefer
 const interfaceScaleClasses: Record<InterfaceScale, string> = {
   small: "[--rvl-card-scale:0.92] [--rvl-font-scale:0.94] [--rvl-space-scale:0.92]",
   normal: "[--rvl-card-scale:1] [--rvl-font-scale:1] [--rvl-space-scale:1]",
-  large: "[--rvl-card-scale:1.1] [--rvl-font-scale:1.08] [--rvl-space-scale:1.08]",
+  large: "[--rvl-card-scale:1] [--rvl-font-scale:1.08] [--rvl-space-scale:0.9]",
 };
 
 function formatTime(value?: string) {
@@ -630,7 +631,7 @@ function buildJourneyItems(
       })) ?? [];
 
   const transferItems =
-    filter === "transferencias"
+    filter === "transferencias" || filter === "todas"
       ? transfers
         ?.filter((transfer) => ["pendente", "aguardando_aceite"].includes(transfer.status))
         .map((transfer) => ({
@@ -655,7 +656,7 @@ function CommunicationSummaryPanel({
   onFilterChange: (filter: FilterId) => void;
 }) {
   return (
-    <section className="shrink-0 rounded-2xl bg-[#f8dcc8] p-1.5 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2] sm:p-2">
+    <section className="shrink-0 rounded-2xl bg-white p-1.5 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2] sm:p-2">
       <div className="grid grid-cols-4 gap-1">
         {(Object.keys(filterLabels) as FilterId[]).map((item) => {
           const active = activeFilter === item;
@@ -669,7 +670,7 @@ function CommunicationSummaryPanel({
                 "min-w-0 cursor-pointer rounded-xl px-1.5 py-1.5 text-center transition-colors sm:px-2 sm:py-2",
                 active
                   ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
-                  : "text-current hover:bg-[#685c20]/6 dark:hover:bg-[#f3c4a2]/8",
+                  : "text-current hover:bg-[#1f1f1a]/6 dark:hover:bg-[#f7f2ec]/8",
               )}
             >
               <div className="flex items-center justify-center gap-1.5">
@@ -900,7 +901,7 @@ function CartPanel({
         </div>
         <div className="mt-4 space-y-2">
           {(items.length > 0 ? items : [{ nome: "Itens do carrinho", quantidade: cart.session.quantidadeItens }]).map((item, index) => (
-            <div key={`${item.nome}-${index}`} className="flex items-center justify-between rounded-2xl bg-white/7 px-3 py-2 text-xs dark:bg-[#685c20]/7">
+            <div key={`${item.nome}-${index}`} className="flex items-center justify-between rounded-2xl bg-white/7 px-3 py-2 text-xs dark:bg-[#1f1f1a]/7">
               <span>{item.nome ?? "Produto"}</span>
               <span className="font-semibold">{item.quantidade ?? 1}x</span>
             </div>
@@ -928,20 +929,52 @@ function ConversationFilters({
   tones,
   activeFilter,
   onFilterChange,
+  secondaryOpen,
+  onSecondaryToggle,
 }: {
   counts: Record<FilterId, number>;
   tones: Record<FilterId, SignalTone>;
   activeFilter: FilterId;
   onFilterChange: (filter: FilterId) => void;
+  secondaryOpen: boolean;
+  onSecondaryToggle: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const [pulsing, setPulsing] = useState<Partial<Record<FilterId, boolean>>>({});
+  const [hiddenHandlePulse, setHiddenHandlePulse] = useState(false);
   const previousCountsRef = useRef(counts);
 
+  const fixedStartItems: FilterId[] = ["ia", "humano"];
+  const dynamicCandidates = conversationFilterOrder.filter(
+    (item) => !fixedStartItems.includes(item) && item !== "todas",
+  );
+  const tonePriority: Record<SignalTone, number> = {
+    red: 4,
+    amber: 3,
+    green: 2,
+    blue: 1,
+    neutral: 0,
+  };
+  const rankedDynamicItems = [...dynamicCandidates].sort((a, b) => {
+    const priorityDiff = tonePriority[tones[b]] - tonePriority[tones[a]];
+    if (priorityDiff !== 0) return priorityDiff;
+    const countDiff = counts[b] - counts[a];
+    if (countDiff !== 0) return countDiff;
+    return conversationFilterOrder.indexOf(a) - conversationFilterOrder.indexOf(b);
+  });
+  const visibleDynamicItems = rankedDynamicItems.slice(0, 2);
+  const hiddenItems = rankedDynamicItems.slice(2);
+  const bottomItems: FilterId[] = [...fixedStartItems, ...visibleDynamicItems];
+  const hiddenHasSignal = hiddenItems.some((item) => counts[item] > 0);
+  const hiddenSignalTone = hiddenItems.reduce<SignalTone>((current, item) => {
+    return tonePriority[tones[item]] > tonePriority[current] ? tones[item] : current;
+  }, "neutral");
   useEffect(() => {
     const changed = conversationFilterOrder.filter((item) => counts[item] > (previousCountsRef.current[item] ?? 0));
     previousCountsRef.current = counts;
     if (changed.length === 0) return;
+    if (changed.some((item) => hiddenItems.includes(item))) {
+      setHiddenHandlePulse(true);
+    }
     setPulsing((current) => {
       const next = { ...current };
       changed.forEach((item) => {
@@ -959,20 +992,32 @@ function ConversationFilters({
       });
     }, 850);
     return () => window.clearTimeout(id);
-  }, [counts]);
+  }, [counts, hiddenItems]);
 
-  const topItems: FilterId[] = [];
-  const bottomItems: FilterId[] = ["ia", "humano", "transferencias", "carrinhos", "todas"];
-  const topHasSignal = topItems.some((item) => counts[item] > 0);
-  const topHasCritical = topItems.some((item) => tones[item] === "red");
-  const topSignalClass = topHasCritical ? "bg-red-600" : topHasSignal ? "bg-amber-500" : "";
+  useEffect(() => {
+    if (secondaryOpen || !hiddenHasSignal) {
+      setHiddenHandlePulse(false);
+    }
+  }, [secondaryOpen, hiddenHasSignal]);
 
   const renderFilterButton = (item: FilterId, showLabel: boolean) => {
     const active = activeFilter === item;
     const count = counts[item];
     const Icon = filterIcons[item];
-    const hasSignal = item !== "todas" && count > 0;
-    const signalClass = hasSignal ? signalToneTextClasses[tones[item]] : signalToneTextClasses.neutral;
+    const hasSignal = item !== "todas" && item !== "ia" && count > 0;
+    const signalClass = item === "ia" ? "text-current/70" : hasSignal ? signalToneTextClasses[tones[item]] : signalToneTextClasses.neutral;
+    const badgeClass =
+      item === "todas" || item === "ia"
+        ? "bg-current/12 text-current/68"
+        : tones[item] === "red"
+          ? "bg-red-600 text-white"
+          : tones[item] === "amber"
+            ? "bg-amber-500 text-[#1f1f1a]"
+            : tones[item] === "green"
+              ? "bg-emerald-500 text-white"
+              : tones[item] === "blue"
+                ? "bg-sky-500 text-white"
+                : "bg-current/10 text-current/58";
     const activeNeutral = active && item === "todas";
 
     return (
@@ -981,21 +1026,29 @@ function ConversationFilters({
         type="button"
         onClick={() => onFilterChange(item)}
         className={cn(
-          "min-w-0 cursor-pointer rounded-xl border-b px-1 py-1 text-center transition-colors",
+          "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1 text-center transition-colors",
+          item === "ia" && "-translate-x-1",
+          item === "carrinhos" && "translate-x-1",
           activeNeutral
-            ? "border-current/18 text-current/72"
+            ? "bg-transparent text-current/62"
             : active
-              ? "border-current/24 bg-[#685c20]/5 text-current dark:bg-[#f3c4a2]/8"
-              : "border-transparent text-current/54 hover:bg-[#685c20]/4 hover:text-current/78 dark:hover:bg-[#f3c4a2]/6",
+              ? "bg-[#1f1f1a]/7 text-current dark:bg-[#24241f]"
+              : item === "ia"
+                ? "text-current/70 hover:bg-[#1f1f1a]/5 hover:text-current/82 dark:hover:bg-[#24241f]"
+                : "text-current/62 hover:bg-[#1f1f1a]/5 hover:text-current/82 dark:hover:bg-[#24241f]",
         )}
         title={filterLabels[item]}
       >
-        <span className={cn("flex items-center justify-center gap-1", signalClass, pulsing[item] && "animate-pulse")}>
-          <Icon className="h-4 w-4 shrink-0 stroke-[1.75]" />
-          {count > 0 && <span className="text-sm font-semibold leading-none tabular-nums">{count}</span>}
+            <span className={cn("relative flex h-5 w-5 items-center justify-center", signalClass, item !== "ia" && pulsing[item] && "animate-pulse")}>
+              <Icon className="h-[1.08rem] w-[1.08rem] shrink-0 stroke-[1.45]" />
+              {count > 0 && (
+                <span className={cn("absolute -right-1.5 -top-1 flex h-3 min-w-3 items-center justify-center rounded-full px-0.5 text-[7px] font-bold leading-none tabular-nums", badgeClass)}>
+                  {count > 9 ? "9+" : count}
+                </span>
+              )}
         </span>
         {showLabel && (
-          <span className="mt-1 block truncate text-[8.5px] font-medium uppercase tracking-[0.03em] text-current/62">
+          <span className="block w-full truncate text-[9.5px] font-light leading-none tracking-[0.01em] text-current/72">
             {filterLabels[item]}
           </span>
         )}
@@ -1004,26 +1057,34 @@ function ConversationFilters({
   };
 
   return (
-    <div className="relative shrink-0 px-1 py-1">
-      {expanded && topItems.length > 0 && (
-        <div className="mb-0.5 grid grid-cols-2 items-center gap-1">
-        {topItems.map((item) => renderFilterButton(item, expanded))}
-        </div>
-      )}
-      <button
-        type="button"
-        onClick={() => setExpanded((value) => !value)}
-        className="absolute left-0 top-1/2 z-10 flex h-6 w-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-current/42 transition-colors hover:bg-[#685c20]/5 hover:text-current dark:hover:bg-[#f3c4a2]/8"
-        aria-label={expanded ? "Recolher resumo" : "Mostrar resumo"}
-      >
-        {expanded ? <ChevronUp className="h-3.5 w-3.5 stroke-[1.8]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[1.8]" />}
-        {!expanded && topHasSignal && (
-          <span className={cn("absolute right-0 top-0 h-1.5 w-1.5 rounded-full", topSignalClass)} />
-        )}
-      </button>
-      <div className="grid grid-cols-5 items-center gap-1 pl-4">
+    <div className="relative shrink-0 px-0 py-1.5">
+      <div className={cn("relative grid items-center gap-1", bottomItems.length === 5 ? "grid-cols-5" : "grid-cols-4")}>
         {bottomItems.map((item) => renderFilterButton(item, true))}
       </div>
+      <div className="mt-0.5 flex h-3 items-center justify-end">
+        <button
+          type="button"
+          onClick={() => {
+            onSecondaryToggle();
+            setHiddenHandlePulse(false);
+          }}
+          className={cn(
+            "flex h-3 w-7 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
+            hiddenHandlePulse && "animate-pulse",
+            !secondaryOpen && hiddenHasSignal && signalToneTextClasses[hiddenSignalTone],
+          )}
+          aria-label={secondaryOpen ? "Recolher resumo" : "Mostrar resumo"}
+        >
+          {secondaryOpen ? <ChevronUp className="h-3.5 w-3.5 stroke-[1.65]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[1.65]" />}
+        </button>
+      </div>
+      {secondaryOpen && hiddenItems.length > 0 && (
+        <div className="-mx-1 mt-1 bg-[#1f1f1a]/4 dark:bg-[#24241f]">
+          <div className="grid grid-cols-2 items-center gap-1 px-4 py-1">
+            {hiddenItems.map((item) => renderFilterButton(item, true))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1076,7 +1137,7 @@ function ConversationListPanel({
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto" data-rvl-scroll>
+    <div className="mt-1 min-h-0 flex-1 overflow-y-auto px-1" data-rvl-scroll>
       {journeys.map((journey, index) => {
         const isTransfer = journey.kind === "transfer";
         const title = isTransfer ? "Repasse" : customerLabel(journey.conversation);
@@ -1120,27 +1181,26 @@ function ConversationListPanel({
             </p>
           )}
           <div
-            className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-2.5 border-b border-[#685c20]/6 px-1 py-3 last:border-b-0 dark:border-[#f3c4a2]/7"
+            className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-2.5 border-b border-[#1f1f1a]/10 py-3 last:border-b-0 dark:border-[#f7f2ec]/10"
           >
-            <span className={cn("relative mt-0.5 flex h-9 w-9 items-center justify-center rounded-full border bg-[#685c20]/8 text-current/72 dark:bg-[#f3c4a2]/10", priorityBorderClasses[priority])}>
+            <span className={cn("relative mt-0.5 flex h-9 w-9 items-center justify-center rounded-full border bg-[#685c20]/8 text-current/72 dark:bg-[#24241f]", priorityBorderClasses[priority])}>
               <OriginIcon className={cn("h-[1.05rem] w-[1.05rem] stroke-[1.8]", isTransfer ? "text-current/68" : origin?.className)} />
               {unreadCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 min-w-3.5 rounded-full bg-emerald-500 px-1 text-[8px] font-bold leading-3 text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[8px] font-bold leading-none text-white">
                   {unreadCount}
                 </span>
               )}
             </span>
             <div className="relative min-w-0">
-              <div className="flex min-w-0 items-center gap-2">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
                 <button
                   type="button"
                   onClick={() => onOpen(journey)}
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
                 >
                   <span className="truncate text-sm font-semibold leading-tight">{title}</span>
-                  {isTransfer && <span className="shrink-0 text-[10px] text-current/46">Repasse</span>}
                 </button>
-                <span className="flex shrink-0 items-center gap-1 text-[10px] tabular-nums text-current/48">
+                <span className="flex min-w-[6.8rem] shrink-0 items-center justify-end gap-1 text-[10px] tabular-nums text-current/58">
                   <Clock className="h-3 w-3" />
                   <span>{formatElapsed(time)}</span>
                   <span className="text-current/28">·</span>
@@ -1150,7 +1210,7 @@ function ConversationListPanel({
                     <button
                       type="button"
                       onClick={() => onTransfer(journey)}
-                      className="cursor-pointer rounded-full p-1 text-current/54 hover:bg-[#685c20]/7 hover:text-current dark:hover:bg-[#f3c4a2]/9"
+                      className="cursor-pointer rounded-full p-1 text-current/62 hover:bg-[#1f1f1a]/7 hover:text-current dark:hover:bg-[#f3c4a2]/9"
                       aria-label="Encaminhar"
                     >
                       <Shuffle className="h-3.5 w-3.5" />
@@ -1167,21 +1227,21 @@ function ConversationListPanel({
                   }
                   onOpen(journey);
                 }}
-                className="mt-1 flex w-full cursor-pointer items-start gap-2 text-left text-xs leading-snug text-current/68"
+                className="mt-1 flex w-full cursor-pointer items-start gap-2 text-left text-xs leading-snug text-current/74"
               >
                 <span className={cn("min-w-0 flex-1", !previewExpanded && "truncate")}>{preview}</span>
                 {canExpandPreview && (
-                  <span className="shrink-0 text-current/42">
+                  <span className="shrink-0 text-current/56">
                     {previewExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
                   </span>
                 )}
               </button>
               {!isTransfer && openChat && (
-                <div className="mt-2 flex min-w-0 items-end gap-1.5 rounded-2xl bg-[#685c20]/6 px-2 py-1 dark:bg-[#f3c4a2]/8">
+                <div className="mt-2 flex min-w-0 items-end gap-1.5 rounded-2xl bg-[#e8e7df] px-2 py-1 dark:bg-[#24241f] dark:ring-1 dark:ring-[#f7f2ec]/6">
                   <button
                     type="button"
                     onClick={() => setOpenAuxId((value) => (value === String(journey.id) ? null : String(journey.id)))}
-                    className="mb-0.5 cursor-pointer rounded-full p-1 text-current/58 hover:text-current"
+                    className="mb-0.5 cursor-pointer rounded-full p-1 text-current/66 hover:text-current"
                     aria-label="Mais ações"
                   >
                     +
@@ -1195,12 +1255,12 @@ function ConversationListPanel({
                       field.style.height = "auto";
                       field.style.height = `${Math.min(field.scrollHeight, 72)}px`;
                     }}
-                    className="max-h-[4.5rem] min-h-[1.5rem] min-w-0 flex-1 resize-none bg-transparent py-1 text-xs leading-5 text-current placeholder:text-current/38 focus:outline-none"
+                    className="max-h-[4.5rem] min-h-[1.5rem] min-w-0 flex-1 resize-none bg-transparent py-1 text-xs leading-5 text-current placeholder:text-current/50 focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => onSendCatalog(journey)}
-                    className="mb-0.5 cursor-pointer rounded-full p-1 text-current/58 hover:text-current"
+                    className="mb-0.5 cursor-pointer rounded-full p-1 text-current/66 hover:text-current"
                     aria-label="Enviar cardápio"
                   >
                     <BookOpen className="h-3.5 w-3.5" />
@@ -1233,12 +1293,12 @@ function ConversationListPanel({
                 </div>
               )}
               {!isTransfer && !openChat && (
-                <div className="mt-2 flex min-w-0 items-center gap-1.5 rounded-full bg-[#685c20]/6 px-2 py-1 dark:bg-[#f3c4a2]/8">
+                <div className="mt-2 flex min-w-0 items-center gap-1.5 rounded-full bg-[#e8e7df] px-2 py-1 dark:bg-[#24241f] dark:ring-1 dark:ring-[#f7f2ec]/6">
                   {hasCart && activeSession && (
                     <button
                       type="button"
                       onClick={() => onOpenCart(journey)}
-                      className="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-[10px] font-medium text-current/62 hover:text-current"
+                      className="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-[10px] font-medium text-current/70 hover:text-current"
                       aria-label="Ver carrinho"
                     >
                       <Package className="h-3.5 w-3.5" />
@@ -1251,7 +1311,7 @@ function ConversationListPanel({
                       setOpenChatId(String(journey.id));
                       setOpenAuxId(String(journey.id));
                     }}
-                    className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full px-1.5 py-1 text-sm font-medium leading-none text-current/58 hover:text-current"
+                    className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full px-1.5 py-1 text-sm font-medium leading-none text-current/66 hover:text-current"
                     aria-label="Mais ações"
                   >
                     +
@@ -1259,7 +1319,7 @@ function ConversationListPanel({
                   <button
                     type="button"
                     onClick={() => setOpenChatId(String(journey.id))}
-                    className="min-w-0 flex-1 cursor-text truncate text-left text-xs text-current/44"
+                    className="min-w-0 flex-1 cursor-text truncate text-left text-xs text-current/58"
                     aria-label="Abrir mensagem"
                   >
                     Mensagem...
@@ -1267,7 +1327,7 @@ function ConversationListPanel({
                   <button
                     type="button"
                     onClick={() => onSendCatalog(journey)}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-current/58 hover:text-current"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-current/66 hover:text-current"
                     aria-label="Enviar cardápio"
                   >
                     <BookOpen className="h-3.5 w-3.5" />
@@ -1305,11 +1365,11 @@ function ConversationDetailScreen({
 
   return (
     <section className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 items-center gap-2 border-b border-[#685c20]/10 px-1 py-2 dark:border-[#f3c4a2]/10">
+      <div className="flex shrink-0 items-center gap-2 border-b border-[#1f1f1a]/10 px-1 py-2 dark:border-[#f7f2ec]/10">
         <button
           type="button"
           onClick={onBack}
-          className="cursor-pointer rounded-full p-2 text-current/68 hover:bg-[#685c20]/7 dark:hover:bg-[#f3c4a2]/9"
+          className="cursor-pointer rounded-full p-2 text-current/68 hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f3c4a2]/9"
           aria-label="Voltar para conversas"
         >
           <ArrowLeft className="h-5 w-5 stroke-[1.8]" />
@@ -1342,7 +1402,7 @@ function ConversationDetailScreen({
               <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-current/44">Histórico</p>
               <div className="mt-1 space-y-2">
                 {(messages ?? []).slice(-4).map((message) => (
-                  <p key={message._id} className="rounded-2xl bg-[#685c20]/7 px-3 py-2 text-xs dark:bg-[#f3c4a2]/9">
+                  <p key={message._id} className="rounded-2xl bg-[#1f1f1a]/7 px-3 py-2 text-xs dark:bg-[#f7f2ec]/9">
                     {message.texto ?? "Mensagem sem texto"}
                   </p>
                 ))}
@@ -1379,42 +1439,50 @@ function PlaceholderTab({ title, description }: { title: string; description: st
 
 function AtendimentoContextShortcuts({
   activeTab,
+  activeFilter,
+  allCount,
   onChange,
-  onHelp,
+  onFilterChange,
 }: {
   activeTab: AtendimentoTab;
+  activeFilter: FilterId;
+  allCount: number;
   onChange: (tab: AtendimentoTab) => void;
-  onHelp: () => void;
+  onFilterChange: (filter: FilterId) => void;
 }) {
-  const items: Array<{ id?: AtendimentoTab; label: string; icon: LucideIcon; action?: () => void }> = [
+  const items: Array<{ id?: AtendimentoTab; filter?: FilterId; label: string; icon: LucideIcon; count?: number }> = [
     { id: "pedidos", label: "Pedidos", icon: ReceiptText },
     { id: "clientes", label: "Clientes", icon: Users },
-    { id: "agenda", label: "Agenda", icon: CalendarDays },
-    { label: "Ajuda", icon: CircleHelp, action: onHelp },
+    { filter: "todas", label: "Todas", icon: Inbox, count: allCount },
   ];
-  const visibleItems = activeTab === "conversas"
-    ? items
-    : [{ id: "conversas" as const, label: "Conversas", icon: MessageCircle }, ...items];
 
   return (
-    <nav className="flex shrink-0 items-center justify-center gap-5 px-1 py-1 text-[11px] text-current/68">
-      {visibleItems.map((item) => {
+    <nav className="flex w-full shrink-0 items-center justify-center gap-2 px-1 pb-1.5 pt-0.5 text-[10.5px] text-current/64">
+      {items.map((item) => {
         const active = Boolean(item.id && activeTab === item.id);
+        const filterActive = Boolean(item.filter && activeFilter === item.filter);
         const Icon = item.icon;
         return (
           <button
             key={item.id ?? item.label}
             type="button"
-            onClick={() => (item.action ? item.action() : item.id ? onChange(item.id) : undefined)}
+            onClick={() => item.id ? onChange(item.id) : item.filter ? onFilterChange(item.filter) : undefined}
             className={cn(
-              "inline-flex cursor-pointer items-center gap-1.5 rounded-full py-1 text-[11px] font-medium transition-colors",
-              active
+              "inline-flex min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-0.5 py-0.5 text-[10.5px] font-light tracking-[0.015em] transition-colors",
+              active || filterActive
                 ? "text-current"
-                : "text-current/64 hover:text-current",
+                : "text-current/70 hover:text-current",
             )}
           >
-            <Icon className="h-3.5 w-3.5 stroke-[1.8]" />
-            <span>{item.label}</span>
+            <span className={cn("relative inline-flex h-4 w-4 shrink-0 items-center justify-center", item.count && "mr-1.5")}>
+              <Icon className="h-[0.9rem] w-[0.9rem] shrink-0 stroke-[1.45]" />
+              {item.count ? (
+                <span className="absolute -right-1.5 -top-1.5 flex h-3 min-w-3 items-center justify-center rounded-full bg-current/10 px-0.5 text-[7px] font-bold leading-none tabular-nums text-current/72">
+                  {item.count > 9 ? "9+" : item.count}
+                </span>
+              ) : null}
+            </span>
+            <span className="truncate">{item.label}</span>
           </button>
         );
       })}
@@ -1437,59 +1505,36 @@ function AtendimentoDock({
   const fixedItems: Array<{ label: string; icon: LucideIcon; active?: boolean; badge?: number }> = [
     { label: "Venda", icon: ReceiptText },
     { label: "Atendimento", icon: MessageCircle, active: true, badge: pendingCount },
-    { label: "Produção", icon: PackagePlus },
-    { label: "Gestão", icon: Settings },
+    { label: "Produção", icon: ChefHat },
+    { label: "Gestão", icon: BarChart3 },
   ];
   const extraItems: Array<{ label: string; icon: LucideIcon }> = [
-    { label: "Delivery", icon: Package },
-    { label: "Caixa", icon: CreditCard },
-    { label: "Estoque", icon: Database },
+    { label: "Delivery", icon: Bike },
+    { label: "Caixa", icon: Banknote },
+    { label: "Estoque", icon: Package },
     { label: "Usuários", icon: Users },
-    { label: "Configurações", icon: Settings },
   ];
 
   return (
-    <footer className="shrink-0 px-2 pb-2">
+    <footer className="shrink-0 border-t border-[#1f1f1a]/8 bg-[#f1f0ea]/96 px-0 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-0.5 text-[#1f1f1a] dark:border-[#f7f2ec]/10 dark:bg-[#181816] dark:text-[#f7f2ec]">
       {expanded && (
-        <div className="mx-auto mb-1 grid max-w-3xl grid-cols-5 gap-1 rounded-2xl bg-[#685c20]/7 px-2 py-2 text-current/62 dark:bg-[#f3c4a2]/8">
-          {extraItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => onAction(item.label)}
-                className="flex cursor-pointer flex-col items-center gap-1 text-[9px] font-medium hover:text-current"
-              >
-                <Icon className="h-4 w-4 stroke-[1.8]" />
-                <span className="truncate">{item.label}</span>
-              </button>
-            );
-          })}
+        <div className="mb-0.5 ml-4 mr-4 grid grid-cols-4 items-stretch gap-1 py-1 pr-8">
+          {extraItems.map((item) => (
+            <DockButton key={item.label} item={item} onClick={() => onAction(item.label)} />
+          ))}
         </div>
       )}
-      <nav className="relative mx-auto grid max-w-3xl grid-cols-4 items-stretch border-t border-[#685c20]/10 pt-1.5 dark:border-[#f3c4a2]/10">
+      <nav className="relative ml-4 mr-4 grid grid-cols-4 items-stretch gap-1 py-1 pr-8">
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="absolute left-1/2 top-0 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full text-current/46 transition-colors hover:bg-[#685c20]/5 hover:text-current dark:hover:bg-[#f3c4a2]/8"
+          className={cn(
+            "absolute right-0 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
+            !expanded && hiddenSignalCount > 0 && signalToneTextClasses[hiddenSignalTone],
+          )}
           aria-label={expanded ? "Recolher módulos" : "Mostrar módulos"}
         >
-          {expanded ? <ChevronDown className="h-4 w-4 stroke-[1.8]" /> : <ChevronUp className="h-4 w-4 stroke-[1.8]" />}
-          {!expanded && hiddenSignalCount > 0 && (
-            <span
-              className={cn(
-                "absolute right-1 top-0 h-2 w-2 rounded-full",
-                hiddenSignalTone === "red"
-                  ? "bg-red-600"
-                  : hiddenSignalTone === "amber"
-                    ? "bg-amber-500"
-                    : hiddenSignalTone === "green"
-                      ? "bg-emerald-500"
-                      : "bg-sky-500",
-              )}
-            />
-          )}
+          {expanded ? <ChevronDown className="h-4 w-4 stroke-[1.6]" /> : <ChevronUp className="h-4 w-4 stroke-[1.6]" />}
         </button>
         {fixedItems.map((item) => (
           <DockButton key={item.label} item={item} onClick={() => onAction(item.label)} />
@@ -1512,21 +1557,21 @@ function DockButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 text-[10px] font-medium transition-colors",
+        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1 text-[8.5px] font-light tracking-[-0.01em] transition-colors",
         item.active
-          ? "bg-[#685c20]/7 text-current dark:bg-[#f3c4a2]/10"
-          : "text-current/52 hover:bg-[#685c20]/5 hover:text-current dark:hover:bg-[#f3c4a2]/8",
+          ? "bg-[#1f1f1a]/7 text-current dark:bg-[#24241f]"
+          : "text-current/62 hover:bg-[#1f1f1a]/5 hover:text-current dark:hover:bg-[#f7f2ec]/8",
       )}
     >
       <span className="relative">
-        <Icon className="h-5 w-5 stroke-[1.8]" />
+        <Icon className="h-[1.15rem] w-[1.15rem] stroke-[1.45]" />
         {item.badge ? (
-          <span className="absolute -right-2 -top-1 rounded-full bg-emerald-500 px-1 text-[8px] font-bold leading-3 text-white">
+          <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center rounded-full bg-emerald-500/90 px-0.5 text-[7px] font-bold leading-none text-white">
             {item.badge}
           </span>
         ) : null}
       </span>
-      <span>{item.label}</span>
+      <span className="max-w-full whitespace-nowrap leading-none">{item.label}</span>
     </button>
   );
 }
@@ -1542,7 +1587,7 @@ function JourneyQueue({
 }) {
   if (journeys.length === 0) {
     return (
-      <div className="px-2 py-2 text-center text-[#685c20] dark:text-[#f3c4a2] sm:py-4">
+      <div className="px-2 py-2 text-center text-[#1f1f1a] dark:text-[#f7f2ec] sm:py-4">
         <p className="text-sm font-medium text-current/72">Fila sem jornadas agora.</p>
         <p className="mt-1 text-xs text-current/48">Use Comunicação Agora para alternar os filtros.</p>
       </div>
@@ -1574,7 +1619,7 @@ function JourneyQueue({
               "w-full cursor-pointer rounded-2xl px-3 py-2.5 text-left transition-colors",
               isSelected
                 ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
-                : "bg-[#f8dcc8] text-[#685c20] hover:bg-[#f8dcc8]/80 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:hover:bg-[#756c2c]/82",
+                : "bg-white text-[#685c20] hover:bg-white/80 dark:bg-[#151513] dark:text-[#f3c4a2] dark:hover:bg-[#756c2c]/82",
             )}
           >
             <div className="flex items-start gap-2.5">
@@ -1612,7 +1657,7 @@ function CustomerMemoryPreview({
   onOpen: () => void;
 }) {
   return (
-    <div className="rounded-2xl bg-[#685c20]/7 px-2 py-2 dark:bg-[#f3c4a2]/8">
+    <div className="rounded-2xl bg-[#1f1f1a]/7 px-2 py-2 dark:bg-[#f7f2ec]/8">
       <div className="mb-1.5 flex items-center justify-between gap-1">
         <p className="truncate text-[9px] font-semibold uppercase tracking-[0.05em] text-current/70">
           Memória do Cliente
@@ -1671,7 +1716,7 @@ function CatalogSessionSummary({
       : `${session?.quantidadeItens ?? 0} itens`;
 
   return (
-    <div className="rounded-2xl bg-[#685c20]/7 px-2 py-2 dark:bg-[#f3c4a2]/8">
+    <div className="rounded-2xl bg-[#1f1f1a]/7 px-2 py-2 dark:bg-[#f7f2ec]/8">
       <div className="mb-1.5 flex items-center justify-between gap-1">
         <p className="truncate text-[9px] font-semibold uppercase tracking-[0.05em] text-current/70">
           Carrinho do Cardápio
@@ -1873,7 +1918,7 @@ function CustomerMemoryPanel({
               Memória do Cliente
             </p>
             <h2 className="truncate text-base font-semibold">{customerLabel(conversation)}</h2>
-            <p className="text-xs text-current/62">{channelLabel(conversation)} · contexto permanente</p>
+            <p className="text-xs text-current/62">{channelLabel(conversation)} ? contexto permanente</p>
           </div>
           <button
             type="button"
@@ -1894,7 +1939,7 @@ function CustomerMemoryPanel({
                     <span className="font-semibold">
                       {formatTime(message.timestamp)} · {message.direcao === "entrada" ? "Cliente" : "Atendimento"}
                     </span>
-                    {message.texto ? ` · ${message.texto}` : " · Mensagem sem texto"}
+                    {message.texto ? ` ? ${message.texto}` : " ? Mensagem sem texto"}
                   </p>
                 ))}
               </div>
@@ -1932,7 +1977,7 @@ function CustomerMemoryPanel({
             <p>Consulta preparada para campanhas e ofertas aplicáveis ao cliente.</p>
           </MemorySection>
 
-          <MemorySection icon={CreditCard} title="Contas">
+          <MemorySection icon={Banknote} title="Contas">
             <p>{linkedOrder && linkedOrder.status !== "entregue" ? "Conta pendente nesta jornada." : "Sem pendência financeira visível nesta jornada."}</p>
           </MemorySection>
 
@@ -1998,7 +2043,7 @@ function FocusedJourney({
 
   if (!journey) {
     return (
-      <section className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-2xl bg-[#f8dcc8] px-6 py-4 text-center text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+      <section className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-2xl bg-white px-6 py-4 text-center text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <MessageCircle className="mb-2 h-8 w-8 stroke-[1.6] opacity-55 sm:mb-3 sm:h-9 sm:w-9" />
         <p className="text-sm font-semibold">Nenhuma jornada em atendimento.</p>
         <p className="mt-1 max-w-xs text-xs leading-snug text-current/58">
@@ -2010,7 +2055,7 @@ function FocusedJourney({
 
   if (journey.kind === "transfer") {
     return (
-      <section className="min-h-0 flex-1 rounded-2xl bg-[#f8dcc8] p-3 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+      <section className="min-h-0 flex-1 rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
@@ -2025,11 +2070,11 @@ function FocusedJourney({
         </div>
 
         <div className="mt-4 grid gap-2">
-          <div className="rounded-2xl bg-[#685c20]/7 px-3 py-2.5 dark:bg-[#f3c4a2]/8">
+          <div className="rounded-2xl bg-[#1f1f1a]/7 px-3 py-2.5 dark:bg-[#f7f2ec]/8">
             <p className="text-[11px] text-current/48">Motivo</p>
             <p className="mt-0.5 text-sm font-medium">{journey.transfer.motivo}</p>
           </div>
-          <div className="rounded-2xl bg-[#685c20]/7 px-3 py-2.5 dark:bg-[#f3c4a2]/8">
+          <div className="rounded-2xl bg-[#1f1f1a]/7 px-3 py-2.5 dark:bg-[#f7f2ec]/8">
             <p className="text-[11px] text-current/48">Contexto</p>
             <p className="mt-0.5 line-clamp-3 text-xs leading-relaxed text-current/70">
               {journey.transfer.contexto}
@@ -2197,7 +2242,7 @@ function FocusedJourney({
   const selectedIndicator = indicators.find((indicator) => indicator.id === openIndicator);
 
   return (
-    <section className="min-h-0 flex-1 rounded-2xl bg-[#f8dcc8] p-3 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+    <section className="min-h-0 flex-1 rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
@@ -2211,7 +2256,7 @@ function FocusedJourney({
         <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-full", priorityClasses[conversation.prioridade])} />
       </div>
 
-      <div className="mt-3 rounded-2xl bg-[#685c20]/7 px-3 py-2.5 dark:bg-[#f3c4a2]/8">
+      <div className="mt-3 rounded-2xl bg-[#1f1f1a]/7 px-3 py-2.5 dark:bg-[#f7f2ec]/8">
         <p className="text-[10.5px] text-current/48">Contexto</p>
         <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-current/84">
           {conversation.ultimoTextoSnapshot ?? "Conversa aberta sem mensagem textual."}
@@ -2231,7 +2276,7 @@ function FocusedJourney({
             />
           ))}
           {hiddenIndicatorCount > 0 && (
-            <span className="inline-flex items-center rounded-full bg-[#685c20]/7 px-2.5 py-1.5 text-[10px] font-medium text-current/62 dark:bg-[#f3c4a2]/8">
+            <span className="inline-flex items-center rounded-full bg-[#1f1f1a]/7 px-2.5 py-1.5 text-[10px] font-medium text-current/62 dark:bg-[#f7f2ec]/8">
               +{hiddenIndicatorCount}
             </span>
           )}
@@ -2239,7 +2284,7 @@ function FocusedJourney({
       )}
 
       {selectedIndicator && (
-        <div className="mt-2 rounded-2xl bg-[#685c20]/7 px-3 py-2 text-xs leading-relaxed dark:bg-[#f3c4a2]/8">
+        <div className="mt-2 rounded-2xl bg-[#1f1f1a]/7 px-3 py-2 text-xs leading-relaxed dark:bg-[#f7f2ec]/8">
           {selectedIndicator.content}
         </div>
       )}
@@ -2270,7 +2315,7 @@ function PrimaryNextAction({
 
   if (!journey) {
     return (
-      <section className="rounded-2xl bg-[#f8dcc8] p-3 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+      <section className="rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
           Próxima Ação
         </p>
@@ -2281,7 +2326,7 @@ function PrimaryNextAction({
 
   if (journey.kind === "transfer") {
     return (
-      <section className="rounded-2xl bg-[#f8dcc8] p-3 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+      <section className="rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
           Próxima Ação
         </p>
@@ -2319,21 +2364,21 @@ function PrimaryNextAction({
   };
 
   return (
-    <section className="rounded-2xl bg-[#f8dcc8] p-2.5 text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+    <section className="rounded-2xl bg-white p-2.5 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
       <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
         Próxima Ação
       </p>
 
       {action.kind === "reply" ? (
         <div className="mt-2">
-          <div className="mb-2 flex items-start gap-2 rounded-2xl bg-[#685c20]/7 px-3 py-2 dark:bg-[#f3c4a2]/8">
+          <div className="mb-2 flex items-start gap-2 rounded-2xl bg-[#1f1f1a]/7 px-3 py-2 dark:bg-[#f7f2ec]/8">
             <ActionIcon className="mt-0.5 h-4 w-4 shrink-0 stroke-[1.8]" />
             <div>
               <p className="text-sm font-semibold">{action.title}</p>
               <p className="text-xs text-current/62">{action.description}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl bg-[#685c20]/8 px-2 py-2 dark:bg-[#f3c4a2]/8">
+          <div className="flex items-center gap-2 rounded-2xl bg-[#685c20]/8 px-2 py-2 dark:bg-[#f7f2ec]/8">
             <input
               value={text}
               onChange={(event) => setText(event.target.value)}
@@ -2370,7 +2415,7 @@ function PrimaryNextAction({
         <button
           type="button"
           onClick={onMarkRead}
-          className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f3c4a2]/8"
+          className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f7f2ec]/8"
         >
           Marcar lida
         </button>
@@ -2378,7 +2423,7 @@ function PrimaryNextAction({
           <button
             type="button"
             onClick={onStartOrder}
-            className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f3c4a2]/8"
+            className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f7f2ec]/8"
           >
             Criar pedido
           </button>
@@ -2386,7 +2431,7 @@ function PrimaryNextAction({
         <button
           type="button"
           onClick={() => toast.info("Repasse contextual será concluída na próxima etapa")}
-          className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f3c4a2]/8"
+          className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f7f2ec]/8"
         >
           Encaminhar
         </button>
@@ -2399,60 +2444,6 @@ function PrimaryNextAction({
       )}
     </section>
   );
-}
-
-function buildHealthItems(role: string): HealthItem[] {
-  const items: HealthItem[] = [
-    {
-      id: "internet",
-      label: "Internet",
-      icon: Wifi,
-      status: typeof navigator !== "undefined" && navigator.onLine ? "online" : "offline",
-      weight: 3,
-      visibleFor: ["gerente", "superadmin", "caixa", "producao", "atendente", "delivery", "estoque"],
-    },
-    {
-      id: "database",
-      label: "Banco",
-      icon: Database,
-      status: "online",
-      weight: 3,
-      visibleFor: ["gerente", "superadmin", "caixa", "estoque", "atendente"],
-    },
-    {
-      id: "sync",
-      label: "Sync",
-      icon: RefreshCw,
-      status: "online",
-      weight: 2,
-      visibleFor: ["gerente", "superadmin", "producao", "atendente", "delivery", "estoque"],
-    },
-    {
-      id: "whatsapp",
-      label: "WhatsApp",
-      icon: MessageCircle,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin", "atendente", "delivery"],
-    },
-    {
-      id: "printer",
-      label: "Impressão",
-      icon: Printer,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin", "caixa", "producao"],
-    },
-    {
-      id: "hardware",
-      label: "Hardware",
-      icon: Activity,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin"],
-    },
-  ];
-  return items.filter((item) => item.visibleFor.includes(role) || item.visibleFor.includes("*"));
 }
 
 export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onStartOrder }: Props) {
@@ -2502,6 +2493,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
   const [activeTab, setActiveTab] = useState<AtendimentoTab>("conversas");
   const [filter, setFilter] = useState<FilterId>("todas");
+  const [summarySecondaryOpen, setSummarySecondaryOpen] = useState(true);
   const [selected, setSelected] = useState<{ kind: JourneyKind; id: string } | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [reportPanelOpen, setReportPanelOpen] = useState(false);
@@ -2512,7 +2504,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   const elasticTimeoutRef = useRef<number | null>(null);
   const [sending, setSending] = useState(false);
   const [memoryOpen, setMemoryOpen] = useState(false);
-  const healthItems = useMemo(() => buildHealthItems(operator.role), [operator.role]);
+  const healthItems = useMemo(() => getVisibleHealthItems(buildOperationalHealthInventory({ role: operator.role }), operator.role), [operator.role]);
 
   const triggerElastic = (direction: number) => {
     if (elasticTimeoutRef.current) window.clearTimeout(elasticTimeoutRef.current);
@@ -2536,12 +2528,15 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   const communicationCounts = useMemo(() => {
     const lista = effectiveConversations ?? [];
     const carrinhos = demoMode ? 1 : 0;
+    const ia = lista.filter((conversation) => conversation.status === "nova").length;
+    const humano = lista.filter((conversation) => conversation.status === "em_atendimento" || Boolean(conversation.operadorResponsavelId)).length;
+    const transferencias = effectiveTransfers?.filter((transfer) => ["pendente", "aguardando_aceite"].includes(transfer.status)).length ?? 0;
     return {
-      ia: lista.filter((conversation) => conversation.status === "nova").length,
-      humano: lista.filter((conversation) => conversation.status === "em_atendimento" || Boolean(conversation.operadorResponsavelId)).length,
-      todas: lista.length,
+      ia,
+      humano,
+      todas: ia + humano + carrinhos + transferencias,
       carrinhos,
-      transferencias: effectiveTransfers?.filter((transfer) => ["pendente", "aguardando_aceite"].includes(transfer.status)).length ?? 0,
+      transferencias,
     };
   }, [effectiveConversations, effectiveTransfers, demoMode]);
 
@@ -2720,15 +2715,15 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   return (
     <div
       className={cn(
-        "flex h-svh flex-col overflow-hidden bg-[#f3c4a2] text-[#685c20] dark:bg-[#685c20] dark:text-[#f3c4a2]",
+        "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0b0b0a] dark:text-[#f7f2ec]",
         interfaceScaleClasses[preferences.interfaceScale],
       )}
     >
-      <header className="grid shrink-0 grid-cols-[1.85rem_minmax(0,1fr)_9rem] items-center gap-1.5 border-b border-[#685c20]/10 px-3 py-2.5 md:grid-cols-[2.25rem_minmax(0,1fr)_10.5rem] md:gap-3 md:px-6 md:py-3 dark:border-[#f3c4a2]/10">
+      <header className="grid shrink-0 grid-cols-[2.1rem_minmax(0,1fr)_11rem] items-center gap-1 border-b border-[#1f1f1a]/12 bg-[#f7f7f4]/96 px-4 py-2 text-[#1f1f1a] md:grid-cols-[2.25rem_minmax(0,1fr)_12rem] md:gap-2 md:px-6 md:py-3 dark:border-[#f7f2ec]/12 dark:bg-[#151513] dark:text-[#f7f2ec]">
         <button
           type="button"
           onClick={onBack}
-          className="cursor-pointer rounded-full p-1.5 text-current/70 transition-colors hover:text-current focus:outline-none sm:p-2"
+          className="relative z-20 flex h-9 w-9 cursor-pointer items-center justify-start rounded-full text-current/76 transition-colors hover:text-current focus:outline-none"
           aria-label="Voltar"
         >
           <ArrowLeft className="h-5 w-5 stroke-[1.8]" />
@@ -2739,11 +2734,14 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
           </h1>
         </div>
         <div className="flex w-full items-center justify-end gap-0.5 sm:gap-1">
-          {healthItems.length > 0 && <OperationalHealthPopover items={healthItems} />}
-          <InterfaceScalePopover
-            value={preferences.interfaceScale}
-            onChange={(interfaceScale) => updatePreferences({ interfaceScale })}
-          />
+          <button
+            type="button"
+            onClick={() => setActiveTab("agenda")}
+            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2] sm:p-2"
+            aria-label="Agenda"
+          >
+            <CalendarDays className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />
+          </button>
           <button
             type="button"
             onClick={() => setTheme(isDark ? "light" : "dark")}
@@ -2754,9 +2752,12 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
           </button>
           <DashboardMenu
             contextualItems={contextualMenu[activeTab]}
+            healthItems={healthItems}
             availableOperationalModes={availableOperationalModes}
             currentOperationalMode={operationalMode}
             onOperationalModeChange={setOperationalMode}
+            interfaceScale={preferences.interfaceScale}
+            onInterfaceScaleChange={(interfaceScale) => updatePreferences({ interfaceScale })}
             onHelp={() => setShowHelp(true)}
             onLogout={onLogout}
             onFutureAction={(label) => {
@@ -2768,20 +2769,32 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
       </header>
 
       <main
-        className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-1 px-3 pb-0 transition-transform duration-150 ease-out md:px-6"
+        className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-1 px-4 pb-0 transition-transform duration-150 ease-out md:px-6"
         style={{ transform: `translateY(${elasticOffset}px)` }}
         onWheel={handleElasticWheel}
       >
         <section className="flex min-h-0 flex-1 flex-col">
           {activeTab === "conversas" && !detailOpen && (
             <>
-              <AtendimentoContextShortcuts activeTab={activeTab} onChange={setActiveTab} onHelp={() => setShowHelp(true)} />
-              <ConversationFilters
-                counts={communicationCounts}
-                tones={communicationTones}
-                activeFilter={filter}
-                onFilterChange={setFilter}
-              />
+              <div className="-mx-4 mt-1 border-b border-[#1f1f1a]/10 bg-[#ffffff]/92 px-4 pb-1 pt-1 dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] md:-mx-6 md:px-6">
+                <ConversationFilters
+                  counts={communicationCounts}
+                  tones={communicationTones}
+                  activeFilter={filter}
+                  onFilterChange={setFilter}
+                  secondaryOpen={summarySecondaryOpen}
+                  onSecondaryToggle={() => setSummarySecondaryOpen((value) => !value)}
+                />
+                {summarySecondaryOpen && (
+                  <AtendimentoContextShortcuts
+                    activeTab={activeTab}
+                    activeFilter={filter}
+                    allCount={communicationCounts.todas}
+                    onChange={setActiveTab}
+                    onFilterChange={setFilter}
+                  />
+                )}
+              </div>
               <ConversationListPanel
                 journeys={journeys}
                 sessions={effectiveCatalogSessions}
@@ -2822,7 +2835,13 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
           {activeTab === "pedidos" && (
             <>
-              <AtendimentoContextShortcuts activeTab={activeTab} onChange={setActiveTab} onHelp={() => setShowHelp(true)} />
+              <AtendimentoContextShortcuts
+                activeTab={activeTab}
+                activeFilter={filter}
+                allCount={communicationCounts.todas}
+                onChange={setActiveTab}
+                onFilterChange={setFilter}
+              />
               <PlaceholderTab
                 title="Pedidos"
                 description="Pedidos do atendimento aparecerão aqui quando estiverem vinculados."
@@ -2832,7 +2851,13 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
           {activeTab === "clientes" && (
             <>
-              <AtendimentoContextShortcuts activeTab={activeTab} onChange={setActiveTab} onHelp={() => setShowHelp(true)} />
+              <AtendimentoContextShortcuts
+                activeTab={activeTab}
+                activeFilter={filter}
+                allCount={communicationCounts.todas}
+                onChange={setActiveTab}
+                onFilterChange={setFilter}
+              />
               <PlaceholderTab
                 title="Clientes"
                 description="Clientes do atendimento aparecerão aqui conforme as conversas forem identificadas."
@@ -2842,7 +2867,13 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
           {activeTab === "agenda" && (
             <>
-              <AtendimentoContextShortcuts activeTab={activeTab} onChange={setActiveTab} onHelp={() => setShowHelp(true)} />
+              <AtendimentoContextShortcuts
+                activeTab={activeTab}
+                activeFilter={filter}
+                allCount={communicationCounts.todas}
+                onChange={setActiveTab}
+                onFilterChange={setFilter}
+              />
               <PlaceholderTab
                 title="Agenda"
                 description="Compromissos do atendimento aparecerão aqui."
@@ -2954,4 +2985,3 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
     </div>
   );
 }
-

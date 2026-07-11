@@ -33,19 +33,23 @@ Parâmetros obrigatórios:
 
 ## DNA Alvorada v1
 
+O DNA visual mantém a paleta da marca como acento e assinatura, mas a base operacional do RondonIA OS passa a ser neutra para preservar usabilidade, contraste e padronização entre clientes.
+
 ### Modo Dia
 
-- Plano 0 / Fundo: Pantone 474 C `#F3C4A2`
-- Plano 1 / Campos: derivado do Pantone 474 C `#F6D0B4`
-- Foco: derivado elevado do Pantone 474 C `#F8DCC8`
-- Texto: Pantone 3995 C `#685C20`
+- Plano 0 / Fundo: branco quente `#F7F7F4`
+- Plano 1 / Operação: branco `#FFFFFF`
+- Foco: branco com acento oliva discreto
+- Texto: grafite quente `#1F1F1A`
+- Assinatura da marca: Pantone 3995 C `#685C20`
 - Ação: Pantone 1655 / Laranja Alvorada `#F04A2A`
 
 ### Modo Noite
 
-- Plano 0 / Fundo: Pantone 3995 C `#685C20`
-- Plano 1 / Campos: derivado do Pantone 3995 C `#756C2C`
-- Texto: Pantone 474 C `#F3C4A2`
+- Plano 0 / Fundo: preto/grafite profundo `#0D0D0B`
+- Plano 1 / Operação: grafite elevado `#151513`
+- Texto: branco quente `#F7F2EC`
+- Assinatura da marca: Pantone 474 C `#F3C4A2`
 - Ação: Pantone 1655 / Laranja Alvorada `#F04A2A`
 
 ### Plano 2
@@ -99,6 +103,12 @@ A Saúde Operacional representa tendência e confiabilidade do ambiente, não ap
 - A janela recomendada para evolução · média móvel de 5 minutos.
 - Adaptar os itens exibidos por perfil.
 - Sinalizar somente quando houver impacto operacional.
+- Em telas com Menu Geral, a Saúde do Sistema deve viver dentro do menu três linhas; o ícone do menu pode receber sinalização semafórica quando houver impacto real.
+- O menu três linhas também pode sinalizar outros alertas globais elegíveis, desde que não duplique informação já apresentada no corpo da tela.
+- O menu pode pulsar suavemente no primeiro acesso/retorno para informar a saúde atual; depois disso, sinaliza conforme configuração e impacto operacional.
+- A lista de saúde de cada cliente deve exibir apenas canais, hardwares, APIs e integrações captados pelo sistema.
+- Quando um item deixar de ser captado, seu histórico deve permanecer registrado para comparação quando voltar, incluindo marca, configuração aplicada, período e impacto operacional.
+- A Saúde do Sistema deve preparar relatórios por período, com leitura enxuta e gráficos comparativos quando necessário para suporte, auditoria ou envio digital.
 - Não marcar vermelho por um evento isolado sem confirmação de tendência.
 
 Estados do ISO:
@@ -431,6 +441,9 @@ Regras:
 - Em docks operacionais, a alça não ocupa vaga de item e não altera a proporção dos ícones.
 - Em resumos, filtros e linhas retráteis, a alça não cria linha exclusiva nem desloca os indicadores.
 - A alça deve ser opticamente centralizada em relação ao conjunto que controla.
+- Alças equivalentes no mesmo fluxo devem ter o mesmo teor de destaque visual, especialmente entre resumo superior e rodapé.
+- No modo escuro, a alça usa branco quente como leitura principal; no modo claro, usa oliva/grafite suave.
+- O destaque deve estar no próprio símbolo, não em cápsula, bolha ou fundo pesado.
 - O estado recolhido/expandido deve continuar intuitivo por chevron ou símbolo equivalente.
 - Hover/foco seguem a mesma linguagem de superfície suave do componente.
 - A regra vale para componentes atuais e futuros.
@@ -463,6 +476,13 @@ Regras:
 - A dock inicial prioriza reconhecimento rápido dos destinos principais.
 - A dock interna prioriza controle, contexto e redução de dispersão.
 - A linguagem visual permanece a mesma: ícone, nome curto, badge quando necessário e destaque suave no ativo.
+- Linhas fixas e linhas expandidas da mesma dock devem usar a mesma composição: ícone acima, texto abaixo, mesmo tamanho, mesmo traço e mesmo respiro.
+- A expansão não pode criar outra linguagem, como lista horizontal, texto lateral ou ícone menor sem justificativa.
+- Badges de dock devem ficar ancorados ao ícone correspondente, nunca soltos no canto do botão.
+- Quando houver espaço, o nome do destino deve aparecer completo; abreviações só são permitidas quando evitarem quebra ou colisão visual.
+- A tela pode reduzir margens laterais da dock para acomodar rótulos completos, desde que preserve respiro e alinhamento óptico.
+- Ícones de dock utilizam traço leve e consistente para não competir com texto, badges ou ações principais.
+- Rótulos curtos devem usar linguagem comum do operador. Quando `Configurações` não couber, preferir `Ajustes` a abreviações técnicas como `Config.`.
 
 ## RVL-029 — Configuração Curta no Expansível
 
@@ -499,6 +519,27 @@ Regras:
 - Azul indica alerta visto ou exceção informativa.
 - O operador deve conseguir cancelar o alerta quando o contexto físico/operacional exigir.
 - Quando houver alerta não visto, a interface deve comunicar isso sem piscar, som ou glow.
+
+## RVL-031 — Plano de Superfícies Funcionais
+
+Telas operacionais devem usar fundo sólido contínuo, com separação por áreas funcionais claras.
+
+Princípios:
+
+- Plano 0 representa o fundo geral da operação.
+- Plano 1 representa áreas funcionais: header, contexto, trabalho principal, apoio e navegação.
+- Plano 2 representa elementos de interação: campos, botões discretos, itens ativos e áreas clicáveis.
+- A separação entre áreas deve acontecer por diferença sutil de superfície, respiro, divisor fino, agrupamento visual e contraste moderado.
+- No modo dia, usar três planos visuais para evitar baixo contraste: off-white como fundo, superfícies brancas/elevadas para áreas e cinza quente claro para interações.
+- No modo escuro, usar três planos visuais: preto/grafite profundo no Plano 0, grafite elevado perceptível no Plano 1 e grafite mais claro no Plano 2.
+- O modo escuro não pode ser preto chapado; áreas funcionais precisam ser reconhecíveis e campos de interação precisam ter contraste próprio.
+- Divisores no modo escuro devem ser discretos, mas visíveis o suficiente para orientar a leitura.
+- A hierarquia visual de interfaces escuras modernas, como Codex, pode servir como referência de contraste, camadas e densidade visual, sem copiar layout.
+- Header nunca deve se fundir visualmente com a primeira área operacional.
+- Toda tela operacional deve diferenciar barra de localização/global, área de contexto operacional, área principal de trabalho e navegação inferior.
+- Evitar cards pesados, sombras fortes, blocos concorrendo entre si, aparência de dashboard, aparência bancária ou aparência de CRM.
+- Cada área precisa ter função única e reconhecível: localização, contexto, trabalho principal, apoio ou navegação.
+- A lista ou área de trabalho principal deve continuar sendo o foco visual da tela.
 
 ## CAO — Centro de Atenção Operacional
 

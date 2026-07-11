@@ -54,15 +54,17 @@
 
 :root {
   --radius: 0.625rem;
-  /* ALVORADA — Pantone 474 C, Pantone 3995 C, Pantone 1655 */
+  /* RONDONIA Soft Surfaces — base neutra + acentos parametrizados por cliente */
   --rvl-pantone-474-c: #f3c4a2;
   --rvl-pantone-3995-c: #685c20;
   --rvl-action: #f04a2a;
-  --rvl-plan-0: #f3c4a2;
-  --rvl-plan-1: #f6d0b4;
-  --rvl-plan-1-elevated: #f8dcc8;
+  --rvl-brand-olive: #685c20;
+  --rvl-brand-peach: #f3c4a2;
+  --rvl-plan-0: #f7f7f4;
+  --rvl-plan-1: #ffffff;
+  --rvl-plan-1-elevated: #ffffff;
   --rvl-plan-2: #685c20;
-  --rvl-text: #685c20;
+  --rvl-text: #1f1f1a;
   --rvl-text-inverse: #fff4e8;
 
   --background: var(--rvl-plan-0);
@@ -99,11 +101,11 @@
 }
 
 .dark {
-  --rvl-plan-0: #685c20;
-  --rvl-plan-1: #756c2c;
-  --rvl-plan-1-elevated: #7f7531;
+  --rvl-plan-0: #0d0d0b;
+  --rvl-plan-1: #151513;
+  --rvl-plan-1-elevated: #1b1b18;
   --rvl-plan-2: #f3c4a2;
-  --rvl-text: #f3c4a2;
+  --rvl-text: #f7f2ec;
   --rvl-text-inverse: #685c20;
 
   --background: var(--rvl-plan-0);
@@ -151,5 +153,23 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+
+  [data-rvl-scroll] {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, currentColor 16%, transparent) transparent;
+  }
+
+  [data-rvl-scroll]::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  [data-rvl-scroll]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  [data-rvl-scroll]::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    border-radius: 999px;
   }
 }

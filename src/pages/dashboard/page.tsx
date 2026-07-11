@@ -1,9 +1,8 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { motion } from "motion/react";
 import {
-  Activity,
   AlertCircle,
   ArrowLeft,
   Banknote,
@@ -13,17 +12,12 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle2,
-  Database,
   MessageCircle,
   Package,
-  Printer,
   ReceiptText,
-  RefreshCw,
   Settings,
-  ShoppingBag,
   Truck,
   Users,
-  Wifi,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -34,10 +28,7 @@ import TodayAgendaCard, { type TodayAgendaItem } from "./_components/TodayAgenda
 import WidgetConfigPanel from "./_components/WidgetConfigPanel.tsx";
 import type { InterfaceScale } from "./_components/InterfaceScalePopover.tsx";
 import { getModulesForRole } from "./_lib/modules.ts";
-import {
-  getVisibleHealthItems,
-  type HealthItem,
-} from "./_lib/operationalHealth.ts";
+import { buildOperationalHealthInventory, getVisibleHealthItems } from "./_lib/operationalHealth.ts";
 import { cn } from "@/lib/utils.ts";
 
 type OperatorSession = {
@@ -146,34 +137,34 @@ function DockActionButton({
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
       className={cn(
-        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-0.5 text-[#1f1f1a] transition-colors active:scale-[0.98] dark:text-[#f7f2ec]",
+        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 text-[#1f1f1a] transition-colors active:scale-[0.98] dark:text-[#f7f2ec]",
         variant === "home"
-          ? "h-full w-full max-w-[4.9rem] rounded-2xl px-1 py-1"
-          : "rounded-xl px-2 py-0.5",
+          ? "h-full w-full max-w-[5.3rem] rounded-2xl px-1 py-1"
+          : "rounded-xl px-2 py-1",
         active
-          ? "bg-[#685c20]/10 dark:bg-[#f3c4a2]/12"
+          ? "bg-[#685c20]/10 dark:bg-[#24241f]"
           : "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
       )}
     >
-      {badge && badge.count > 0 && (
-        <span
+      <span className="relative">
+        <Icon
           className={cn(
-            "absolute right-2 top-2 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold leading-none",
-            badgeClasses[badge.priority]
+            "stroke-[1.45]",
+            "h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))]",
           )}
-        >
-          {badge.count > 9 ? "9+" : badge.count}
-        </span>
-      )}
-      <Icon
-        className={cn(
-          "stroke-[1.5]",
-          variant === "home"
-            ? "h-[calc(1.44rem*var(--rvl-font-scale,1))] w-[calc(1.44rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.58rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.58rem*var(--rvl-font-scale,1))] sm:h-[calc(1.68rem*var(--rvl-font-scale,1))] sm:w-[calc(1.68rem*var(--rvl-font-scale,1))]"
-            : "h-[calc(1.32rem*var(--rvl-font-scale,1))] w-[calc(1.32rem*var(--rvl-font-scale,1))] min-[380px]:h-[calc(1.45rem*var(--rvl-font-scale,1))] min-[380px]:w-[calc(1.45rem*var(--rvl-font-scale,1))] sm:h-[calc(1.56rem*var(--rvl-font-scale,1))] sm:w-[calc(1.56rem*var(--rvl-font-scale,1))]",
+        />
+        {badge && badge.count > 0 && (
+          <span
+            className={cn(
+              "absolute -right-1 top-2 flex h-3 min-w-3 items-center justify-center rounded-full px-0.5 text-[7px] font-bold leading-none",
+              badgeClasses[badge.priority]
+            )}
+          >
+            {badge.count > 9 ? "9+" : badge.count}
+          </span>
         )}
-      />
-      <span className="text-[calc(10px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em] sm:text-[calc(10.5px*var(--rvl-font-scale,1))]">
+      </span>
+      <span className="text-[calc(9.5px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em]">
         {label}
       </span>
     </button>
@@ -210,7 +201,7 @@ function OperationalDock({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.15, ease: "easeOut" as const }}
           className={cn(
-            "absolute inset-x-0 z-20 rounded-t-3xl bg-white/96 p-1.5 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#0d0d0b]/96 dark:text-[#f7f2ec]",
+            "absolute inset-x-0 z-20 rounded-t-3xl bg-[#f1f0ea]/96 p-1.5 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#181816] dark:text-[#f7f2ec]",
             "bottom-[calc(3.42rem*var(--rvl-card-scale,1))]"
           )}
         >
@@ -224,8 +215,10 @@ function OperationalDock({
 
       <div
         className={cn(
-          "relative bg-white/96 text-[#1f1f1a] backdrop-blur-sm dark:bg-[#0d0d0b]/96 dark:text-[#f7f2ec]",
-          variant === "home" ? "px-4 py-1.5" : "px-2 py-1",
+          "relative border-t border-[#1f1f1a]/8 bg-[#f1f0ea]/96 text-[#1f1f1a] backdrop-blur-sm dark:border-[#f7f2ec]/10 dark:bg-[#181816] dark:text-[#f7f2ec]",
+          variant === "home"
+            ? "px-4 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-1"
+            : "px-2 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-0.5",
         )}
       >
         {variant !== "home" && (
@@ -233,37 +226,25 @@ function OperationalDock({
             type="button"
             onClick={() => onOpenChange(!open)}
             className={cn(
-              "absolute left-1/2 top-1 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full text-[#1f1f1a]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] dark:text-[#f7f2ec]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]",
+              "absolute left-1/2 top-1 z-10 flex h-5 w-12 -translate-x-1/2 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
               hasHiddenSignal &&
                 !open &&
                 (hiddenSignalTone === "critical"
-                  ? "bg-red-600/16 text-red-700 dark:bg-red-300/16 dark:text-red-200"
+                  ? "text-red-700 dark:text-red-200"
                   : hiddenSignalTone === "important"
-                    ? "bg-amber-500/18 text-amber-800 dark:bg-amber-300/18 dark:text-amber-200"
-                    : "bg-emerald-500/14 text-emerald-800 dark:bg-emerald-300/14 dark:text-emerald-200")
+                    ? "text-amber-800 dark:text-amber-200"
+                    : "text-emerald-800 dark:text-emerald-200")
             )}
             aria-label={open ? "Recolher atalhos" : "Mostrar atalhos"}
           >
-            {open ? <ChevronDown className="h-4 w-4 stroke-[1.9]" /> : <ChevronUp className="h-4 w-4 stroke-[1.9]" />}
-            {hasHiddenSignal && !open && (
-              <span
-                className={cn(
-                  "absolute right-0 top-0 h-2 w-2 rounded-full",
-                  hiddenSignalTone === "critical"
-                    ? "bg-red-600"
-                    : hiddenSignalTone === "important" || hiddenSignalTone === "attention"
-                      ? "bg-amber-500"
-                      : "bg-emerald-500"
-                )}
-              />
-            )}
+            {open ? <ChevronDown className="h-4 w-4 stroke-[1.6]" /> : <ChevronUp className="h-4 w-4 stroke-[1.6]" />}
           </button>
         )}
         <div
           className={cn(
             "grid",
             variant === "home"
-              ? "grid-cols-5 place-items-center gap-y-1 min-[720px]:grid-cols-9"
+              ? "grid-cols-5 place-items-center gap-y-1.5 min-[720px]:grid-cols-9"
               : "h-[calc(2.85rem*var(--rvl-card-scale,1))] gap-1.5 sm:h-[calc(3.05rem*var(--rvl-card-scale,1))]"
           )}
         >
@@ -341,64 +322,13 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
         }))
       : fallbackTodayItems;
 
-  const healthItems: HealthItem[] = [
-    {
-      id: "internet",
-      label: "Internet",
-      icon: Wifi,
-      status: typeof navigator !== "undefined" && navigator.onLine ? "online" : "offline",
-      weight: 3,
-      visibleFor: ["gerente", "superadmin", "caixa", "producao", "atendente", "delivery", "estoque"],
-    },
-    {
-      id: "database",
-      label: "Banco",
-      icon: Database,
-      status: "online",
-      weight: 3,
-      visibleFor: ["gerente", "superadmin", "caixa", "estoque"],
-    },
-    {
-      id: "sync",
-      label: "Sync",
-      icon: RefreshCw,
-      status: "online",
-      weight: 2,
-      visibleFor: ["gerente", "superadmin", "producao", "atendente", "delivery", "estoque"],
-    },
-    {
-      id: "whatsapp",
-      label: "WhatsApp",
-      icon: MessageCircle,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin", "atendente", "delivery"],
-    },
-    {
-      id: "printer",
-      label: "Impressão",
-      icon: Printer,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin", "caixa", "producao"],
-    },
-    {
-      id: "hardware",
-      label: "Hardware",
-      icon: Activity,
-      status: "pending",
-      weight: 1,
-      visibleFor: ["gerente", "superadmin"],
-    },
-  ];
-  // TEF: item futuro para o perfil caixa, quando houver origem real de status.
-
+  const healthItems = buildOperationalHealthInventory({ role: operator.role });
   const visibleHealthItems = getVisibleHealthItems(healthItems, operator.role);
 
   const primaryDockActions: ManagerAction[] = [
-    { label: "Venda", icon: ShoppingBag, onClick: () => onNavigate("venda") },
+    { label: "Venda", icon: ReceiptText, onClick: () => onNavigate("venda") },
     {
-      label: "Atend.",
+      label: "Atendimento",
       icon: MessageCircle,
       onClick: () => onNavigate("whatsapp"),
       badge: whatsappUnread > 0 ? { count: whatsappUnread, priority: whatsappUnread > 4 ? "important" : "attention" } : undefined,
@@ -422,7 +352,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
       onClick: () => onNavigate("usuarios"),
       badge: pendingCount > 0 ? { count: pendingCount, priority: "attention" } : undefined,
     },
-    { label: "Config.", icon: Settings },
+    { label: "Ajustes", icon: Settings },
   ];
 
   const primaryAlertCount = primaryDockActions.reduce((sum, action) => sum + (action.badge?.count ?? 0), 0);
@@ -455,11 +385,11 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
       return (
         <div
           className={cn(
-            "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0d0d0b] dark:text-[#f7f2ec]",
+            "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0b0b0a] dark:text-[#f7f2ec]",
             interfaceScaleClasses[preferences.interfaceScale]
           )}
         >
-          <header className="flex shrink-0 items-center gap-3 px-4 py-[calc(0.75rem*var(--rvl-space-scale,1))] md:px-6">
+          <header className="flex shrink-0 items-center gap-3 bg-[#ffffff]/88 px-4 py-[calc(0.75rem*var(--rvl-space-scale,1))] dark:bg-[#181816] md:px-6">
             <button
               type="button"
               onClick={() => setActiveWidgetView(null)}
@@ -478,15 +408,15 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 px-4 pb-[calc(1rem*var(--rvl-space-scale,1))] md:px-6">
-            <section className="flex h-full flex-col rounded-2xl bg-white p-[calc(1rem*var(--rvl-space-scale,1))] dark:bg-[#151513]">
+          <main className="min-h-0 flex-1 px-4 pb-[calc(1rem*var(--rvl-space-scale,1))] pt-1 md:px-6">
+            <section className="flex h-full flex-col rounded-2xl bg-[#ffffff]/92 p-[calc(1rem*var(--rvl-space-scale,1))] dark:bg-[#181816]">
               <div className="grid flex-1 content-center gap-[calc(0.5rem*var(--rvl-space-scale,1))]">
                 {todayItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={`${item.time}-${item.label}`}
-                      className="grid grid-cols-[calc(1.25rem*var(--rvl-font-scale,1))_1fr_calc(3.25rem*var(--rvl-font-scale,1))] items-center gap-2 rounded-xl bg-[#1f1f1a]/5 px-3 py-[calc(0.625rem*var(--rvl-space-scale,1))] dark:bg-[#f7f2ec]/8"
+                      className="grid grid-cols-[calc(1.25rem*var(--rvl-font-scale,1))_1fr_calc(3.25rem*var(--rvl-font-scale,1))] items-center gap-2 rounded-xl bg-[#1f1f1a]/5 px-3 py-[calc(0.625rem*var(--rvl-space-scale,1))] dark:bg-[#24241f]"
                     >
                       <Icon className="h-[calc(1rem*var(--rvl-font-scale,1))] w-[calc(1rem*var(--rvl-font-scale,1))] text-current/78" />
                       <span className="text-[calc(0.875rem*var(--rvl-font-scale,1))] font-light text-current/92">
@@ -508,7 +438,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
     return (
       <div
         className={cn(
-          "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0d0d0b] dark:text-[#f7f2ec]",
+          "flex h-svh flex-col overflow-hidden bg-[#f7f7f4] text-[#1f1f1a] dark:bg-[#0b0b0a] dark:text-[#f7f2ec]",
           interfaceScaleClasses[preferences.interfaceScale]
         )}
       >
@@ -524,7 +454,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
         />
 
         <main className="flex min-h-0 flex-1 overflow-hidden">
-          <div className="mx-auto flex h-full w-full max-w-none flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-0 pb-3 pt-2 md:py-4">
+          <div className="mx-auto flex h-full w-full max-w-none flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-0 pb-0 pt-2 md:pb-0 md:pt-4">
             <div className="flex min-h-0 flex-1 flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))]">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -656,7 +586,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
                   label="Em andamento"
                   value={resumo === undefined ? "-" : String(resumo.emAndamento)}
                   sub="pedidos ativos agora"
-                  icon={ShoppingBag}
+                  icon={ReceiptText}
                   color="bg-orange-500"
                 />
                 <SummaryCard

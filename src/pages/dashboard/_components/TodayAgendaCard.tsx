@@ -199,7 +199,7 @@ export default function TodayAgendaCard({
     customMonth !== "";
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setShowCreateLabel(false), 3500);
+    const timeout = window.setTimeout(() => setShowCreateLabel(false), 7000);
     return () => window.clearTimeout(timeout);
   }, []);
 
@@ -365,7 +365,7 @@ export default function TodayAgendaCard({
   return (
     <section
       className={cn(
-        "relative flex h-full min-h-0 flex-col rounded-none bg-white px-4 py-3 text-[#1f1f1a] dark:bg-[#151513] dark:text-[#f7f2ec] md:rounded-2xl",
+        "relative flex h-full min-h-0 flex-col rounded-none border-y border-[#1f1f1a]/10 bg-[#ffffff]/96 px-4 py-3 text-[#1f1f1a] dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] dark:text-[#f7f2ec] md:rounded-2xl md:border",
         className,
       )}
     >
@@ -384,20 +384,20 @@ export default function TodayAgendaCard({
             <span className="text-[calc(0.6875rem*var(--rvl-font-scale,1))] font-medium uppercase tracking-[0.12em]">
               Agenda
             </span>
-            <span className="truncate text-[calc(0.65625rem*var(--rvl-font-scale,1))] font-light normal-case tracking-normal text-[#1f1f1a]/54 dark:text-[#f7f2ec]/56">
+            <span className="truncate text-[calc(0.65625rem*var(--rvl-font-scale,1))] font-light normal-case tracking-normal text-[#1f1f1a]/64 dark:text-[#f7f2ec]/68">
               {quickConfig.summary}
             </span>
             {settingsOpen ? (
-              <ChevronUp className="h-3 w-3 shrink-0 text-[#1f1f1a]/50 dark:text-[#f7f2ec]/52" />
+              <ChevronUp className="h-3 w-3 shrink-0 text-[#1f1f1a]/58 dark:text-[#f7f2ec]/66" />
             ) : (
-              <ChevronDown className="h-3 w-3 shrink-0 text-[#1f1f1a]/50 dark:text-[#f7f2ec]/52" />
+              <ChevronDown className="h-3 w-3 shrink-0 text-[#1f1f1a]/58 dark:text-[#f7f2ec]/66" />
             )}
           </button>
         </div>
         <div
           ref={actionClusterRef}
           className={cn(
-            "relative inline-flex h-7 shrink-0 items-center gap-0.5 overflow-visible text-[#1f1f1a]/64 transition-colors dark:text-[#f7f2ec]/68",
+            "relative inline-flex h-7 shrink-0 items-center gap-0.5 overflow-visible text-[#1f1f1a]/68 transition-colors dark:text-[#f7f2ec]/68",
             (createOpen || showCreateLabel) && "text-[#685c20] dark:text-[#f3c4a2]"
           )}
           onClick={(event) => event.stopPropagation()}
@@ -414,14 +414,14 @@ export default function TodayAgendaCard({
             onMouseLeave={() => !createOpen && setShowCreateLabel(false)}
             className={cn(
               "inline-flex h-full cursor-pointer items-center justify-center gap-1 rounded-full px-1.5 text-[#685c20] transition-all hover:bg-[#685c20]/10 hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2] dark:hover:bg-[#f3c4a2]/12 dark:hover:text-[#f3c4a2]",
-              showCreateLabel || createOpen ? "w-[5.9rem]" : "w-6",
+              showCreateLabel || createOpen ? "w-[4.9rem]" : "w-6",
               createOpen && "bg-[#685c20]/10 dark:bg-[#f3c4a2]/12",
             )}
-            aria-label="Criar agenda"
+            aria-label="Agendar"
             aria-expanded={createOpen}
           >
             <span className="inline-flex h-[1.18rem] w-[1.18rem] shrink-0 items-center justify-center rounded-full bg-[#685c20]/9 dark:bg-[#f3c4a2]/12">
-              <CalendarPlus className="h-[calc(0.9rem*var(--rvl-font-scale,1))] w-[calc(0.9rem*var(--rvl-font-scale,1))] stroke-[2.2]" />
+              <CalendarPlus className="h-[calc(0.9rem*var(--rvl-font-scale,1))] w-[calc(0.9rem*var(--rvl-font-scale,1))] stroke-[2]" />
             </span>
             <span
               className={cn(
@@ -429,7 +429,7 @@ export default function TodayAgendaCard({
                 showCreateLabel || createOpen ? "opacity-100" : "w-0 opacity-0",
               )}
             >
-              Criar agenda
+              Agendar
             </span>
           </button>
           <button
@@ -454,7 +454,7 @@ export default function TodayAgendaCard({
             aria-label="Pendências da Agenda"
             aria-expanded={pendingOpen}
           >
-            <CalendarClock className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[1.95]" />
+            <CalendarClock className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[1.8]" />
           </button>
           {onConfigure && (
             <>
@@ -465,11 +465,11 @@ export default function TodayAgendaCard({
                   setPendingOpen(false);
                   setCreateOpen(false);
                 }}
-                className="inline-flex h-full w-6 cursor-pointer items-center justify-center rounded-full text-[#1f1f1a]/62 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:text-[#f7f2ec]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]"
+                className="inline-flex h-full w-6 cursor-pointer items-center justify-center rounded-full text-[#1f1f1a]/68 transition-colors hover:bg-[#685c20]/8 hover:text-[#685c20] focus:outline-none dark:text-[#f7f2ec]/68 dark:hover:bg-[#f3c4a2]/10 dark:hover:text-[#f3c4a2]"
                 aria-label="Menu da Agenda"
                 aria-expanded={agendaMenuOpen}
               >
-                <MoreVertical className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[2.15]" />
+                <MoreVertical className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] stroke-[1.8]" />
               </button>
             </>
           )}
@@ -1066,8 +1066,8 @@ export default function TodayAgendaCard({
             <div key={key}>
               <div
                 className={cn(
-                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.25rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#1f1f1a]/5 dark:hover:bg-[#f7f2ec]/7",
-                  selected && "bg-[#1f1f1a]/6 dark:bg-[#f7f2ec]/8",
+                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.25rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#1f1f1a]/5 dark:hover:bg-[#24241f]",
+                  selected && "bg-[#1f1f1a]/6 dark:bg-[#24241f]",
                 )}
               >
                 {completed ? (
@@ -1109,10 +1109,10 @@ export default function TodayAgendaCard({
                     className={cn(
                       "inline-flex items-center justify-end gap-0.5 text-right text-[calc(0.65625rem*var(--rvl-font-scale,1))] tabular-nums",
                       completed
-                        ? "text-[#1f1f1a]/52 dark:text-[#f7f2ec]/52"
+                        ? "text-[#1f1f1a]/58 dark:text-[#f7f2ec]/60"
                         : item.overdue
                         ? "font-semibold text-red-700 dark:text-red-300"
-                        : "text-[#1f1f1a]/54 dark:text-[#f7f2ec]/54",
+                        : "text-[#1f1f1a]/64 dark:text-[#f7f2ec]/66",
                     )}
                   >
                     {item.alertEnabled && (
@@ -1170,7 +1170,7 @@ export default function TodayAgendaCard({
           );
         })}
         {emptyMessage && (
-          <p className="pt-1 text-center text-[calc(0.6875rem*var(--rvl-font-scale,1))] font-light text-[#1f1f1a]/48 dark:text-[#f7f2ec]/50">
+          <p className="pt-1 text-center text-[calc(0.6875rem*var(--rvl-font-scale,1))] font-light text-[#1f1f1a]/58 dark:text-[#f7f2ec]/62">
             {emptyMessage}
           </p>
         )}

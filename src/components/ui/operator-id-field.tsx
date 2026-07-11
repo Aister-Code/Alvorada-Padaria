@@ -40,7 +40,7 @@ export default function OperatorIdField({
 
   return (
     <div
-      className={`flex h-11 w-full cursor-text items-center rounded-xl border ${borderClass} bg-[#f6d0b4] px-3 shadow-[0_1px_8px_rgba(78,91,29,0.045)] transition-all focus-within:border-[#685c20]/35 focus-within:bg-[#f8dcc8] focus-within:shadow-[0_4px_18px_rgba(217,90,43,0.12)] dark:focus-within:border-[#f3c4a2]/40 dark:bg-[#756c2c] dark:shadow-none dark:focus-within:bg-[#756c2c]`}
+      className={`flex h-11 w-full cursor-text items-center rounded-xl border ${borderClass} bg-white px-3 shadow-none transition-all focus-within:border-[#685c20]/30 focus-within:bg-white focus-within:shadow-none dark:focus-within:border-[#f3c4a2]/30 dark:bg-[#151513] dark:shadow-none dark:focus-within:bg-[#151513]`}
       onPointerDown={(e) => {
         if (e.target !== inputRef.current) e.preventDefault();
         onFinalizedChange(false);
@@ -76,14 +76,14 @@ export default function OperatorIdField({
         }}
         className={
           operatorName
-            ? "h-full w-14 bg-transparent text-left text-xl font-serif tracking-[0.18em] text-[#685c20] placeholder:text-muted-foreground/30 focus:outline-none dark:text-[#f3c4a2]"
-            : "h-full w-full bg-transparent text-center text-xl font-serif tracking-[0.18em] indent-[0.18em] text-[#685c20] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none dark:text-[#f3c4a2]"
+            ? "h-full w-14 bg-transparent text-left text-xl font-serif tracking-[0.18em] text-[#1f1f1a] placeholder:text-muted-foreground/30 focus:outline-none dark:text-[#f7f2ec]"
+            : "h-full w-full bg-transparent text-center text-xl font-serif tracking-[0.18em] indent-[0.18em] text-[#1f1f1a] placeholder:text-muted-foreground/30 placeholder:tracking-normal placeholder:indent-0 focus:outline-none dark:text-[#f7f2ec]"
         }
       />
       {operatorName && (
         <>
-          <span className="mx-2 h-5 w-px bg-[#685c20]/15 dark:bg-[#f3c4a2]/20" />
-          <span className="min-w-0 flex-1 truncate text-left text-sm font-light text-[#685c20]/90 dark:text-[#f3c4a2]/90">
+          <span className="mx-2 h-5 w-px bg-[#1f1f1a]/12 dark:bg-[#f7f2ec]/16" />
+          <span className="min-w-0 flex-1 truncate text-left text-sm font-light text-[#1f1f1a]/90 dark:text-[#f7f2ec]/90">
             {operatorName}
           </span>
         </>

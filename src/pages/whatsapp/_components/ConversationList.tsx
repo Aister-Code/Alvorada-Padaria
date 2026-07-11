@@ -33,7 +33,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
     return (
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="h-20 animate-pulse rounded-2xl bg-[#f8dcc8] dark:bg-[#756c2c]" />
+          <div key={index} className="h-20 animate-pulse rounded-2xl bg-white dark:bg-[#151513]" />
         ))}
       </div>
     );
@@ -41,7 +41,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
 
   if (conversations.length === 0) {
     return (
-      <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-2xl bg-[#f8dcc8] px-6 text-center text-[#685c20] dark:bg-[#756c2c] dark:text-[#f3c4a2]">
+      <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-2xl bg-white px-6 text-center text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <MessageCircle className="mb-3 h-8 w-8 stroke-[1.6] opacity-60" />
         <p className="text-sm font-medium">Nenhuma conversa aberta</p>
         <p className="mt-1 max-w-xs text-xs text-current/62">
@@ -64,7 +64,7 @@ export default function ConversationList({ conversations, selectedId, onSelect }
               "w-full cursor-pointer rounded-2xl px-3 py-3 text-left transition-colors",
               selected
                 ? "bg-[#685c20] text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]"
-                : "bg-[#f8dcc8] text-[#685c20] hover:bg-[#f8dcc8]/78 dark:bg-[#756c2c] dark:text-[#f3c4a2] dark:hover:bg-[#756c2c]/82",
+                : "bg-white text-[#685c20] hover:bg-white/78 dark:bg-[#151513] dark:text-[#f3c4a2] dark:hover:bg-[#756c2c]/82",
             )}
           >
             <div className="flex items-start gap-2.5">
