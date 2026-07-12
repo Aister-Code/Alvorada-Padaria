@@ -365,11 +365,11 @@ export default function TodayAgendaCard({
   return (
     <section
       className={cn(
-        "relative flex h-full min-h-0 flex-col rounded-none border-y border-[#1f1f1a]/10 bg-[#ffffff]/96 px-4 py-3 text-[#1f1f1a] dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] dark:text-[#f7f2ec] md:rounded-2xl md:border",
+        "relative flex h-full min-h-0 flex-col rounded-none border-y border-[#1f1f1a]/10 bg-[#ffffff]/96 px-2.5 py-3 text-[#1f1f1a] dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] dark:text-[#f7f2ec] md:rounded-2xl md:border",
         className,
       )}
     >
-      <div className="mb-2 grid min-h-7 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-[#1f1f1a] dark:text-[#f7f2ec]">
+      <div className="mb-2 grid min-h-7 grid-cols-[minmax(0,1fr)_4.6rem] items-center gap-2 text-[#1f1f1a] dark:text-[#f7f2ec]">
         <div className="min-w-0 text-left">
           <button
             type="button"
@@ -397,7 +397,7 @@ export default function TodayAgendaCard({
         <div
           ref={actionClusterRef}
           className={cn(
-            "relative inline-flex h-7 shrink-0 items-center gap-0.5 overflow-visible text-[#1f1f1a]/68 transition-colors dark:text-[#f7f2ec]/68",
+            "relative inline-flex h-7 shrink-0 items-center justify-end gap-0.5 overflow-visible text-[#1f1f1a]/68 transition-colors dark:text-[#f7f2ec]/68",
             (createOpen || showCreateLabel) && "text-[#685c20] dark:text-[#f3c4a2]"
           )}
           onClick={(event) => event.stopPropagation()}
@@ -474,7 +474,7 @@ export default function TodayAgendaCard({
             </>
           )}
           {pendingOpen && (
-            <div className="absolute right-7 top-8 z-30 w-56 rounded-2xl bg-[#685c20] px-3 py-2.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
+            <div className="absolute right-3 top-8 z-30 w-[min(14rem,calc(100%-1.5rem))] rounded-2xl bg-[#685c20] px-3 py-2.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="text-[0.6875rem] font-semibold">Pendências</span>
                 <span className="text-[0.625rem] font-medium opacity-70">
@@ -511,7 +511,7 @@ export default function TodayAgendaCard({
             </div>
           )}
           {agendaMenuOpen && (
-            <div className="absolute right-0 top-8 z-30 w-48 rounded-2xl bg-[#685c20] p-1.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
+            <div className="absolute right-0 top-8 z-30 w-[min(12rem,calc(100%-1.5rem))] rounded-2xl bg-[#685c20] p-1.5 text-[#f3c4a2] dark:bg-[#f3c4a2] dark:text-[#685c20]">
               <button
                 type="button"
                 onClick={() => {
@@ -1066,13 +1066,13 @@ export default function TodayAgendaCard({
             <div key={key}>
               <div
                 className={cn(
-                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.25rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#1f1f1a]/5 dark:hover:bg-[#24241f]",
+                  "grid w-full cursor-pointer grid-cols-[0.55rem_1fr_4.6rem] items-center gap-1.5 rounded-xl px-0 py-0.5 text-sm transition-colors hover:bg-[#1f1f1a]/5 dark:hover:bg-[#24241f]",
                   selected && "bg-[#1f1f1a]/6 dark:bg-[#24241f]",
                 )}
               >
                 {completed ? (
                   <Check
-                    className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] -ml-0.5 text-blue-600 stroke-[2.6] dark:text-blue-400"
+                    className="h-[calc(0.875rem*var(--rvl-font-scale,1))] w-[calc(0.875rem*var(--rvl-font-scale,1))] justify-self-center text-blue-600 stroke-[2.6] dark:text-blue-400"
                     aria-label="Compromisso concluído"
                   />
                 ) : (
@@ -1083,7 +1083,7 @@ export default function TodayAgendaCard({
                       toast.info(priorityLabels[priority]);
                     }}
                     className={cn(
-                      "h-1.5 w-1.5 cursor-pointer rounded-full transition-transform hover:scale-125 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current",
+                      "h-1.5 w-1.5 cursor-pointer justify-self-center rounded-full transition-transform hover:scale-125 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current",
                       markerClass,
                     )}
                     aria-label={`Status da agenda: ${priorityLabels[priority]}`}

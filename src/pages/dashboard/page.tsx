@@ -132,40 +132,74 @@ function DockActionButton({
   badge,
   active,
   variant = "compact",
-}: ManagerAction & { variant?: DockVariant }) {
+  slot,
+}: ManagerAction & { variant?: DockVariant; slot?: number }) {
   return (
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
       className={cn(
         "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 text-[#1f1f1a] transition-colors active:scale-[0.98] dark:text-[#f7f2ec]",
         variant === "home"
-          ? "h-full w-full max-w-[5.3rem] rounded-2xl px-1 py-1"
-          : "rounded-xl px-2 py-1",
-        active
-          ? "bg-[#685c20]/10 dark:bg-[#24241f]"
-          : "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
+          ? "h-full w-full px-0 py-0.5"
+          : "items-center rounded-xl px-2 py-1",
+        variant !== "home" &&
+          (active
+            ? "bg-[#685c20]/10 dark:bg-[#24241f]"
+            : "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8")
       )}
     >
-      <span className="relative">
-        <Icon
-          className={cn(
-            "stroke-[1.45]",
-            "h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))]",
-          )}
-        />
-        {badge && badge.count > 0 && (
-          <span
-            className={cn(
-              "absolute -right-1 top-2 flex h-3 min-w-3 items-center justify-center rounded-full px-0.5 text-[7px] font-bold leading-none",
-              badgeClasses[badge.priority]
-            )}
-          >
-            {badge.count > 9 ? "9+" : badge.count}
-          </span>
+      <span
+        className={cn(
+          "flex min-w-0 flex-col items-center gap-1",
+          variant === "home" &&
+            cn(
+              "w-full rounded-2xl px-0 py-1 text-center transition-colors",
+              active
+                ? "bg-[#685c20]/10 dark:bg-[#24241f]"
+                : "hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
+            )
         )}
-      </span>
-      <span className="text-[calc(9.5px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em]">
-        {label}
+      >
+        <span
+          className={cn(
+            "relative",
+            variant === "home" && slot === 1 && "translate-x-[-14.8px]",
+            variant === "home" && slot === 2 && (label === "Atendimento" ? "translate-x-[-4.5px]" : "translate-x-[-6.5px]"),
+            variant === "home" && slot === 3 && "translate-x-[8px]",
+            variant === "home" && slot === 4 && "translate-x-[11px]",
+            variant === "home" && slot === 5 && "translate-x-[11px]",
+          )}
+        >
+          <Icon
+            className={cn(
+              "stroke-[1.45]",
+              "h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))]",
+            )}
+          />
+          {badge && badge.count > 0 && (
+            <span
+              className={cn(
+                "absolute -right-1 top-2 flex h-3 min-w-3 items-center justify-center rounded-full px-0.5 text-[7px] font-bold leading-none",
+                badgeClasses[badge.priority]
+              )}
+            >
+              {badge.count > 9 ? "9+" : badge.count}
+            </span>
+          )}
+        </span>
+        <span
+          className={cn(
+            "block w-full max-w-full truncate text-[calc(9.5px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em]",
+            "text-center",
+            variant === "home" && slot === 1 && "translate-x-[-14.8px]",
+            variant === "home" && slot === 2 && "translate-x-[-6.5px]",
+            variant === "home" && slot === 3 && "translate-x-[8px]",
+            variant === "home" && slot === 4 && "translate-x-[11px]",
+            variant === "home" && slot === 5 && "translate-x-[11px]",
+          )}
+        >
+          {label}
+        </span>
       </span>
     </button>
   );
@@ -190,7 +224,10 @@ function OperationalDock({
 }) {
   const hasHiddenSignal = hiddenSignalCount > 0;
   const visibleActions =
-    variant === "home" ? [...primaryActions, ...secondaryActions] : primaryActions;
+    variant === "home" ? [] : primaryActions;
+  const homePrimaryActions =
+    variant === "home" ? [...primaryActions, secondaryActions[0]].filter(Boolean) : [];
+  const homeSecondaryActions = variant === "home" ? secondaryActions.slice(1, 5) : [];
 
   return (
     <section className="relative shrink-0">
@@ -217,7 +254,7 @@ function OperationalDock({
         className={cn(
           "relative border-t border-[#1f1f1a]/8 bg-[#f1f0ea]/96 text-[#1f1f1a] backdrop-blur-sm dark:border-[#f7f2ec]/10 dark:bg-[#181816] dark:text-[#f7f2ec]",
           variant === "home"
-            ? "px-4 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-1"
+            ? "px-1 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-1"
             : "px-2 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-0.5",
         )}
       >
@@ -240,18 +277,27 @@ function OperationalDock({
             {open ? <ChevronDown className="h-4 w-4 stroke-[1.6]" /> : <ChevronUp className="h-4 w-4 stroke-[1.6]" />}
           </button>
         )}
-        <div
-          className={cn(
-            "grid",
-            variant === "home"
-              ? "grid-cols-5 place-items-center gap-y-1.5 min-[720px]:grid-cols-9"
-              : "h-[calc(2.85rem*var(--rvl-card-scale,1))] gap-1.5 sm:h-[calc(3.05rem*var(--rvl-card-scale,1))]"
-          )}
-        >
-          {visibleActions.map((action) => (
-            <DockActionButton key={action.label} {...action} variant={variant} />
-          ))}
-        </div>
+        {variant === "home" ? (
+          <div className="grid w-full gap-y-1.5">
+            <div className="grid w-full grid-cols-5 gap-x-0">
+              {homePrimaryActions.map((action, index) => (
+                <DockActionButton key={action.label} {...action} variant="home" slot={index + 1} />
+              ))}
+            </div>
+            <div className="grid w-full grid-cols-5 gap-x-0">
+              {homeSecondaryActions.map((action, index) => (
+                <DockActionButton key={action.label} {...action} variant="home" slot={index + 1} />
+              ))}
+              <span className="min-w-0 flex-1" aria-hidden="true" />
+            </div>
+          </div>
+        ) : (
+          <div className="grid h-[calc(2.85rem*var(--rvl-card-scale,1))] gap-1.5 sm:h-[calc(3.05rem*var(--rvl-card-scale,1))]">
+            {visibleActions.map((action) => (
+              <DockActionButton key={action.label} {...action} variant={variant} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -389,7 +435,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
             interfaceScaleClasses[preferences.interfaceScale]
           )}
         >
-          <header className="flex shrink-0 items-center gap-3 bg-[#ffffff]/88 px-4 py-[calc(0.75rem*var(--rvl-space-scale,1))] dark:bg-[#181816] md:px-6">
+          <header className="flex shrink-0 items-center gap-3 bg-[#ffffff]/88 px-3 py-[calc(0.75rem*var(--rvl-space-scale,1))] dark:bg-[#181816] md:px-3">
             <button
               type="button"
               onClick={() => setActiveWidgetView(null)}
@@ -408,7 +454,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 px-4 pb-[calc(1rem*var(--rvl-space-scale,1))] pt-1 md:px-6">
+          <main className="min-h-0 flex-1 px-3 pb-[calc(1rem*var(--rvl-space-scale,1))] pt-1 md:px-3">
             <section className="flex h-full flex-col rounded-2xl bg-[#ffffff]/92 p-[calc(1rem*var(--rvl-space-scale,1))] dark:bg-[#181816]">
               <div className="grid flex-1 content-center gap-[calc(0.5rem*var(--rvl-space-scale,1))]">
                 {todayItems.map((item) => {
@@ -451,9 +497,20 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
           interfaceScale={preferences.interfaceScale}
           onInterfaceScaleChange={(interfaceScale) => updatePreferences({ interfaceScale })}
           onLogout={onLogout}
+          compactMargins={isManager}
         />
 
-        <main className="flex min-h-0 flex-1 overflow-hidden">
+        <main className="relative flex min-h-0 flex-1 overflow-hidden">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
+            style={{ left: "7.8px" }}
+          />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
+            style={{ right: "7.8px" }}
+          />
           <div className="mx-auto flex h-full w-full max-w-none flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-0 pb-0 pt-2 md:pb-0 md:pt-4">
             <div className="flex min-h-0 flex-1 flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))]">
               <motion.div

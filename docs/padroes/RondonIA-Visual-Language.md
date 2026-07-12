@@ -541,6 +541,91 @@ Princípios:
 - Cada área precisa ter função única e reconhecível: localização, contexto, trabalho principal, apoio ou navegação.
 - A lista ou área de trabalho principal deve continuar sendo o foco visual da tela.
 
+## RVL-032 — Régua Óptica Operacional
+
+Toda tela operacional deve possuir uma régua óptica própria.
+
+Princípios:
+
+- A régua é definida pelas extremidades visuais mais fortes da tela, não apenas por padding matemático.
+- O elemento usado como referência é uma baliza da tela inteira, não o limite do ajuste.
+- Header, conteúdo, ações, listas, horários, indicadores, menus, popovers e dock devem conversar com essa régua.
+- Sub-réguas internas são permitidas quando organizam melhor a leitura, como status antes do texto ou horário à direita.
+- A régua deve ser validada visualmente e, quando possível, medida no DOM.
+- O alinhamento deve seguir a percepção do operador: elementos não podem parecer soltos, colados ou pertencentes a outro bloco.
+- A referência de qualidade é a organização de interfaces operacionais maduras, como WhatsApp Android: áreas simples, extremidades consistentes, ações presas ao lado certo e navegação inferior previsível.
+
+Aplicação:
+
+- Primeiro identificar as balizas principais da tela.
+- Depois distribuir todos os elementos elegíveis da tela, não apenas o componente citado.
+- Por fim ajustar peso, proporção, respiro e hierarquia para manter leitura rápida e sensação profissional.
+
+## RVL-033 — DNA WhatsApp Android para telas mobile-first
+
+O RondonIA OS usa o WhatsApp Android como referência principal de aproveitamento de espaço, proporção, margens, distribuição e alinhamento visual percebido em experiências mobile-first.
+
+Esta referência orienta a experiência, sem copiar layout, identidade ou componentes do WhatsApp.
+
+Princípios globais:
+
+- Aproveitar a largura útil com margens compactas e confortáveis.
+- Reduzir recuos laterais e áreas mortas que não tenham função operacional.
+- Alinhar header, conteúdo, ações e navegação inferior pela percepção visual do operador.
+- Preferir alinhamento óptico a um grid matemático rígido quando houver conflito entre cálculo e percepção.
+- Distribuir ícones, rótulos, badges e contadores com leitura imediata e área de toque suficiente.
+- Manter header e dock reconhecíveis como partes do mesmo sistema visual.
+- Respeitar safe-area dentro do próprio dock, sem transformá-la em faixa vazia aparente.
+- Preservar hierarquia simples, leitura rápida, densidade equilibrada e sensação mobile-first.
+
+Aplicação por família de tela:
+
+- Telas operacionais densas, como Gerente, Central de Atendimento, Venda, Caixa, Produção, Delivery, Acompanhamento e Agenda operacional, devem aproveitar mais a largura, aproximar o conteúdo útil das extremidades e evitar recuos laterais mortos.
+- Telas de foco único, como Login, PIN, confirmação, erro, estados vazios e onboarding, devem preservar foco e harmonia, sem esticar o conteúdo artificialmente.
+- O DNA é global, mas sua aplicação deve respeitar a função, a densidade e a jornada de cada tela.
+
+Dock operacional:
+
+- A faixa pode ocupar toda a largura, mas seus itens também devem aproveitar a largura útil.
+- A primeira e a última posições devem se aproximar das extremidades úteis sem encostar na borda física.
+- Linhas secundárias devem reutilizar os mesmos slots da linha principal; posições sem ação permanecem vazias, sem recentralizar a linha.
+- Item ativo e badges devem ser claros, legíveis e presos ao elemento correto.
+
+Aplicação imediata e evolução:
+
+- O Centro de Operações adota esta régua no dock do Gerente.
+- A Central de Atendimento deve seguir a mesma referência em etapa própria, sem alteração automática de sua estrutura atual.
+
+## RVL-034 — Alinhamento Óptico de Ícones e Rótulos
+
+Pares formados por ícone e rótulo devem ser alinhados pela percepção visual, não apenas pelo centro geométrico do SVG ou do slot.
+
+Princípios:
+
+- A palavra/rótulo define a régua de leitura do item.
+- O ícone deve parecer centralizado em relação ao rótulo e ao eixo do item.
+- O centro geométrico do SVG é ponto de partida, não garantia de alinhamento visual.
+- Ícones com massa visual assimétrica podem receber compensação óptica específica.
+- A compensação deve mover o ícone, não a palavra, quando o rótulo já estiver na régua correta.
+- A compensação deve ser mínima, normalmente entre 1 e 3 px, e validada visualmente.
+- Linhas-guia e sobreposições coloridas são permitidas apenas como diagnóstico temporário; não permanecem na UI final.
+- O ajuste não pode alterar significado, área de toque, ordem dos itens ou hierarquia operacional.
+
+Aplicação obrigatória:
+
+- Header.
+- Dock/rodapé.
+- Resumos superiores.
+- Filtros.
+- Menus.
+- Indicadores.
+- Atalhos internos.
+- Todos os componentes futuros com ícone + texto.
+
+Regra:
+
+Quando cálculo e percepção divergirem, prevalece o alinhamento óptico aprovado.
+
 ## CAO — Centro de Atenção Operacional
 
 O RondonIA OS não utiliza Centro de Notificações.

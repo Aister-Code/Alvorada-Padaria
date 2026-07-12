@@ -42,6 +42,7 @@ type Props = {
   onHelp: () => void;
   onLogout: () => void;
   onFutureAction: (label: string) => void;
+  compact?: boolean;
 };
 
 export default function DashboardMenu({
@@ -55,6 +56,7 @@ export default function DashboardMenu({
   onHelp,
   onLogout,
   onFutureAction,
+  compact = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [modeOpen, setModeOpen] = useState(false);
@@ -112,7 +114,8 @@ export default function DashboardMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          "relative cursor-pointer rounded-full p-2 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]",
+          "relative cursor-pointer rounded-full text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]",
+          compact ? "p-1.5" : "p-2",
           shouldSignalMenu && "text-[#685c20] dark:text-[#f3c4a2]",
           introPulse && "animate-pulse",
         )}
