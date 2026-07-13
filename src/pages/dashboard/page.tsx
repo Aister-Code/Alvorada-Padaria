@@ -125,6 +125,15 @@ function getDeliveryPriority(deliveryReady: number): AttentionPriority | undefin
   return "critical";
 }
 
+function getHomeDockOpticalShift(slot?: number) {
+  if (slot === 1) return "translate-x-[-14.8px]";
+  if (slot === 2) return "translate-x-[-6.5px]";
+  if (slot === 3) return "translate-x-[8px]";
+  if (slot === 4) return "translate-x-[11px]";
+  if (slot === 5) return "translate-x-[11px]";
+  return "";
+}
+
 function DockActionButton({
   label,
   icon: Icon,
@@ -134,6 +143,8 @@ function DockActionButton({
   variant = "compact",
   slot,
 }: ManagerAction & { variant?: DockVariant; slot?: number }) {
+  const homeOpticalShift = variant === "home" ? getHomeDockOpticalShift(slot) : "";
+
   return (
     <button
       onClick={onClick ?? (() => toast.info(`${label} - em breve`))}
@@ -143,33 +154,28 @@ function DockActionButton({
           ? "h-full w-full px-0 py-0.5"
           : "items-center rounded-xl px-2 py-1",
         variant !== "home" &&
-          (active
-            ? "bg-[#685c20]/10 dark:bg-[#24241f]"
-            : "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8")
+          "bg-transparent hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
       )}
     >
       <span
         className={cn(
-          "flex min-w-0 flex-col items-center gap-1",
+          "flex min-w-fit flex-col items-center gap-1",
+          homeOpticalShift,
           variant === "home" &&
             cn(
-              "w-full rounded-2xl px-0 py-1 text-center transition-colors",
+              "min-w-[2.8rem] rounded-2xl px-2 py-1.5 text-center transition-colors",
               active
-                ? "bg-[#685c20]/10 dark:bg-[#24241f]"
-                : "hover:bg-[#1f1f1a]/7 dark:hover:bg-[#f7f2ec]/8"
+                ? "bg-[#685c20]/10 shadow-none dark:bg-[#24241f]"
+                : "hover:bg-[#1f1f1a]/4 dark:hover:bg-[#f7f2ec]/5"
+            ),
+          variant !== "home" &&
+            cn(
+              "rounded-2xl text-center transition-colors",
+              active && "min-w-[2.8rem] px-2 py-1.5 bg-[#685c20]/10 shadow-none dark:bg-[#24241f]"
             )
         )}
       >
-        <span
-          className={cn(
-            "relative",
-            variant === "home" && slot === 1 && "translate-x-[-14.8px]",
-            variant === "home" && slot === 2 && (label === "Atendimento" ? "translate-x-[-4.5px]" : "translate-x-[-6.5px]"),
-            variant === "home" && slot === 3 && "translate-x-[8px]",
-            variant === "home" && slot === 4 && "translate-x-[11px]",
-            variant === "home" && slot === 5 && "translate-x-[11px]",
-          )}
-        >
+        <span className="relative">
           <Icon
             className={cn(
               "stroke-[1.45]",
@@ -191,11 +197,6 @@ function DockActionButton({
           className={cn(
             "block w-full max-w-full truncate text-[calc(9.5px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em]",
             "text-center",
-            variant === "home" && slot === 1 && "translate-x-[-14.8px]",
-            variant === "home" && slot === 2 && "translate-x-[-6.5px]",
-            variant === "home" && slot === 3 && "translate-x-[8px]",
-            variant === "home" && slot === 4 && "translate-x-[11px]",
-            variant === "home" && slot === 5 && "translate-x-[11px]",
           )}
         >
           {label}
@@ -280,15 +281,15 @@ function OperationalDock({
         {variant === "home" ? (
           <div className="grid w-full gap-y-1.5">
             <div className="grid w-full grid-cols-5 gap-x-0">
-              {homePrimaryActions.map((action, index) => (
-                <DockActionButton key={action.label} {...action} variant="home" slot={index + 1} />
-              ))}
-            </div>
-            <div className="grid w-full grid-cols-5 gap-x-0">
               {homeSecondaryActions.map((action, index) => (
                 <DockActionButton key={action.label} {...action} variant="home" slot={index + 1} />
               ))}
               <span className="min-w-0 flex-1" aria-hidden="true" />
+            </div>
+            <div className="grid w-full grid-cols-5 gap-x-0">
+              {homePrimaryActions.map((action, index) => (
+                <DockActionButton key={action.label} {...action} variant="home" slot={index + 1} />
+              ))}
             </div>
           </div>
         ) : (
@@ -380,7 +381,7 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
       badge: whatsappUnread > 0 ? { count: whatsappUnread, priority: whatsappUnread > 4 ? "important" : "attention" } : undefined,
     },
     { label: "Produção", icon: ChefHat, onClick: () => onNavigate("acompanhamento") },
-    { label: "Gestão", icon: BarChart3 },
+    { label: "Gestão", icon: BarChart3, active: true },
   ];
 
   const secondaryDockActions: ManagerAction[] = [
@@ -501,16 +502,6 @@ export default function DashboardPage({ operator, onLogout, onNavigate }: Props)
         />
 
         <main className="relative flex min-h-0 flex-1 overflow-hidden">
-          <span
-            aria-hidden="true"
-            className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
-            style={{ left: "7.8px" }}
-          />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
-            style={{ right: "7.8px" }}
-          />
           <div className="mx-auto flex h-full w-full max-w-none flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))] px-0 pb-0 pt-2 md:pb-0 md:pt-4">
             <div className="flex min-h-0 flex-1 flex-col gap-[calc(0.55rem*var(--rvl-space-scale,1))]">
               <motion.div

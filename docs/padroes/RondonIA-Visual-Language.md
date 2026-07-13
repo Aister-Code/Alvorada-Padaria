@@ -626,6 +626,43 @@ Regra:
 
 Quando cálculo e percepção divergirem, prevalece o alinhamento óptico aprovado.
 
+## RVL-035 — Dock Ativo por Massa Óptica
+
+O item ativo de uma dock, rodapé ou faixa de atalhos deve destacar a intenção operacional do item, não a coluna inteira do layout.
+
+Nome oficial do padrão:
+
+**DNA Dock Ativo por Massa Óptica**
+
+Princípios:
+
+- O destaque ativo envolve o conjunto real formado por ícone, rótulo e área mínima confortável de toque.
+- O destaque não deve nascer apenas no ícone, nem ocupar o slot inteiro quando isso gerar peso visual excessivo.
+- Ícone e rótulo devem permanecer centralizados entre si dentro da mesma massa óptica.
+- A superfície ativa deve ter respiro suficiente para leitura, mas não pode invadir visualmente o espaço dos itens vizinhos.
+- A largura da superfície deve acompanhar o rótulo, o ícone e o respiro mínimo aprovado.
+- A altura deve acolher ícone e rótulo sem parecer card, botão pesado ou cápsula dominante.
+- Hover, foco e ativo devem usar a mesma família de superfície, variando apenas intensidade.
+- Badges permanecem presos ao ícone ou elemento de origem, sem alterar o eixo do conjunto.
+- Quando houver guia visual, o centro óptico do conjunto ativo deve bater com o eixo aprovado da tela.
+
+Aplicação obrigatória:
+
+- Dock inferior.
+- Rodapés operacionais.
+- Atalhos fixos de telas principais.
+- Faixas de navegação com ícone + rótulo.
+- Elementos futuros que tenham comportamento equivalente ao dock.
+
+Checklist antes de aprovar:
+
+- O destaque cobre ícone e rótulo?
+- O ícone está centralizado visualmente sobre o rótulo?
+- O destaque está centralizado no mesmo eixo do conjunto?
+- O destaque respeita as margens e a régua óptica da tela?
+- O destaque não compete com itens vizinhos?
+- O modo dia e o modo noite mantêm o mesmo teor de destaque?
+
 ## CAO — Centro de Atenção Operacional
 
 O RondonIA OS não utiliza Centro de Notificações.

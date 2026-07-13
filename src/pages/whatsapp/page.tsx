@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type WheelEvent } from "react";
+﻿import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type WheelEvent } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { useTheme } from "next-themes";
 import {
@@ -158,7 +158,7 @@ const filterIcons: Record<FilterId, LucideIcon> = {
   transferencias: Shuffle,
 };
 
-const conversationFilterOrder: FilterId[] = ["ia", "humano", "carrinhos", "transferencias", "todas"];
+const conversationFilterOrder: FilterId[] = ["ia", "humano", "transferencias", "carrinhos", "todas"];
 
 const signalToneTextClasses: Record<SignalTone, string> = {
   neutral: "text-current/58",
@@ -169,10 +169,10 @@ const signalToneTextClasses: Record<SignalTone, string> = {
 };
 
 const contextualMenu: Record<AtendimentoTab, string[]> = {
-  conversas: ["Relatórios", "Filtros", "Mensagens rápidas", "Configurações da conversa", "Ajuda"],
-  pedidos: ["Em aberto", "Em produção", "Prontos", "Encerrados", "Ajuda", "Configurações de pedidos"],
-  clientes: ["Todos", "Recorrentes", "Com pedido", "Ajuda", "Configurações de clientes"],
-  agenda: ["Hoje", "Amanhã", "Pendências", "Configurar agenda"],
+  conversas: ["RelatÃ³rios", "Filtros", "Mensagens rÃ¡pidas", "ConfiguraÃ§Ãµes da conversa", "Ajuda"],
+  pedidos: ["Em aberto", "Em produÃ§Ã£o", "Prontos", "Encerrados", "Ajuda", "ConfiguraÃ§Ãµes de pedidos"],
+  clientes: ["Todos", "Recorrentes", "Com pedido", "Ajuda", "ConfiguraÃ§Ãµes de clientes"],
+  agenda: ["Hoje", "AmanhÃ£", "PendÃªncias", "Configurar agenda"],
 };
 
 const filterLabelsByTab: Record<AtendimentoTab, string> = {
@@ -225,10 +225,10 @@ const channelVisuals: Record<string, { icon: LucideIcon; className: string; labe
 };
 
 const priorityText = {
-  info: "Informação",
-  attention: "Atenção",
+  info: "InformaÃ§Ã£o",
+  attention: "AtenÃ§Ã£o",
   important: "Importante",
-  critical: "Crítica",
+  critical: "CrÃ­tica",
 };
 
 const statusLabels = {
@@ -255,7 +255,7 @@ const demoConversation: WhatsAppConversation = {
   prioridade: "attention",
   operadorResponsavelId: "demo_operator" as Id<"operators">,
   operadorResponsavelNomeSnapshot: "Atendimento",
-  ultimoTextoSnapshot: "Cliente pediu ajuda para confirmar o carrinho do cardápio antes de finalizar o pedido.",
+  ultimoTextoSnapshot: "Cliente pediu ajuda para confirmar o carrinho do cardÃ¡pio antes de finalizar o pedido.",
   ultimaMensagemEm: new Date(Date.now() - 4 * 60000).toISOString(),
   naoLidas: 0,
   dataCriacao: new Date(Date.now() - 22 * 60000).toISOString(),
@@ -266,14 +266,14 @@ const demoConversationWait: WhatsAppConversation = {
   _id: DEMO_CONVERSA_2_ID,
   unit: "alvorada-01",
   clienteId: "demo_cliente_2" as Id<"clientes">,
-  clienteNomeSnapshot: "João Pereira",
+  clienteNomeSnapshot: "JoÃ£o Pereira",
   clienteTelefoneSnapshot: "(69) 99204-1188",
   telefoneNormalizado: "69992041188",
   status: "aguardando_cliente",
   prioridade: "info",
   operadorResponsavelId: "demo_operator" as Id<"operators">,
   operadorResponsavelNomeSnapshot: "Atendimento",
-  ultimoTextoSnapshot: "Aguardando confirmação do endereço para seguir com o pedido.",
+  ultimoTextoSnapshot: "Aguardando confirmaÃ§Ã£o do endereÃ§o para seguir com o pedido.",
   ultimaMensagemEm: new Date(Date.now() - 8 * 60000).toISOString(),
   naoLidas: 0,
   dataCriacao: new Date(Date.now() - 34 * 60000).toISOString(),
@@ -288,7 +288,7 @@ const demoConversationNew: WhatsAppConversation = {
   telefoneNormalizado: "69993317740",
   status: "nova",
   prioridade: "important",
-  ultimoTextoSnapshot: "Bom dia, vocês entregam pão de queijo para escritório?",
+  ultimoTextoSnapshot: "Bom dia, vocÃªs entregam pÃ£o de queijo para escritÃ³rio?",
   ultimaMensagemEm: new Date(Date.now() - 2 * 60000).toISOString(),
   naoLidas: 1,
   dataCriacao: new Date(Date.now() - 2 * 60000).toISOString(),
@@ -310,7 +310,7 @@ const demoMessages: WhatsAppMessage[] = [
     conversaId: DEMO_CONVERSA_ID,
     direcao: "saida",
     tipo: "texto",
-    texto: "Claro, Marina. Separei seu carrinho e vou confirmar os itens com você.",
+    texto: "Claro, Marina. Separei seu carrinho e vou confirmar os itens com vocÃª.",
     status: "enviada",
     operadorNomeSnapshot: "Atendimento",
     timestamp: new Date(Date.now() - 12 * 60000).toISOString(),
@@ -320,7 +320,7 @@ const demoMessages: WhatsAppMessage[] = [
     conversaId: DEMO_CONVERSA_ID,
     direcao: "entrada",
     tipo: "texto",
-    texto: "Pode confirmar. O endereço é o mesmo.",
+    texto: "Pode confirmar. O endereÃ§o Ã© o mesmo.",
     status: "recebida",
     timestamp: new Date(Date.now() - 4 * 60000).toISOString(),
   },
@@ -332,7 +332,7 @@ const demoCatalogSession: SessaoCatalogoResumo = {
   canalOrigem: "WhatsApp",
   itensSnapshot: JSON.stringify({
     itens: [
-      { nome: "Pizza média calabresa", quantidade: 1, precoUnitario: 48 },
+      { nome: "Pizza mÃ©dia calabresa", quantidade: 1, precoUnitario: 48 },
       { nome: "Coca-Cola 2L", quantidade: 1, precoUnitario: 12 },
     ],
   }),
@@ -352,9 +352,9 @@ const demoTransferReceived: TransferenciaTrabalho = {
   dePerfil: "Delivery",
   deOperadorId: "demo_delivery" as Id<"operators">,
   paraPerfil: "Atendimento",
-  motivo: "Cliente pediu ajuste no endereço.",
-  acaoEsperada: "Confirmar endereço com o cliente.",
-  contexto: "Pedido ainda não foi despachado.",
+  motivo: "Cliente pediu ajuste no endereÃ§o.",
+  acaoEsperada: "Confirmar endereÃ§o com o cliente.",
+  contexto: "Pedido ainda nÃ£o foi despachado.",
   prioridade: "attention",
   status: "pendente",
   criadaEm: new Date(Date.now() - 7 * 60000).toISOString(),
@@ -370,7 +370,7 @@ const demoTransferSent: TransferenciaTrabalho = {
   paraPerfil: "Caixa",
   motivo: "Cliente perguntou sobre pagamento.",
   acaoEsperada: "Caixa deve orientar forma de pagamento.",
-  contexto: "Carrinho pronto aguardando confirmação.",
+  contexto: "Carrinho pronto aguardando confirmaÃ§Ã£o.",
   prioridade: "attention",
   status: "aguardando_aceite",
   criadaEm: new Date(Date.now() - 11 * 60000).toISOString(),
@@ -385,7 +385,7 @@ const demoPedidoDetalhe: PedidoDetalheResumo = {
     canalOrigem: "WhatsApp",
   },
   itens: [
-    { nomeSnapshot: "Pizza média calabresa", quantidade: 1, subtotal: 48 },
+    { nomeSnapshot: "Pizza mÃ©dia calabresa", quantidade: 1, subtotal: 48 },
     { nomeSnapshot: "Coca-Cola 2L", quantidade: 1, subtotal: 12 },
   ],
   eventos: [],
@@ -493,7 +493,7 @@ function buildCustomerMemorySummary({
   const preference = pedidoDetalhe?.itens?.[0]?.nomeSnapshot
     ? pedidoDetalhe.itens[0].nomeSnapshot
     : sessionCount > 0
-      ? "Cardápio digital"
+      ? "CardÃ¡pio digital"
       : "A confirmar";
   const account = conversation.pedidoId && pedidoDetalhe?.pedido?.status !== "entregue" ? "Pendente" : "OK";
 
@@ -534,11 +534,11 @@ function displayUnit(unit: string) {
 
 function getAuthorizedOperationalModes(role: string) {
   if (role === "gerente" || role === "superadmin") {
-    return ["Atendimento", "Venda Balcão", "Caixa", "Delivery", "Produção", "Gerência"];
+    return ["Atendimento", "Venda BalcÃ£o", "Caixa", "Delivery", "ProduÃ§Ã£o", "GerÃªncia"];
   }
-  if (role === "caixa") return ["Caixa", "Venda Balcão"];
-  if (role === "atendente") return ["Atendimento", "Venda Balcão"];
-  if (role === "producao") return ["Produção"];
+  if (role === "caixa") return ["Caixa", "Venda BalcÃ£o"];
+  if (role === "atendente") return ["Atendimento", "Venda BalcÃ£o"];
+  if (role === "producao") return ["ProduÃ§Ã£o"];
   if (role === "delivery") return ["Delivery"];
   if (role === "estoque") return ["Estoque"];
   if (role === "financeiro") return ["Financeiro"];
@@ -555,7 +555,7 @@ function getConversationNextAction(conversation: WhatsAppConversation, hasCatalo
     return {
       icon: UserCheck,
       title: "Assumir conversa",
-      description: "Defina um responsável para conduzir esta jornada.",
+      description: "Defina um responsÃ¡vel para conduzir esta jornada.",
       kind: "assume" as const,
     };
   }
@@ -564,7 +564,7 @@ function getConversationNextAction(conversation: WhatsAppConversation, hasCatalo
     return {
       icon: CheckCircle2,
       title: "Confirmar pedido",
-      description: "Revise o carrinho assistido e confirme a criação do pedido.",
+      description: "Revise o carrinho assistido e confirme a criaÃ§Ã£o do pedido.",
       kind: "confirm_order" as const,
     };
   }
@@ -573,7 +573,7 @@ function getConversationNextAction(conversation: WhatsAppConversation, hasCatalo
     return {
       icon: MessageCircle,
       title: "Responder cliente",
-      description: "Há mensagem nova aguardando retorno do atendimento.",
+      description: "HÃ¡ mensagem nova aguardando retorno do atendimento.",
       kind: "reply" as const,
     };
   }
@@ -582,15 +582,15 @@ function getConversationNextAction(conversation: WhatsAppConversation, hasCatalo
     return {
       icon: CheckCircle2,
       title: "Acompanhar pedido",
-      description: "A conversa já virou pedido. O próximo passo é acompanhar o fluxo operacional.",
+      description: "A conversa jÃ¡ virou pedido. O prÃ³ximo passo Ã© acompanhar o fluxo operacional.",
       kind: "track" as const,
     };
   }
 
   return {
     icon: BookOpen,
-    title: "Enviar cardápio",
-    description: "A jornada está pronta para receber intenção de compra.",
+    title: "Enviar cardÃ¡pio",
+    description: "A jornada estÃ¡ pronta para receber intenÃ§Ã£o de compra.",
     kind: "catalog" as const,
   };
 }
@@ -598,6 +598,16 @@ function getConversationNextAction(conversation: WhatsAppConversation, hasCatalo
 function getJourneySortDate(journey: JourneyItem) {
   if (journey.kind === "transfer") return journey.transfer.criadaEm;
   return journey.conversation.ultimaMensagemEm ?? journey.conversation.dataAtualizacao;
+}
+
+function isHumanConversation(conversation: WhatsAppConversation) {
+  return (
+    conversation.status === "em_atendimento" ||
+    conversation.status === "aguardando_cliente" ||
+    conversation.status === "convertida_pedido" ||
+    Boolean(conversation.operadorResponsavelId) ||
+    Boolean(conversation.pedidoId)
+  );
 }
 
 function buildJourneyItems(
@@ -618,7 +628,7 @@ function buildJourneyItems(
       ?.filter((conversation) => {
         if (filter === "todas") return true;
         if (filter === "ia") return conversation.status === "nova";
-        if (filter === "humano") return conversation.status === "em_atendimento" || Boolean(conversation.operadorResponsavelId);
+        if (filter === "humano") return isHumanConversation(conversation);
         if (filter === "carrinhos") {
           return conversationsWithCart.has(conversation._id);
         }
@@ -737,7 +747,7 @@ function ContextualMenuPopover({
 function ReportsPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
 
-  const filters = ["Período", "Atividade", "Atendente", "Canal", "Status", "Repasses"];
+  const filters = ["PerÃ­odo", "Atividade", "Atendente", "Canal", "Status", "Repasses"];
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/16 px-3 py-3 sm:items-center">
@@ -747,13 +757,13 @@ function ReportsPanel({ open, onClose }: { open: boolean; onClose: () => void })
             <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-current/58">
               Conversas
             </p>
-            <h2 className="text-base font-semibold">Relatórios</h2>
+            <h2 className="text-base font-semibold">RelatÃ³rios</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="cursor-pointer rounded-full p-1.5 text-current/70 hover:text-current"
-            aria-label="Fechar relatórios"
+            aria-label="Fechar relatÃ³rios"
           >
             <X className="h-5 w-5" />
           </button>
@@ -764,7 +774,7 @@ function ReportsPanel({ open, onClose }: { open: boolean; onClose: () => void })
             <button
               key={filter}
               type="button"
-              onClick={() => toast.info(`${filter} será configurado na próxima etapa`)}
+              onClick={() => toast.info(`${filter} serÃ¡ configurado na prÃ³xima etapa`)}
               className="flex w-full cursor-pointer items-center justify-between rounded-2xl px-3 py-2 text-left text-xs font-medium text-current/82 hover:bg-white/8 dark:hover:bg-[#685c20]/8"
             >
               <span className="inline-flex items-center gap-2">
@@ -777,7 +787,7 @@ function ReportsPanel({ open, onClose }: { open: boolean; onClose: () => void })
         </div>
 
         <p className="mt-3 text-[11px] leading-relaxed text-current/58">
-          Estrutura visual preparada. Relatórios avançados entram quando houver backend dedicado.
+          Estrutura visual preparada. RelatÃ³rios avanÃ§ados entram quando houver backend dedicado.
         </p>
       </section>
     </div>
@@ -798,7 +808,7 @@ function CatalogConfirmPanel({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/16 px-3 py-3 sm:items-center">
       <section className="w-full max-w-xs rounded-3xl bg-[#685c20] p-4 text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]">
-        <p className="text-sm font-semibold">Enviar cardápio para {customerName}?</p>
+        <p className="text-sm font-semibold">Enviar cardÃ¡pio para {customerName}?</p>
         <div className="mt-4 grid grid-cols-2 gap-2">
           <button
             type="button"
@@ -845,7 +855,7 @@ function TransferPanel({
           {[
             ["Destino", "Caixa"],
             ["Motivo", "Pagamento do pedido"],
-            ["Ação esperada", "Confirmar recebimento"],
+            ["AÃ§Ã£o esperada", "Confirmar recebimento"],
           ].map(([label, value]) => (
             <button
               key={label}
@@ -912,7 +922,7 @@ function CartPanel({
           <span>{formatBRL(cart.session.valorEstimado)}</span>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <button type="button" onClick={() => toast.info("Edição do carrinho será conectada na próxima etapa")} className="cursor-pointer rounded-2xl bg-white/8 px-3 py-2 text-xs font-medium dark:bg-[#685c20]/8">
+          <button type="button" onClick={() => toast.info("EdiÃ§Ã£o do carrinho serÃ¡ conectada na prÃ³xima etapa")} className="cursor-pointer rounded-2xl bg-white/8 px-3 py-2 text-xs font-medium dark:bg-[#685c20]/8">
             Editar
           </button>
           <button type="button" onClick={() => toast.info("Pedido deve ser confirmado explicitamente")} className="cursor-pointer rounded-2xl bg-[#f04a2a] px-3 py-2 text-xs font-semibold text-white">
@@ -929,52 +939,19 @@ function ConversationFilters({
   tones,
   activeFilter,
   onFilterChange,
-  secondaryOpen,
-  onSecondaryToggle,
 }: {
   counts: Record<FilterId, number>;
   tones: Record<FilterId, SignalTone>;
   activeFilter: FilterId;
   onFilterChange: (filter: FilterId) => void;
-  secondaryOpen: boolean;
-  onSecondaryToggle: () => void;
 }) {
   const [pulsing, setPulsing] = useState<Partial<Record<FilterId, boolean>>>({});
-  const [hiddenHandlePulse, setHiddenHandlePulse] = useState(false);
   const previousCountsRef = useRef(counts);
 
-  const fixedStartItems: FilterId[] = ["ia", "humano"];
-  const dynamicCandidates = conversationFilterOrder.filter(
-    (item) => !fixedStartItems.includes(item) && item !== "todas",
-  );
-  const tonePriority: Record<SignalTone, number> = {
-    red: 4,
-    amber: 3,
-    green: 2,
-    blue: 1,
-    neutral: 0,
-  };
-  const rankedDynamicItems = [...dynamicCandidates].sort((a, b) => {
-    const priorityDiff = tonePriority[tones[b]] - tonePriority[tones[a]];
-    if (priorityDiff !== 0) return priorityDiff;
-    const countDiff = counts[b] - counts[a];
-    if (countDiff !== 0) return countDiff;
-    return conversationFilterOrder.indexOf(a) - conversationFilterOrder.indexOf(b);
-  });
-  const visibleDynamicItems = rankedDynamicItems.slice(0, 2);
-  const hiddenItems = rankedDynamicItems.slice(2);
-  const bottomItems: FilterId[] = [...fixedStartItems, ...visibleDynamicItems];
-  const hiddenHasSignal = hiddenItems.some((item) => counts[item] > 0);
-  const hiddenSignalTone = hiddenItems.reduce<SignalTone>((current, item) => {
-    return tonePriority[tones[item]] > tonePriority[current] ? tones[item] : current;
-  }, "neutral");
   useEffect(() => {
-    const changed = conversationFilterOrder.filter((item) => counts[item] > (previousCountsRef.current[item] ?? 0));
+    const changed = conversationFilterOrder.filter((item) => item !== "ia" && counts[item] > (previousCountsRef.current[item] ?? 0));
     previousCountsRef.current = counts;
     if (changed.length === 0) return;
-    if (changed.some((item) => hiddenItems.includes(item))) {
-      setHiddenHandlePulse(true);
-    }
     setPulsing((current) => {
       const next = { ...current };
       changed.forEach((item) => {
@@ -992,32 +969,14 @@ function ConversationFilters({
       });
     }, 850);
     return () => window.clearTimeout(id);
-  }, [counts, hiddenItems]);
+  }, [counts]);
 
-  useEffect(() => {
-    if (secondaryOpen || !hiddenHasSignal) {
-      setHiddenHandlePulse(false);
-    }
-  }, [secondaryOpen, hiddenHasSignal]);
-
-  const renderFilterButton = (item: FilterId, showLabel: boolean) => {
+  const renderFilterButton = (item: FilterId) => {
     const active = activeFilter === item;
     const count = counts[item];
     const Icon = filterIcons[item];
     const hasSignal = item !== "todas" && item !== "ia" && count > 0;
     const signalClass = item === "ia" ? "text-current/70" : hasSignal ? signalToneTextClasses[tones[item]] : signalToneTextClasses.neutral;
-    const badgeClass =
-      item === "todas" || item === "ia"
-        ? "bg-current/12 text-current/68"
-        : tones[item] === "red"
-          ? "bg-red-600 text-white"
-          : tones[item] === "amber"
-            ? "bg-amber-500 text-[#1f1f1a]"
-            : tones[item] === "green"
-              ? "bg-emerald-500 text-white"
-              : tones[item] === "blue"
-                ? "bg-sky-500 text-white"
-                : "bg-current/10 text-current/58";
     const activeNeutral = active && item === "todas";
 
     return (
@@ -1026,9 +985,7 @@ function ConversationFilters({
         type="button"
         onClick={() => onFilterChange(item)}
         className={cn(
-          "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1 text-center transition-colors",
-          item === "ia" && "-translate-x-1",
-          item === "carrinhos" && "translate-x-1",
+          "relative flex min-w-fit cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl px-0.5 py-1 text-center transition-colors",
           activeNeutral
             ? "bg-transparent text-current/62"
             : active
@@ -1039,52 +996,26 @@ function ConversationFilters({
         )}
         title={filterLabels[item]}
       >
-            <span className={cn("relative flex h-5 w-5 items-center justify-center", signalClass, item !== "ia" && pulsing[item] && "animate-pulse")}>
-              <Icon className="h-[1.08rem] w-[1.08rem] shrink-0 stroke-[1.45]" />
-              {count > 0 && (
-                <span className={cn("absolute -right-1.5 -top-1 flex h-3 min-w-3 items-center justify-center rounded-full px-0.5 text-[7px] font-bold leading-none tabular-nums", badgeClass)}>
-                  {count > 9 ? "9+" : count}
-                </span>
-              )}
+        <span className={cn("flex min-w-0 items-center justify-center gap-1", signalClass, pulsing[item] && "animate-pulse")}>
+          <Icon className="h-[1.05rem] w-[1.05rem] shrink-0 stroke-[1.45]" />
+          {count > 0 && (
+            <span className="text-[10px] font-semibold leading-none tabular-nums text-current/90">
+              {count > 99 ? "99+" : count}
+            </span>
+          )}
         </span>
-        {showLabel && (
-          <span className="block w-full truncate text-[9.5px] font-light leading-none tracking-[0.01em] text-current/72">
-            {filterLabels[item]}
-          </span>
-        )}
+        <span className="block whitespace-nowrap text-[9.5px] font-light leading-none tracking-[0.01em] text-current/72">
+          {filterLabels[item]}
+        </span>
       </button>
     );
   };
 
   return (
     <div className="relative shrink-0 px-0 py-1.5">
-      <div className={cn("relative grid items-center gap-1", bottomItems.length === 5 ? "grid-cols-5" : "grid-cols-4")}>
-        {bottomItems.map((item) => renderFilterButton(item, true))}
+      <div className="relative flex items-center justify-between">
+        {conversationFilterOrder.map((item) => renderFilterButton(item))}
       </div>
-      <div className="mt-0.5 flex h-3 items-center justify-end">
-        <button
-          type="button"
-          onClick={() => {
-            onSecondaryToggle();
-            setHiddenHandlePulse(false);
-          }}
-          className={cn(
-            "flex h-3 w-7 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
-            hiddenHandlePulse && "animate-pulse",
-            !secondaryOpen && hiddenHasSignal && signalToneTextClasses[hiddenSignalTone],
-          )}
-          aria-label={secondaryOpen ? "Recolher resumo" : "Mostrar resumo"}
-        >
-          {secondaryOpen ? <ChevronUp className="h-3.5 w-3.5 stroke-[1.65]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[1.65]" />}
-        </button>
-      </div>
-      {secondaryOpen && hiddenItems.length > 0 && (
-        <div className="-mx-1 mt-1 bg-[#1f1f1a]/4 dark:bg-[#24241f]">
-          <div className="grid grid-cols-2 items-center gap-1 px-4 py-1">
-            {hiddenItems.map((item) => renderFilterButton(item, true))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -1092,11 +1023,11 @@ function ConversationFilters({
 function conversationSubtitle(journey: JourneyItem) {
   if (journey.kind === "transfer") return "Repasse";
   const conversation = journey.conversation;
-  if (conversation.prioridade === "critical") return `${channelLabel(conversation)} · Ajuda crítica`;
-  if (conversation.prioridade === "important") return `${channelLabel(conversation)} · Ajuda`;
-  if (conversation.status === "aguardando_cliente") return `${channelLabel(conversation)} · Espera`;
-  if (conversation.status === "convertida_pedido") return `${channelLabel(conversation)} · Pedido`;
-  return `${channelLabel(conversation)} · ${statusLabels[conversation.status]}`;
+  if (conversation.prioridade === "critical") return `${channelLabel(conversation)} Â· Ajuda crÃ­tica`;
+  if (conversation.prioridade === "important") return `${channelLabel(conversation)} Â· Ajuda`;
+  if (conversation.status === "aguardando_cliente") return `${channelLabel(conversation)} Â· Espera`;
+  if (conversation.status === "convertida_pedido") return `${channelLabel(conversation)} Â· Pedido`;
+  return `${channelLabel(conversation)} Â· ${statusLabels[conversation.status]}`;
 }
 
 function conversationPreview(journey: JourneyItem) {
@@ -1130,7 +1061,7 @@ function ConversationListPanel({
       <div className="flex min-h-0 flex-1 flex-col justify-center px-3 text-center">
         <p className="text-sm font-semibold text-current/78">Nenhuma conversa agora.</p>
         <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-current/52">
-          Quando um cliente chamar, a conversa aparecerá aqui.
+          Quando um cliente chamar, a conversa aparecerÃ¡ aqui.
         </p>
       </div>
     );
@@ -1203,7 +1134,7 @@ function ConversationListPanel({
                 <span className="flex min-w-[6.8rem] shrink-0 items-center justify-end gap-1 text-[10px] tabular-nums text-current/58">
                   <Clock className="h-3 w-3" />
                   <span>{formatElapsed(time)}</span>
-                  <span className="text-current/28">·</span>
+                  <span className="text-current/28">Â·</span>
                   <Hourglass className="h-3 w-3" />
                   <span>{formatElapsed(totalTime)}</span>
                   {!isTransfer && (
@@ -1242,7 +1173,7 @@ function ConversationListPanel({
                     type="button"
                     onClick={() => setOpenAuxId((value) => (value === String(journey.id) ? null : String(journey.id)))}
                     className="mb-0.5 cursor-pointer rounded-full p-1 text-current/66 hover:text-current"
-                    aria-label="Mais ações"
+                    aria-label="Mais aÃ§Ãµes"
                   >
                     +
                   </button>
@@ -1261,7 +1192,7 @@ function ConversationListPanel({
                     type="button"
                     onClick={() => onSendCatalog(journey)}
                     className="mb-0.5 cursor-pointer rounded-full p-1 text-current/66 hover:text-current"
-                    aria-label="Enviar cardápio"
+                    aria-label="Enviar cardÃ¡pio"
                   >
                     <BookOpen className="h-3.5 w-3.5" />
                   </button>
@@ -1280,7 +1211,7 @@ function ConversationListPanel({
               )}
               {!isTransfer && openChat && openAuxId === String(journey.id) && (
                 <div className="absolute left-0 top-full z-20 mt-1 grid w-56 grid-cols-2 gap-1 rounded-2xl bg-[#685c20] p-2 text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]">
-                  {["Mensagens rápidas", "Mídia", "Câmera", "Documento", "Áudio", "Contato", "Produtos"].map((label) => (
+                  {["Mensagens rÃ¡pidas", "MÃ­dia", "CÃ¢mera", "Documento", "Ãudio", "Contato", "Produtos"].map((label) => (
                     <button
                       key={label}
                       type="button"
@@ -1312,7 +1243,7 @@ function ConversationListPanel({
                       setOpenAuxId(String(journey.id));
                     }}
                     className="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full px-1.5 py-1 text-sm font-medium leading-none text-current/66 hover:text-current"
-                    aria-label="Mais ações"
+                    aria-label="Mais aÃ§Ãµes"
                   >
                     +
                   </button>
@@ -1328,10 +1259,10 @@ function ConversationListPanel({
                     type="button"
                     onClick={() => onSendCatalog(journey)}
                     className="inline-flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-current/66 hover:text-current"
-                    aria-label="Enviar cardápio"
+                    aria-label="Enviar cardÃ¡pio"
                   >
                     <BookOpen className="h-3.5 w-3.5" />
-                    <span className="hidden text-[10px] font-medium min-[380px]:inline">Cardápio</span>
+                    <span className="hidden text-[10px] font-medium min-[380px]:inline">CardÃ¡pio</span>
                   </button>
                 </div>
               )}
@@ -1395,11 +1326,11 @@ function ConversationDetailScreen({
             {session && (
               <div>
                 <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-current/44">Carrinho</p>
-                <p className="text-sm">{session.quantidadeItens ?? 0} itens · {formatBRL(session.valorEstimado)}</p>
+                <p className="text-sm">{session.quantidadeItens ?? 0} itens Â· {formatBRL(session.valorEstimado)}</p>
               </div>
             )}
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-current/44">Histórico</p>
+              <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-current/44">HistÃ³rico</p>
               <div className="mt-1 space-y-2">
                 {(messages ?? []).slice(-4).map((message) => (
                   <p key={message._id} className="rounded-2xl bg-[#1f1f1a]/7 px-3 py-2 text-xs dark:bg-[#f7f2ec]/9">
@@ -1507,38 +1438,60 @@ function AtendimentoDock({
     { label: "Atendimento", icon: MessageCircle, active: true, badge: pendingCount },
     { label: "Produção", icon: ChefHat },
     { label: "Gestão", icon: BarChart3 },
+    { label: "Delivery", icon: Bike },
   ];
   const extraItems: Array<{ label: string; icon: LucideIcon }> = [
-    { label: "Delivery", icon: Bike },
     { label: "Caixa", icon: Banknote },
     { label: "Estoque", icon: Package },
     { label: "Usuários", icon: Users },
+    { label: "Ajustes", icon: Settings },
   ];
 
   return (
-    <footer className="shrink-0 border-t border-[#1f1f1a]/8 bg-[#f1f0ea]/96 px-0 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-0.5 text-[#1f1f1a] dark:border-[#f7f2ec]/10 dark:bg-[#181816] dark:text-[#f7f2ec]">
+    <footer className="shrink-0 border-t border-[#1f1f1a]/8 bg-[#f1f0ea]/96 px-1 pb-[calc(0.45rem+env(safe-area-inset-bottom))] pt-0.5 text-[#1f1f1a] dark:border-[#f7f2ec]/10 dark:bg-[#181816] dark:text-[#f7f2ec]">
       {expanded && (
-        <div className="mb-0.5 ml-4 mr-4 grid grid-cols-4 items-stretch gap-1 py-1 pr-8">
-          {extraItems.map((item) => (
-            <DockButton key={item.label} item={item} onClick={() => onAction(item.label)} />
-          ))}
+        <div className="py-1">
+          <div className="grid w-full grid-cols-5 gap-x-0">
+            {extraItems.map((item, index) => (
+              <DockButton key={item.label} item={item} slot={index + 1} onClick={() => onAction(item.label)} />
+            ))}
+            <div className="flex min-w-0 items-center justify-center">
+              <button
+                type="button"
+                onClick={() => setExpanded(false)}
+                className="flex h-7 w-7 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white"
+                aria-label="Recolher módulos"
+              >
+                <ChevronDown className="h-3.5 w-3.5 stroke-[1.6]" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
-      <nav className="relative ml-4 mr-4 grid grid-cols-4 items-stretch gap-1 py-1 pr-8">
-        <button
-          type="button"
-          onClick={() => setExpanded((value) => !value)}
-          className={cn(
-            "absolute right-0 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
-            !expanded && hiddenSignalCount > 0 && signalToneTextClasses[hiddenSignalTone],
-          )}
-          aria-label={expanded ? "Recolher módulos" : "Mostrar módulos"}
-        >
-          {expanded ? <ChevronDown className="h-4 w-4 stroke-[1.6]" /> : <ChevronUp className="h-4 w-4 stroke-[1.6]" />}
-        </button>
-        {fixedItems.map((item) => (
-          <DockButton key={item.label} item={item} onClick={() => onAction(item.label)} />
-        ))}
+      {!expanded && (
+        <div className="grid h-3 grid-cols-5 gap-x-0">
+          <span className="col-span-4" aria-hidden="true" />
+          <div className="flex min-w-0 items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              className={cn(
+                "flex h-3 w-7 cursor-pointer items-center justify-center bg-transparent text-[#685c20]/82 transition-colors hover:text-[#685c20] dark:text-[#f7f2ec]/88 dark:hover:text-white",
+                !expanded && hiddenSignalCount > 0 && signalToneTextClasses[hiddenSignalTone],
+              )}
+              aria-label="Mostrar módulos"
+            >
+              <ChevronUp className="h-3.5 w-3.5 stroke-[1.6]" />
+            </button>
+          </div>
+        </div>
+      )}
+      <nav className="relative py-1">
+        <div className="grid grid-cols-5 gap-x-0">
+          {fixedItems.map((item, index) => (
+            <DockButton key={item.label} item={item} slot={index + 1} onClick={() => onAction(item.label)} />
+          ))}
+        </div>
       </nav>
     </footer>
   );
@@ -1547,31 +1500,54 @@ function AtendimentoDock({
 function DockButton({
   item,
   onClick,
+  slot,
 }: {
   item: { label: string; icon: LucideIcon; active?: boolean; badge?: number };
   onClick: () => void;
+  slot?: number;
 }) {
   const Icon = item.icon;
+  const opticalShift =
+    slot === 1
+      ? "translate-x-[-14.8px]"
+      : slot === 2
+        ? "translate-x-[-6.5px]"
+        : slot === 3
+          ? "translate-x-[8px]"
+          : slot === 4 || slot === 5
+            ? "translate-x-[11px]"
+            : "";
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-1 text-[8.5px] font-light tracking-[-0.01em] transition-colors",
-        item.active
-          ? "bg-[#1f1f1a]/7 text-current dark:bg-[#24241f]"
-          : "text-current/62 hover:bg-[#1f1f1a]/5 hover:text-current dark:hover:bg-[#f7f2ec]/8",
+        "relative flex min-w-0 cursor-pointer flex-col items-center justify-center px-0 py-0.5 transition-colors active:scale-[0.98]",
+        item.active ? "text-current" : "text-current/62 hover:text-current",
       )}
     >
-      <span className="relative">
-        <Icon className="h-[1.15rem] w-[1.15rem] stroke-[1.45]" />
-        {item.badge ? (
-          <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center rounded-full bg-emerald-500/90 px-0.5 text-[7px] font-bold leading-none text-white">
-            {item.badge}
-          </span>
-        ) : null}
+      <span
+        className={cn(
+          "flex min-w-[2.8rem] flex-col items-center gap-1 rounded-2xl px-2 py-1.5 text-center transition-colors",
+          opticalShift,
+          item.active
+            ? "bg-[#685c20]/10 shadow-none dark:bg-[#24241f]"
+            : "hover:bg-[#1f1f1a]/4 dark:hover:bg-[#f7f2ec]/5",
+        )}
+      >
+        <span className="relative">
+          <Icon className="h-[calc(1.15rem*var(--rvl-font-scale,1))] w-[calc(1.15rem*var(--rvl-font-scale,1))] stroke-[1.45]" />
+          {item.badge ? (
+            <span className="absolute -right-1 -top-1 flex h-3 min-w-3 items-center justify-center rounded-full bg-emerald-500/90 px-0.5 text-[7px] font-bold leading-none text-white">
+              {item.badge}
+            </span>
+          ) : null}
+        </span>
+        <span className="block w-full max-w-full truncate text-center text-[calc(9.5px*var(--rvl-font-scale,1))] font-light leading-none tracking-[0.005em]">
+          {item.label}
+        </span>
       </span>
-      <span className="max-w-full whitespace-nowrap leading-none">{item.label}</span>
     </button>
   );
 }
@@ -1589,7 +1565,7 @@ function JourneyQueue({
     return (
       <div className="px-2 py-2 text-center text-[#1f1f1a] dark:text-[#f7f2ec] sm:py-4">
         <p className="text-sm font-medium text-current/72">Fila sem jornadas agora.</p>
-        <p className="mt-1 text-xs text-current/48">Use Comunicação Agora para alternar os filtros.</p>
+        <p className="mt-1 text-xs text-current/48">Use ComunicaÃ§Ã£o Agora para alternar os filtros.</p>
       </div>
     );
   }
@@ -1605,7 +1581,7 @@ function JourneyQueue({
         const priority = isTransfer ? journey.transfer.prioridade : journey.conversation.prioridade;
         const responsible = isTransfer
           ? `Para ${journey.transfer.paraPerfil}`
-          : journey.conversation.operadorResponsavelNomeSnapshot ?? "Sem responsável";
+          : journey.conversation.operadorResponsavelNomeSnapshot ?? "Sem responsÃ¡vel";
         const time = isTransfer
           ? journey.transfer.criadaEm
           : journey.conversation.ultimaMensagemEm ?? journey.conversation.dataAtualizacao;
@@ -1629,7 +1605,7 @@ function JourneyQueue({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold leading-tight">{title}</p>
                     <p className="mt-0.5 truncate text-[10.5px] text-current/60">
-                      {channel} · {state}
+                      {channel} Â· {state}
                     </p>
                   </div>
                   <span className="shrink-0 text-[10px] tabular-nums text-current/56">
@@ -1660,14 +1636,14 @@ function CustomerMemoryPreview({
     <div className="rounded-2xl bg-[#1f1f1a]/7 px-2 py-2 dark:bg-[#f7f2ec]/8">
       <div className="mb-1.5 flex items-center justify-between gap-1">
         <p className="truncate text-[9px] font-semibold uppercase tracking-[0.05em] text-current/70">
-          Memória do Cliente
+          MemÃ³ria do Cliente
         </p>
         <button
           type="button"
           onClick={onOpen}
           className="shrink-0 cursor-pointer text-[9.5px] font-medium text-current/74 underline-offset-4 hover:underline"
         >
-          Ver Memória
+          Ver MemÃ³ria
         </button>
       </div>
       <div className="grid grid-cols-2 gap-1.5 text-[9.5px] leading-tight text-current/68">
@@ -1676,11 +1652,11 @@ function CustomerMemoryPreview({
           {summary.recurrence}
         </p>
         <p>
-          <span className="block text-current/46">última compra</span>
+          <span className="block text-current/46">Ãºltima compra</span>
           {summary.lastPurchase}
         </p>
         <p>
-          <span className="block text-current/46">Preferência</span>
+          <span className="block text-current/46">PreferÃªncia</span>
           {summary.preference}
         </p>
         <p>
@@ -1719,7 +1695,7 @@ function CatalogSessionSummary({
     <div className="rounded-2xl bg-[#1f1f1a]/7 px-2 py-2 dark:bg-[#f7f2ec]/8">
       <div className="mb-1.5 flex items-center justify-between gap-1">
         <p className="truncate text-[9px] font-semibold uppercase tracking-[0.05em] text-current/70">
-          Carrinho do Cardápio
+          Carrinho do CardÃ¡pio
         </p>
         {session && (
           <span className="rounded-full bg-[#685c20]/10 px-1.5 py-0.5 text-[8.5px] font-medium text-current/64 dark:bg-[#f3c4a2]/10">
@@ -1745,7 +1721,7 @@ function CatalogSessionSummary({
               <span className="line-clamp-1">{itemPreview}</span>
             </p>
             <p className="col-span-2">
-              <span className="block text-current/46">última interação</span>
+              <span className="block text-current/46">Ãºltima interaÃ§Ã£o</span>
               {formatElapsed(session.ultimaInteracaoEm ?? session.atualizadaEm)}
             </p>
           </div>
@@ -1781,7 +1757,7 @@ function CatalogSessionSummary({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-current/62">Nenhuma sessão ativa vinculada.</p>
+        <p className="text-xs text-current/62">Nenhuma sessÃ£o ativa vinculada.</p>
       )}
     </div>
   );
@@ -1790,11 +1766,11 @@ function CatalogSessionSummary({
 type FocusIndicatorId = "promocoes" | "restricoes" | "conta" | "memoria" | "catalogo";
 
 const focusIndicatorLabels: Record<FocusIndicatorId, string> = {
-  promocoes: "Promoção",
-  restricoes: "Restrição",
+  promocoes: "PromoÃ§Ã£o",
+  restricoes: "RestriÃ§Ã£o",
   conta: "Conta",
-  memoria: "Memória",
-  catalogo: "Cardápio",
+  memoria: "MemÃ³ria",
+  catalogo: "CardÃ¡pio",
 };
 
 type FocusIndicatorTone = "info" | "active" | "attention" | "critical";
@@ -1915,7 +1891,7 @@ function CustomerMemoryPanel({
         <div className="flex items-start justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-current/58">
-              Memória do Cliente
+              MemÃ³ria do Cliente
             </p>
             <h2 className="truncate text-base font-semibold">{customerLabel(conversation)}</h2>
             <p className="text-xs text-current/62">{channelLabel(conversation)} ? contexto permanente</p>
@@ -1924,7 +1900,7 @@ function CustomerMemoryPanel({
             type="button"
             onClick={onClose}
             className="cursor-pointer rounded-full p-1.5 text-current/70 transition-colors hover:text-current"
-            aria-label="Fechar memória do cliente"
+            aria-label="Fechar memÃ³ria do cliente"
           >
             <X className="h-5 w-5 stroke-[1.8]" />
           </button>
@@ -1937,7 +1913,7 @@ function CustomerMemoryPanel({
                 {recentMessages.map((message) => (
                   <p key={message._id} className="line-clamp-2">
                     <span className="font-semibold">
-                      {formatTime(message.timestamp)} · {message.direcao === "entrada" ? "Cliente" : "Atendimento"}
+                      {formatTime(message.timestamp)} Â· {message.direcao === "entrada" ? "Cliente" : "Atendimento"}
                     </span>
                     {message.texto ? ` ? ${message.texto}` : " ? Mensagem sem texto"}
                   </p>
@@ -1951,7 +1927,7 @@ function CustomerMemoryPanel({
           <MemorySection icon={ReceiptText} title="Pedidos">
             {linkedOrder ? (
               <p>
-                Pedido {linkedOrder.numero ? `#${linkedOrder.numero}` : "vinculado"} · {linkedOrder.status ?? "status aberto"} ·{" "}
+                Pedido {linkedOrder.numero ? `#${linkedOrder.numero}` : "vinculado"} Â· {linkedOrder.status ?? "status aberto"} Â·{" "}
                 {formatBRL(linkedOrder.totalLiquido ?? linkedOrder.totalBruto)}
               </p>
             ) : (
@@ -1964,54 +1940,54 @@ function CustomerMemoryPanel({
               <div className="space-y-1">
                 {firstItems.map((item, index) => (
                   <p key={`${item.nomeSnapshot}-${index}`}>
-                    {item.quantidade ?? 1}x {item.nomeSnapshot ?? "Item"} · {formatBRL(item.subtotal)}
+                    {item.quantidade ?? 1}x {item.nomeSnapshot ?? "Item"} Â· {formatBRL(item.subtotal)}
                   </p>
                 ))}
               </div>
             ) : (
-              <p>Histórico consolidado de produtos preparado para etapa futura.</p>
+              <p>HistÃ³rico consolidado de produtos preparado para etapa futura.</p>
             )}
           </MemorySection>
 
-          <MemorySection icon={Tag} title="Promoções">
-            <p>Consulta preparada para campanhas e ofertas aplicáveis ao cliente.</p>
+          <MemorySection icon={Tag} title="PromoÃ§Ãµes">
+            <p>Consulta preparada para campanhas e ofertas aplicÃ¡veis ao cliente.</p>
           </MemorySection>
 
           <MemorySection icon={Banknote} title="Contas">
-            <p>{linkedOrder && linkedOrder.status !== "entregue" ? "Conta pendente nesta jornada." : "Sem pendência financeira visível nesta jornada."}</p>
+            <p>{linkedOrder && linkedOrder.status !== "entregue" ? "Conta pendente nesta jornada." : "Sem pendÃªncia financeira visÃ­vel nesta jornada."}</p>
           </MemorySection>
 
-          <MemorySection icon={Heart} title="Preferências">
+          <MemorySection icon={Heart} title="PreferÃªncias">
             <p>
               {firstItems[0]?.nomeSnapshot
-                ? `Último item em destaque: ${firstItems[0].nomeSnapshot}.`
-                : "Preferências serão projetadas a partir de compras e sessões recorrentes."}
+                ? `Ãšltimo item em destaque: ${firstItems[0].nomeSnapshot}.`
+                : "PreferÃªncias serÃ£o projetadas a partir de compras e sessÃµes recorrentes."}
             </p>
           </MemorySection>
 
-          <MemorySection icon={CircleHelp} title="Ocorrências">
+          <MemorySection icon={CircleHelp} title="OcorrÃªncias">
             {occurrences.length > 0 ? (
-              <p>{occurrences.length} atendimento(s) com prioridade importante/crítica.</p>
+              <p>{occurrences.length} atendimento(s) com prioridade importante/crÃ­tica.</p>
             ) : (
-              <p>Nenhuma ocorrência crítica registrada para este telefone.</p>
+              <p>Nenhuma ocorrÃªncia crÃ­tica registrada para este telefone.</p>
             )}
           </MemorySection>
 
           <MemorySection icon={CalendarDays} title="Encomendas">
-            <p>Espaço preparado para encomendas futuras vinculadas ao cliente.</p>
+            <p>EspaÃ§o preparado para encomendas futuras vinculadas ao cliente.</p>
           </MemorySection>
 
-          <MemorySection icon={BookOpen} title="Cardápio">
+          <MemorySection icon={BookOpen} title="CardÃ¡pio">
             {recentSessions.length > 0 ? (
               <div className="space-y-1">
                 {recentSessions.map((session) => (
                   <p key={session._id}>
-                    {session.status} · {session.quantidadeItens ?? 0} itens · {formatBRL(session.valorEstimado)}
+                    {session.status} Â· {session.quantidadeItens ?? 0} itens Â· {formatBRL(session.valorEstimado)}
                   </p>
                 ))}
               </div>
             ) : (
-              <p>Nenhuma sessão de cardápio encontrada para este telefone.</p>
+              <p>Nenhuma sessÃ£o de cardÃ¡pio encontrada para este telefone.</p>
             )}
           </MemorySection>
         </div>
@@ -2047,7 +2023,7 @@ function FocusedJourney({
         <MessageCircle className="mb-2 h-8 w-8 stroke-[1.6] opacity-55 sm:mb-3 sm:h-9 sm:w-9" />
         <p className="text-sm font-semibold">Nenhuma jornada em atendimento.</p>
         <p className="mt-1 max-w-xs text-xs leading-snug text-current/58">
-          Assim que uma nova jornada chegar ou você assumir uma existente, ela aparecerá aqui.
+          Assim que uma nova jornada chegar ou vocÃª assumir uma existente, ela aparecerÃ¡ aqui.
         </p>
       </section>
     );
@@ -2063,7 +2039,7 @@ function FocusedJourney({
             </p>
             <h2 className="mt-1 truncate text-xl font-semibold">Repasse recebido</h2>
             <p className="mt-1 text-xs text-current/62">
-              {journey.transfer.dePerfil} · {journey.transfer.paraPerfil}
+              {journey.transfer.dePerfil} Â· {journey.transfer.paraPerfil}
             </p>
           </div>
           <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-full", priorityClasses[journey.transfer.prioridade])} />
@@ -2119,8 +2095,8 @@ function FocusedJourney({
             tone: "active" as const,
             content: (
               <div>
-                <p className="font-medium text-current/86">Promoção</p>
-                <p className="mt-0.5 text-current/62">Há uma oferta aplicável para esta jornada.</p>
+                <p className="font-medium text-current/86">PromoÃ§Ã£o</p>
+                <p className="mt-0.5 text-current/62">HÃ¡ uma oferta aplicÃ¡vel para esta jornada.</p>
               </div>
             ),
           },
@@ -2134,11 +2110,11 @@ function FocusedJourney({
             tone: conversation.prioridade === "critical" ? ("critical" as const) : ("attention" as const),
             content: (
               <div>
-                <p className="font-medium text-current/86">Restrição</p>
+                <p className="font-medium text-current/86">RestriÃ§Ã£o</p>
                 <p className="mt-0.5 text-current/62">
                   {conversation.prioridade === "critical"
-                    ? "Atendimento crítico. Acione o gerente se precisar de apoio."
-                    : "Atenção nesta jornada antes de confirmar o pedido."}
+                    ? "Atendimento crÃ­tico. Acione o gerente se precisar de apoio."
+                    : "AtenÃ§Ã£o nesta jornada antes de confirmar o pedido."}
                 </p>
               </div>
             ),
@@ -2156,8 +2132,8 @@ function FocusedJourney({
                 <p className="font-medium text-current/86">Conta</p>
                 <p className="mt-0.5 text-current/62">
                   {fallbackMemory.account === "Pendente"
-                    ? "Existe pendência. Pagamento pertence ao Caixa."
-                    : "Conta consultável, sem pendência visível."}
+                    ? "Existe pendÃªncia. Pagamento pertence ao Caixa."
+                    : "Conta consultÃ¡vel, sem pendÃªncia visÃ­vel."}
                 </p>
               </div>
             ),
@@ -2173,18 +2149,18 @@ function FocusedJourney({
             content: (
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-medium text-current/86">Memória</p>
+                  <p className="font-medium text-current/86">MemÃ³ria</p>
                   <p className="mt-0.5 text-current/62">
-                    {fallbackMemory.recurrence} · última compra: {fallbackMemory.lastPurchase}
+                    {fallbackMemory.recurrence} Â· Ãºltima compra: {fallbackMemory.lastPurchase}
                   </p>
-                  <p className="mt-0.5 text-current/62">Preferência: {fallbackMemory.preference}</p>
+                  <p className="mt-0.5 text-current/62">PreferÃªncia: {fallbackMemory.preference}</p>
                 </div>
                 <button
                   type="button"
                   onClick={onOpenMemory}
                   className="shrink-0 cursor-pointer rounded-full bg-[#685c20]/10 px-2.5 py-1 text-[10px] font-medium text-current/78 dark:bg-[#f3c4a2]/10"
                 >
-                  Ver memória
+                  Ver memÃ³ria
                 </button>
               </div>
             ),
@@ -2201,9 +2177,9 @@ function FocusedJourney({
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-medium text-current/86">Cardápio</p>
+                    <p className="font-medium text-current/86">CardÃ¡pio</p>
                     <p className="mt-0.5 text-current/62">
-                      {session.status} · {formatBRL(session.valorEstimado)}
+                      {session.status} Â· {formatBRL(session.valorEstimado)}
                     </p>
                     <p className="mt-0.5 line-clamp-1 text-current/62">{catalogSummary}</p>
                   </div>
@@ -2250,7 +2226,7 @@ function FocusedJourney({
           </p>
           <h2 className="mt-0.5 truncate text-lg font-semibold">{customerLabel(conversation)}</h2>
           <p className="mt-0.5 truncate text-[11px] text-current/62">
-            {channelLabel(conversation)} · {statusLabels[conversation.status]}
+            {channelLabel(conversation)} Â· {statusLabels[conversation.status]}
           </p>
         </div>
         <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-full", priorityClasses[conversation.prioridade])} />
@@ -2317,9 +2293,9 @@ function PrimaryNextAction({
     return (
       <section className="rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
-          Próxima Ação
+          PrÃ³xima AÃ§Ã£o
         </p>
-        <p className="mt-2 text-sm text-current/68">Aguardando seleção de jornada.</p>
+        <p className="mt-2 text-sm text-current/68">Aguardando seleÃ§Ã£o de jornada.</p>
       </section>
     );
   }
@@ -2328,11 +2304,11 @@ function PrimaryNextAction({
     return (
       <section className="rounded-2xl bg-white p-3 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
         <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
-          Próxima Ação
+          PrÃ³xima AÃ§Ã£o
         </p>
         <button
           type="button"
-          onClick={() => toast.info("Aceite de repasse será ativado na próxima etapa")}
+          onClick={() => toast.info("Aceite de repasse serÃ¡ ativado na prÃ³xima etapa")}
           className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#f04a2a] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#df3e21]"
         >
           <Shuffle className="h-4 w-4" />
@@ -2359,14 +2335,14 @@ function PrimaryNextAction({
   const runPrimaryAction = () => {
     if (action.kind === "assume") onAssume();
     if (action.kind === "confirm_order") onStartOrder();
-    if (action.kind === "track") toast.info("Acompanhamento do pedido será aberto pela jornada");
-    if (action.kind === "catalog") toast.info("Envio de cardápio será conectado na próxima etapa");
+    if (action.kind === "track") toast.info("Acompanhamento do pedido serÃ¡ aberto pela jornada");
+    if (action.kind === "catalog") toast.info("Envio de cardÃ¡pio serÃ¡ conectado na prÃ³xima etapa");
   };
 
   return (
     <section className="rounded-2xl bg-white p-2.5 text-[#685c20] dark:bg-[#151513] dark:text-[#f3c4a2]">
       <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-current/58">
-        Próxima Ação
+        PrÃ³xima AÃ§Ã£o
       </p>
 
       {action.kind === "reply" ? (
@@ -2385,7 +2361,7 @@ function PrimaryNextAction({
               onKeyDown={(event) => {
                 if (event.key === "Enter") submit();
               }}
-              placeholder="Resposta rápida..."
+              placeholder="Resposta rÃ¡pida..."
               className="min-w-0 flex-1 bg-transparent px-1 text-sm text-current placeholder:text-current/44 focus:outline-none"
               disabled={sending}
             />
@@ -2430,7 +2406,7 @@ function PrimaryNextAction({
         )}
         <button
           type="button"
-          onClick={() => toast.info("Repasse contextual será concluída na próxima etapa")}
+          onClick={() => toast.info("Repasse contextual serÃ¡ concluÃ­da na prÃ³xima etapa")}
           className="cursor-pointer rounded-full bg-[#685c20]/8 px-2.5 py-1 font-medium text-current/72 dark:bg-[#f7f2ec]/8"
         >
           Encaminhar
@@ -2439,7 +2415,7 @@ function PrimaryNextAction({
 
       {messages && messages.length > 0 && (
         <p className="mt-1 line-clamp-1 text-[10px] text-current/52">
-          última mensagem às {formatTime(messages[messages.length - 1]?.timestamp)}
+          Ãºltima mensagem Ã s {formatTime(messages[messages.length - 1]?.timestamp)}
         </p>
       )}
     </section>
@@ -2493,7 +2469,6 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
   const [activeTab, setActiveTab] = useState<AtendimentoTab>("conversas");
   const [filter, setFilter] = useState<FilterId>("todas");
-  const [summarySecondaryOpen, setSummarySecondaryOpen] = useState(true);
   const [selected, setSelected] = useState<{ kind: JourneyKind; id: string } | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [reportPanelOpen, setReportPanelOpen] = useState(false);
@@ -2529,7 +2504,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
     const lista = effectiveConversations ?? [];
     const carrinhos = demoMode ? 1 : 0;
     const ia = lista.filter((conversation) => conversation.status === "nova").length;
-    const humano = lista.filter((conversation) => conversation.status === "em_atendimento" || Boolean(conversation.operadorResponsavelId)).length;
+    const humano = lista.filter(isHumanConversation).length;
     const transferencias = effectiveTransfers?.filter((transfer) => ["pendente", "aguardando_aceite"].includes(transfer.status)).length ?? 0;
     return {
       ia,
@@ -2541,18 +2516,17 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   }, [effectiveConversations, effectiveTransfers, demoMode]);
 
   const communicationTones = useMemo<Record<FilterId, SignalTone>>(() => {
-    const lista = effectiveConversations ?? [];
     const transfers = effectiveTransfers?.filter((transfer) => ["pendente", "aguardando_aceite"].includes(transfer.status)) ?? [];
     const hasCriticalTransfer = transfers.some((transfer) => transfer.prioridade === "critical");
 
     return {
-      ia: communicationCounts.ia > 0 ? "green" : "neutral",
+      ia: "neutral",
       humano: communicationCounts.humano > 0 ? "amber" : "neutral",
       carrinhos: communicationCounts.carrinhos > 0 ? "amber" : "neutral",
       transferencias: hasCriticalTransfer ? "red" : communicationCounts.transferencias > 0 ? "amber" : "neutral",
       todas: "neutral",
     };
-  }, [effectiveConversations, effectiveTransfers, communicationCounts]);
+  }, [effectiveTransfers, communicationCounts]);
 
   const journeys = useMemo(
     () => buildJourneyItems(effectiveConversations, effectiveTransfers, demoMode ? [demoCatalogSession] : undefined, filter),
@@ -2634,7 +2608,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   const handleAssume = async () => {
     if (!selectedConversation || !operadorConvex) return;
     if (selectedIsDemo) {
-      toast.info("Cenário demonstrativo: conversa já está sob atendimento");
+      toast.info("CenÃ¡rio demonstrativo: conversa jÃ¡ estÃ¡ sob atendimento");
       return;
     }
     try {
@@ -2648,7 +2622,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   const handleMarkRead = async () => {
     if (!selectedConversation) return;
     if (selectedIsDemo) {
-      toast.success("Cenário demonstrativo marcado como lido");
+      toast.success("CenÃ¡rio demonstrativo marcado como lido");
       return;
     }
     try {
@@ -2682,11 +2656,11 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   };
 
   const handleContinueCatalog = () => {
-    toast.info("Cardápio preparado para abrir em etapa futura");
+    toast.info("CardÃ¡pio preparado para abrir em etapa futura");
   };
 
   const handleSendCatalog = () => {
-    toast.info("Envio manual do cardápio preparado para conexão com canal real");
+    toast.info("Envio manual do cardÃ¡pio preparado para conexÃ£o com canal real");
   };
 
   const handleClaimCatalog = async (session: SessaoCatalogoResumo) => {
@@ -2697,18 +2671,18 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
     }
     try {
       await assumirSessaoCatalogo({ sessaoId: session._id, operadorId: operadorConvex._id });
-      toast.success("Carrinho do cardápio assumido");
+      toast.success("Carrinho do cardÃ¡pio assumido");
     } catch {
-      toast.error("Erro ao avocar sessão");
+      toast.error("Erro ao avocar sessÃ£o");
     }
   };
 
   const handleConvertCatalog = (session: SessaoCatalogoResumo) => {
     if (session.pedidoId) {
-      toast.info("Carrinho já possui pedido vinculado");
+      toast.info("Carrinho jÃ¡ possui pedido vinculado");
       return;
     }
-    toast.info("Pedido deve nascer por confirmação explícita do atendente");
+    toast.info("Pedido deve nascer por confirmaÃ§Ã£o explÃ­cita do atendente");
     onStartOrder();
   };
 
@@ -2719,36 +2693,54 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
         interfaceScaleClasses[preferences.interfaceScale],
       )}
     >
-      <header className="grid shrink-0 grid-cols-[2.1rem_minmax(0,1fr)_11rem] items-center gap-1 border-b border-[#1f1f1a]/12 bg-[#f7f7f4]/96 px-4 py-2 text-[#1f1f1a] md:grid-cols-[2.25rem_minmax(0,1fr)_12rem] md:gap-2 md:px-6 md:py-3 dark:border-[#f7f2ec]/12 dark:bg-[#151513] dark:text-[#f7f2ec]">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
+        style={{ left: "7.8px" }}
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none fixed bottom-0 top-0 z-50 w-px scale-x-50 bg-sky-400/35 dark:bg-sky-300/45"
+        style={{ right: "7.8px" }}
+      />
+      <header className="grid shrink-0 grid-cols-[1.55rem_minmax(0,1fr)_10.75rem] items-center gap-1 border-b border-[#1f1f1a]/12 bg-[#f7f7f4]/96 px-[7.8px] py-2 text-[#1f1f1a] md:grid-cols-[1.7rem_minmax(0,1fr)_10.75rem] md:gap-2 md:px-[7.8px] md:py-3 dark:border-[#f7f2ec]/12 dark:bg-[#151513] dark:text-[#f7f2ec]">
         <button
           type="button"
           onClick={onBack}
-          className="relative z-20 flex h-9 w-9 cursor-pointer items-center justify-start rounded-full text-current/76 transition-colors hover:text-current focus:outline-none"
+          className="relative z-20 flex h-8 w-6 cursor-pointer items-center justify-start rounded-full text-current/72 transition-colors hover:text-current focus:outline-none"
           aria-label="Voltar"
         >
-          <ArrowLeft className="h-5 w-5 stroke-[1.8]" />
+          <ArrowLeft className="h-4 w-4 -translate-x-[3px] stroke-[1.65]" />
         </button>
         <div className="min-w-0">
           <h1 className="max-w-full whitespace-nowrap text-[12px] font-semibold uppercase leading-[1.05] tracking-[0.08em] sm:text-sm sm:tracking-[0.12em]">
             {filterLabelsByTab[activeTab]}
           </h1>
         </div>
-        <div className="flex w-full items-center justify-end gap-0.5 sm:gap-1">
+        <div className="flex w-full translate-x-[8.3px] items-center justify-end gap-[6px]">
+          <button
+            type="button"
+            onClick={() => setActiveTab("clientes")}
+            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
+            aria-label="Clientes"
+          >
+            <Users className="h-[1.1rem] w-[1.1rem] stroke-[1.7]" />
+          </button>
           <button
             type="button"
             onClick={() => setActiveTab("agenda")}
-            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2] sm:p-2"
+            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
             aria-label="Agenda"
           >
-            <CalendarDays className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />
+            <CalendarDays className="h-[1.1rem] w-[1.1rem] stroke-[1.7]" />
           </button>
           <button
             type="button"
             onClick={() => setTheme(isDark ? "light" : "dark")}
-            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2] sm:p-2"
+            className="cursor-pointer rounded-full p-1.5 text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]"
             aria-label="Alternar tema"
           >
-            {isDark ? <Sun className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" /> : <Moon className="h-[1.15rem] w-[1.15rem] stroke-[1.8]" />}
+            {isDark ? <Sun className="h-[1.1rem] w-[1.1rem] stroke-[1.7]" /> : <Moon className="h-[1.1rem] w-[1.1rem] stroke-[1.7]" />}
           </button>
           <DashboardMenu
             contextualItems={contextualMenu[activeTab]}
@@ -2761,9 +2753,10 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
             onHelp={() => setShowHelp(true)}
             onLogout={onLogout}
             onFutureAction={(label) => {
-              if (label === "Relatórios") setReportPanelOpen(true);
+              if (label === "RelatÃ³rios") setReportPanelOpen(true);
               else toast.info(`${label} - em breve`);
             }}
+            compact
           />
         </div>
       </header>
@@ -2776,24 +2769,13 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
         <section className="flex min-h-0 flex-1 flex-col">
           {activeTab === "conversas" && !detailOpen && (
             <>
-              <div className="-mx-4 mt-1 border-b border-[#1f1f1a]/10 bg-[#ffffff]/92 px-4 pb-1 pt-1 dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] md:-mx-6 md:px-6">
+              <div className="-mx-4 mt-1 border-b border-[#1f1f1a]/10 bg-[#ffffff]/92 px-[7.8px] pb-1 pt-1 dark:border-[#f7f2ec]/12 dark:bg-[#1d1d1a] md:-mx-6 md:px-[7.8px]">
                 <ConversationFilters
                   counts={communicationCounts}
                   tones={communicationTones}
                   activeFilter={filter}
                   onFilterChange={setFilter}
-                  secondaryOpen={summarySecondaryOpen}
-                  onSecondaryToggle={() => setSummarySecondaryOpen((value) => !value)}
                 />
-                {summarySecondaryOpen && (
-                  <AtendimentoContextShortcuts
-                    activeTab={activeTab}
-                    activeFilter={filter}
-                    allCount={communicationCounts.todas}
-                    onChange={setActiveTab}
-                    onFilterChange={setFilter}
-                  />
-                )}
               </div>
               <ConversationListPanel
                 journeys={journeys}
@@ -2827,7 +2809,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
               messages={effectiveMessages}
               onBack={() => setDetailOpen(false)}
               onStartOrder={() => {
-                toast.info("Pedido deve nascer por confirmação explícita do atendente");
+                toast.info("Pedido deve nascer por confirmaÃ§Ã£o explÃ­cita do atendente");
                 onStartOrder();
               }}
             />
@@ -2844,7 +2826,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
               />
               <PlaceholderTab
                 title="Pedidos"
-                description="Pedidos do atendimento aparecerão aqui quando estiverem vinculados."
+                description="Pedidos do atendimento aparecerÃ£o aqui quando estiverem vinculados."
               />
             </>
           )}
@@ -2860,7 +2842,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
               />
               <PlaceholderTab
                 title="Clientes"
-                description="Clientes do atendimento aparecerão aqui conforme as conversas forem identificadas."
+                description="Clientes do atendimento aparecerÃ£o aqui conforme as conversas forem identificadas."
               />
             </>
           )}
@@ -2876,7 +2858,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
               />
               <PlaceholderTab
                 title="Agenda"
-                description="Compromissos do atendimento aparecerão aqui."
+                description="Compromissos do atendimento aparecerÃ£o aqui."
               />
             </>
           )}
@@ -2910,7 +2892,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
               onMarkRead={handleMarkRead}
               onSend={handleSend}
               onStartOrder={() => {
-                toast.info("Pedido deve nascer por confirmação explícita do atendente");
+                toast.info("Pedido deve nascer por confirmaÃ§Ã£o explÃ­cita do atendente");
                 onStartOrder();
               }}
             />
@@ -2936,7 +2918,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
 
         <footer className="hidden shrink-0 items-center gap-2 text-[10.5px] text-current/42 md:flex">
           <Clock className="h-3.5 w-3.5" />
-          <span>Central em homologação · atendimento sem integração real de canais.</span>
+          <span>Central em homologaÃ§Ã£o Â· atendimento sem integraÃ§Ã£o real de canais.</span>
           <History className="ml-auto h-3.5 w-3.5" />
         </footer>
         </div>

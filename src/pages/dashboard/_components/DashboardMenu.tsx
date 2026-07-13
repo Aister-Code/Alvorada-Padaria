@@ -139,9 +139,10 @@ export default function DashboardMenu({
 
       {open && (
         <div className="absolute right-0 top-10 z-40 w-60 animate-in fade-in-0 slide-in-from-top-1 rounded-2xl bg-[#685c20] p-2 text-[#fff4e8] duration-150 dark:bg-[#f3c4a2] dark:text-[#685c20]">
+          <MenuItem icon={User} label="Meu perfil" onClick={() => runAndClose(() => onFutureAction("Meu perfil"))} />
           {healthItems.length > 0 && (
             <>
-              <div className="rounded-xl bg-[#fff4e8]/8 px-3 py-2 dark:bg-[#685c20]/7">
+              <div className="px-3 py-2">
                 <button
                   type="button"
                   onClick={() => setHealthOpen((value) => !value)}
@@ -168,7 +169,7 @@ export default function DashboardMenu({
                 </button>
 
                 {healthOpen && (
-                  <div className="mt-2 space-y-1.5">
+                  <div className="mt-2 space-y-1.5 border-t border-current/10 pt-2">
                     {(healthAttentionItems.length > 0 ? healthAttentionItems : healthItems).slice(0, 4).map((item) => (
                       <div key={item.id} className="flex items-center justify-between gap-2 text-[10.5px] leading-tight">
                         <span className="truncate opacity-82">{item.label}</span>
@@ -272,9 +273,9 @@ export default function DashboardMenu({
               )}
             </div>
           )}
-          <MenuItem icon={User} label="Meu perfil" onClick={() => runAndClose(() => onFutureAction("Meu perfil"))} />
           {!hasContextualHelp && <MenuItem icon={HelpCircle} label="Ajuda" onClick={() => runAndClose(onHelp)} />}
           <MenuItem icon={Settings} label="Configurações" onClick={() => runAndClose(() => onFutureAction("Configurações"))} />
+          <div className="my-1 h-px bg-current/10" />
           <MenuItem icon={LogOut} label="Sair" onClick={() => runAndClose(onLogout)} />
         </div>
       )}

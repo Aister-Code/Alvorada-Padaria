@@ -470,6 +470,7 @@ Princípios:
 - Operação com uma mão.
 - Pouco texto.
 - Ícone, nome curto e badge quando necessário.
+- Item ativo seguindo o DNA Dock Ativo por Massa Óptica definido no RVL-035.
 - Alça retrátil discreta para destinos secundários.
 - A Dock permanece visível quando a expansão abre.
 - Não utilizar um quinto item `Mais` quando a alça resolver a expansão.
