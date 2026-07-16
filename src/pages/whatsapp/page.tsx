@@ -257,21 +257,21 @@ const filterLabelsByTab: Record<AtendimentoTab, string> = {
 const priorityClasses = {
   info: "bg-emerald-500",
   attention: "bg-amber-400",
-  important: "bg-amber-500",
+  important: "bg-red-500",
   critical: "bg-red-700",
 };
 
 const priorityBorderClasses = {
   info: "border-emerald-600/70 dark:border-emerald-300/75",
   attention: "border-amber-600/75 dark:border-amber-300/85",
-  important: "border-amber-700/80 dark:border-amber-200/90",
+  important: "border-red-600/80 dark:border-red-200/90",
   critical: "border-red-700/85 dark:border-red-300/90",
 };
 
 const priorityTimerColors = {
   info: "#10b981",
   attention: "#f59e0b",
-  important: "#d97706",
+  important: "#ef4444",
   critical: "#b91c1c",
 };
 
@@ -279,12 +279,70 @@ type PriorityTimerLevel = keyof typeof priorityTimerColors;
 
 const priorityTimerLevels = ["info", "attention", "important", "critical"] as const;
 
-const priorityTimerLimitsMinutes = {
-  info: 8,
-  attention: 15,
-  important: 25,
-  critical: 35,
+type WaitSlaProfileId = "default" | "newCustomer" | "cart" | "transfer";
+
+type WaitSlaThresholds = Record<PriorityTimerLevel, number>;
+
+type ConversationWaitSlaSettings = Record<WaitSlaProfileId, WaitSlaThresholds>;
+
+const defaultWaitSlaSettings: ConversationWaitSlaSettings = {
+  default: {
+    info: 3,
+    attention: 7,
+    important: 12,
+    critical: 12,
+  },
+  newCustomer: {
+    info: 2,
+    attention: 5,
+    important: 9,
+    critical: 9,
+  },
+  cart: {
+    info: 2,
+    attention: 4,
+    important: 8,
+    critical: 8,
+  },
+  transfer: {
+    info: 5,
+    attention: 10,
+    important: 20,
+    critical: 20,
+  },
 };
+
+const waitSlaProfileLabels: Record<WaitSlaProfileId, string> = {
+  default: "Geral",
+  newCustomer: "Cliente novo",
+  cart: "Carrinho",
+  transfer: "Repasse",
+};
+
+const waitSlaLevelLabels: Record<PriorityTimerLevel, string> = {
+  info: "Verde ate",
+  attention: "Amarelo ate",
+  important: "Vermelho ate",
+  critical: "Critico apos",
+};
+
+function normalizeWaitSlaThresholds(thresholds?: Partial<WaitSlaThresholds>, fallback = defaultWaitSlaSettings.default): WaitSlaThresholds {
+  const info = Math.max(1, Number(thresholds?.info ?? fallback.info));
+  const attention = Math.max(info + 1, Number(thresholds?.attention ?? fallback.attention));
+  const important = Math.max(attention + 1, Number(thresholds?.important ?? fallback.important));
+  const critical = Math.max(important, Number(thresholds?.critical ?? fallback.critical));
+
+  return { info, attention, important, critical };
+}
+
+function normalizeWaitSlaSettings(settings?: Partial<ConversationWaitSlaSettings>): ConversationWaitSlaSettings {
+  return {
+    default: normalizeWaitSlaThresholds(settings?.default, defaultWaitSlaSettings.default),
+    newCustomer: normalizeWaitSlaThresholds(settings?.newCustomer, defaultWaitSlaSettings.newCustomer),
+    cart: normalizeWaitSlaThresholds(settings?.cart, defaultWaitSlaSettings.cart),
+    transfer: normalizeWaitSlaThresholds(settings?.transfer, defaultWaitSlaSettings.transfer),
+  };
+}
 
 function rgbaFromHex(hex: string, opacity: number) {
   const normalized = hex.replace("#", "");
@@ -294,23 +352,29 @@ function rgbaFromHex(hex: string, opacity: number) {
   return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
 }
 
-function getStatusTimerVisual(priority: PriorityTimerLevel, startedAt?: string) {
+function getWaitTimerLevel(elapsedMinutes: number, thresholds: WaitSlaThresholds): PriorityTimerLevel {
+  if (elapsedMinutes < thresholds.info) return "info";
+  if (elapsedMinutes < thresholds.attention) return "attention";
+  if (elapsedMinutes < thresholds.important) return "important";
+  return "critical";
+}
+
+function getStatusTimerVisual(startedAt: string | undefined, thresholds: WaitSlaThresholds) {
   const started = startedAt ? new Date(startedAt).getTime() : Date.now();
   const elapsedMinutes = Number.isFinite(started) ? Math.max(0, (Date.now() - started) / 60000) : 0;
-  const currentLevelIndex = priorityTimerLevels.indexOf(priority);
-  const elapsedBeforeCurrentLevel = priorityTimerLevels
-    .slice(0, currentLevelIndex)
-    .reduce((total, level) => total + priorityTimerLimitsMinutes[level], 0);
-  const stageElapsedMinutes =
-    elapsedMinutes >= elapsedBeforeCurrentLevel ? elapsedMinutes - elapsedBeforeCurrentLevel : elapsedMinutes;
-  const limit = priorityTimerLimitsMinutes[priority];
+  const level = getWaitTimerLevel(elapsedMinutes, thresholds);
+  const previousLimit =
+    level === "info" ? 0 : level === "attention" ? thresholds.info : level === "important" ? thresholds.attention : thresholds.important;
+  const limit = level === "critical" ? Math.max(1, thresholds.critical - thresholds.important || 1) : thresholds[level] - previousLimit;
+  const stageElapsedMinutes = level === "critical" ? elapsedMinutes - thresholds.important : elapsedMinutes - previousLimit;
   const progress = Math.min(1, stageElapsedMinutes / limit);
   const filledDegrees = Math.round(progress * 360);
-  const currentColor = priorityTimerColors[priority];
-  const expired = priority === "critical" && progress >= 1;
+  const currentColor = priorityTimerColors[level];
+  const expired = level === "critical" && elapsedMinutes >= thresholds.critical;
   const timerBase = rgbaFromHex(currentColor, 0.16);
 
   return {
+    level,
     expired,
     background: expired
       ? currentColor
@@ -563,10 +627,12 @@ const demoPedidoDetalhe: PedidoDetalheResumo = {
 
 type OperatorPreferences = {
   interfaceScale: InterfaceScale;
+  waitSla: ConversationWaitSlaSettings;
 };
 
 const defaultPreferences: OperatorPreferences = {
   interfaceScale: "normal",
+  waitSla: defaultWaitSlaSettings,
 };
 
 function preferencesKey(operatorId: string): string {
@@ -581,7 +647,12 @@ function loadOperatorPreferences(operatorId: string): OperatorPreferences {
   try {
     const raw = localStorage.getItem(preferencesKey(operatorId));
     if (!raw) return defaultPreferences;
-    return { ...defaultPreferences, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw) as Partial<OperatorPreferences>;
+    return {
+      ...defaultPreferences,
+      ...parsed,
+      waitSla: normalizeWaitSlaSettings(parsed.waitSla),
+    };
   } catch {
     return defaultPreferences;
   }
@@ -1108,6 +1179,107 @@ function ReportsPanel({ open, onClose }: { open: boolean; onClose: () => void })
         <p className="mt-3 text-[11px] leading-relaxed text-current/58">
           Estrutura visual preparada. Clientes novos poderão ser comparados por período, ticket e base já cadastrada.
         </p>
+      </section>
+    </div>
+  );
+}
+
+function ConversationSlaSettingsPanel({
+  open,
+  settings,
+  onChange,
+  onClose,
+}: {
+  open: boolean;
+  settings: ConversationWaitSlaSettings;
+  onChange: (settings: ConversationWaitSlaSettings) => void;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  const updateThreshold = (profile: WaitSlaProfileId, level: PriorityTimerLevel, value: string) => {
+    const numeric = Number(value);
+    const nextProfile = normalizeWaitSlaThresholds(
+      {
+        ...settings[profile],
+        [level]: Number.isFinite(numeric) ? numeric : settings[profile][level],
+      },
+      defaultWaitSlaSettings[profile],
+    );
+    onChange({ ...settings, [profile]: nextProfile });
+  };
+
+  const resetDefaults = () => {
+    onChange(defaultWaitSlaSettings);
+    toast.success("SLA de espera restaurado");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/16 px-3 py-3 sm:items-center" role="dialog" aria-modal="true">
+      <section className="w-full max-w-sm rounded-3xl bg-[#685c20] p-4 text-[#fff4e8] dark:bg-[#f3c4a2] dark:text-[#685c20]">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-current/58">
+              Conversas
+            </p>
+            <h2 className="text-base font-semibold">Tempo de espera</h2>
+            <p className="mt-1 text-[11px] leading-relaxed text-current/62">
+              Define quando o avatar muda de verde, amarelo e vermelho.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="cursor-pointer rounded-full p-1.5 text-current/70 hover:text-current"
+            aria-label="Fechar configuracoes de espera"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {(Object.keys(waitSlaProfileLabels) as WaitSlaProfileId[]).map((profile) => (
+            <div key={profile} className="rounded-2xl bg-white/8 p-2.5 dark:bg-[#685c20]/8">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold">{waitSlaProfileLabels[profile]}</p>
+                <span className="text-[10px] font-medium text-current/52">minutos</span>
+              </div>
+              <div className="mt-2 grid grid-cols-4 gap-1.5">
+                {priorityTimerLevels.map((level) => (
+                  <label key={level} className="min-w-0">
+                    <span className="block truncate text-[9px] font-medium text-current/52">
+                      {waitSlaLevelLabels[level]}
+                    </span>
+                    <input
+                      type="number"
+                      min={1}
+                      value={settings[profile][level]}
+                      onChange={(event) => updateThreshold(profile, level, event.target.value)}
+                      className="mt-1 h-8 w-full rounded-xl bg-white/12 px-2 text-center text-xs font-semibold text-current outline-none dark:bg-[#685c20]/10"
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={resetDefaults}
+            className="min-h-9 flex-1 cursor-pointer rounded-2xl bg-white/10 px-3 text-xs font-semibold text-current/78 dark:bg-[#685c20]/10"
+          >
+            Restaurar
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-9 flex-1 cursor-pointer rounded-2xl bg-[#f04a2a] px-3 text-xs font-semibold text-white"
+          >
+            Concluir
+          </button>
+        </div>
       </section>
     </div>
   );
@@ -1957,7 +2129,7 @@ function ConversationFilters({
         <span className={cn("flex min-w-0 items-center justify-center gap-1", signalClass, pulsing[item] && "animate-pulse")}>
           <Icon className="h-[1.05rem] w-[1.05rem] shrink-0 stroke-[1.45]" />
           {count > 0 && (
-            <span className="text-[10px] font-semibold leading-none tabular-nums text-current/90">
+            <span className="text-[11px] font-semibold leading-none tabular-nums text-current/92">
               {count > 99 ? "99+" : count}
             </span>
           )}
@@ -2100,6 +2272,7 @@ function ConversationListPanel({
   sessions,
   messagesByConversation,
   blockedContacts,
+  waitSla,
   activeFilter,
   onOpen,
   onSendCatalog,
@@ -2112,6 +2285,7 @@ function ConversationListPanel({
   sessions: SessaoCatalogoResumo[] | undefined;
   messagesByConversation: Record<string, WhatsAppMessage[]>;
   blockedContacts: BlockedContact[];
+  waitSla: ConversationWaitSlaSettings;
   activeFilter: FilterId;
   onOpen: (journey: JourneyItem) => void;
   onSendCatalog: (journey: JourneyItem, trigger: HTMLElement) => void;
@@ -2355,7 +2529,6 @@ function ConversationListPanel({
       {journeys.map((journey, index) => {
         const isTransfer = journey.kind === "transfer";
         const title = isTransfer ? "Repasse" : customerLabel(journey.conversation);
-        const priority = isTransfer ? journey.transfer.prioridade : journey.conversation.prioridade;
         const time = getJourneySortDate(journey);
         const totalTime = isTransfer ? journey.transfer.criadaEm : journey.conversation.dataCriacao;
         const unreadCount = !isTransfer ? journey.conversation.naoLidas ?? 0 : 0;
@@ -2392,7 +2565,8 @@ function ConversationListPanel({
         const chatMessages = !isTransfer
           ? conversationThreadMessages(journey.conversation, messagesByConversation[String(journey.conversation._id)])
           : [];
-        const statusTimer = getStatusTimerVisual(priority, time);
+        const waitProfile: WaitSlaProfileId = isTransfer ? "transfer" : hasCart ? "cart" : isNew ? "newCustomer" : "default";
+        const statusTimer = getStatusTimerVisual(time, waitSla[waitProfile]);
         const chatDraft = chatDrafts[journeyId] ?? "";
         const hasChatDraft = chatDraft.trim().length > 0;
         const showInlineChatActions = !hasChatDraft || openChatActionOptionsId === journeyId;
@@ -4257,6 +4431,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
   const [selected, setSelected] = useState<{ kind: JourneyKind; id: string } | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [reportPanelOpen, setReportPanelOpen] = useState(false);
+  const [slaSettingsPanelOpen, setSlaSettingsPanelOpen] = useState(false);
   const [catalogConfirm, setCatalogConfirm] = useState<CatalogConfirmState>(null);
   const [transferPanel, setTransferPanel] = useState<TransferPanelState>(null);
   const [cartPanel, setCartPanel] = useState<CartPanelState>(null);
@@ -4563,6 +4738,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
             onFutureAction={(label) => {
               if (label === "Relatórios") setReportPanelOpen(true);
               else if (label === "Contatos bloqueados" || label === "Bloqueados") setBlockedContactsPanelOpen(true);
+              else if (label.toLowerCase().includes("conversa")) setSlaSettingsPanelOpen(true);
               else toast.info(`${label} - em breve`);
             }}
             compact
@@ -4591,6 +4767,7 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
                 sessions={effectiveCatalogSessions}
                 messagesByConversation={listMessagesByConversation}
                 blockedContacts={blockedContacts}
+                waitSla={preferences.waitSla}
                 activeFilter={filter}
                 onOpen={(journey) => {
                   setSelected({ kind: journey.kind, id: journey.id });
@@ -4813,6 +4990,12 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
         onClose={() => setShowHelp(false)}
       />
       <ReportsPanel open={reportPanelOpen} onClose={() => setReportPanelOpen(false)} />
+      <ConversationSlaSettingsPanel
+        open={slaSettingsPanelOpen}
+        settings={preferences.waitSla}
+        onChange={(waitSla) => updatePreferences({ waitSla: normalizeWaitSlaSettings(waitSla) })}
+        onClose={() => setSlaSettingsPanelOpen(false)}
+      />
       <CatalogConfirmPanel
         confirm={catalogConfirm}
         onCancel={() => setCatalogConfirm(null)}
