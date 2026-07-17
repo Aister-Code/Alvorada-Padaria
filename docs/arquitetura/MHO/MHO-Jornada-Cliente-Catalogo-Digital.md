@@ -30,6 +30,104 @@ Producao/Separacao recebe Pedido, nao sessao de catalogo.
 
 Central organiza conversa, contexto e intencao; nao duplica Venda, Caixa, Producao ou Delivery.
 
+## Contrato de Homologacao Reconciliado
+
+Este MHO valida tambem as decisoes consolidadas na matriz `docs/arquitetura/UX/Matriz-Reconciliacao-Cardapio-Foundation.md`.
+
+### Categorias homologadas
+
+O cadastro real do catalogo so pode ser homologado se usar como referencia as categorias da Foundation externa:
+
+- Lanches Tradicionais
+- Hamburgueres Artesanais
+- Pizzas Salgadas
+- Pizzas Doces
+- Porcoes
+- Caldos
+- Sucos
+- Bebidas
+- Cervejas
+
+Categorias como Padaria, Lanches, Pizzas, Bebidas e Sobremesas sao consideradas placeholders/fallback visual, nao cadastro real definitivo.
+
+### Modelo Produto / Variacao / Complemento / Observacao
+
+O modelo homologavel e:
+
+```text
+Categoria
+-> Produto
+-> Variacoes
+-> Complementos
+-> Observacoes
+```
+
+Criterios:
+
+- Produto nao pode ser duplicado por tamanho.
+- Produto nao pode ser duplicado por sabor.
+- Produto nao pode ser duplicado por massa.
+- Produto nao pode ser duplicado por volume.
+- Produto nao pode ser duplicado por complemento.
+- Variacoes devem ser tratadas como variacoes.
+- Complementos devem ser tratados como complementos.
+- Observacoes devem ficar no item/carrinho/pedido, nunca no cadastro fixo do produto.
+
+### Multiunidade / unit
+
+O Catalogo deve ser homologado sem bloquear Matriz, Filiais e `unit`.
+
+Criterios:
+
+- disponibilidade pode variar por unidade;
+- preco pode variar por unidade quando necessario;
+- visibilidade pode variar por unidade;
+- o MVP pode usar unidade padrao, mas a modelagem nao pode impedir multiunidade futura.
+
+### Snapshot do carrinho
+
+O carrinho OJC deve preservar snapshot completo do item escolhido.
+
+Dados minimos do snapshot:
+
+- produtoId;
+- categoriaId;
+- variacaoId quando houver;
+- complementos selecionados;
+- observacao do item;
+- nomeSnapshot;
+- descricaoSnapshot;
+- precoSnapshot;
+- unit;
+- imagemSnapshot quando aplicavel.
+
+O carrinho nao deve depender apenas do produto vivo, pois produto, preco e disponibilidade podem mudar depois.
+
+### Fallback visual vs fonte real
+
+Fallback visual pode existir para preview/desenvolvimento, mas nao pode ser tratado como fonte da verdade.
+
+Criterios:
+
+- seed generico nao e cadastro homologado;
+- fallback local nao e cadastro real;
+- cadastro real segue a Foundation reconciliada;
+- dados mockados nao podem ser exibidos como definitivos.
+
+### IA
+
+IA observa, aprende e sugere.
+
+IA nao decide, nao altera catalogo, nao altera carrinho, nao confirma pedido, nao cria Pedido e nao fecha Venda automaticamente.
+
+IA pode auxiliar triagem, sugestao e orientacao, sempre com rastreabilidade.
+
+### Status operacionais fechados
+
+Estados de sessao de catalogo, carrinho, pedido, atendimento, pagamento e entrega devem usar vocabulario fechado.
+
+Qualquer novo status precisa ser registrado no DMI/MHO antes de implementacao.
+
 ## Perfis a Homologar
 
 ### Cliente
@@ -497,7 +595,7 @@ Como auditar: conferir trilha da sessao.
 
 Quando ocorre: cliente ou atendente adiciona item.
 
-Dados minimos: sessaoId, produtoId, quantidade, precoSnapshot, subtotalSnapshot.
+Dados minimos: sessaoId, produtoId, categoriaId, quantidade, variacaoId quando houver, complementos selecionados, observacao do item, nomeSnapshot, descricaoSnapshot, precoSnapshot, subtotalSnapshot, unit e imagemSnapshot quando aplicavel.
 
 Quem dispara: Catalogo ou Atendimento assistido.
 
@@ -780,6 +878,14 @@ Bloqueiam aprovacao:
 - Carrinho confundido com Pedido.
 - Pedido confundido com Venda.
 - Central duplicando Producao/Caixa/Delivery.
+- Cadastro real usando categorias de fallback como se fossem definitivas.
+- Produto duplicado por tamanho, sabor, massa, volume ou complemento.
+- Complemento modelado como produto novo sem contrato.
+- Observacao salva como cadastro fixo do produto.
+- Carrinho sem snapshot completo do item escolhido.
+- Modelagem que bloqueia multiunidade futura.
+- IA decidindo ou alterando catalogo/carrinho/pedido automaticamente.
+- Status livre ou ambiguo sem DMI/MHO.
 - Ausencia de eventos.
 - Ausencia de rastreabilidade.
 - Ajuda do catalogo sem aparecer na Central.
@@ -807,6 +913,17 @@ Bloqueiam aprovacao:
 - Pedido complementar validado.
 - Recebimento assistido validado.
 - Status para cliente validado.
+- Categorias homologadas validadas.
+- Placeholders/fallbacks identificados como nao definitivos.
+- Produto unico por item comercial validado.
+- Variacoes validadas como variacoes.
+- Complementos validados como complementos.
+- Observacoes validadas no item/carrinho/pedido.
+- Snapshot completo do carrinho validado.
+- `unit`/multiunidade validado.
+- Fallback visual validado como nao fonte real.
+- IA validada como sugestiva, nao decisoria.
+- Status operacionais fechados validados.
 - Nenhum dominio duplicado.
 - Build OK quando houver codigo.
 - `git diff --check` OK quando houver alteracao.
@@ -861,6 +978,13 @@ Bloqueiam aprovacao:
 - Definir status para cliente fora do WhatsApp.
 - Definir contrato do recebimento assistido com Caixa.
 - Definir MHO visual do Catalogo publico quando a tela for implementada.
+- Definir modelagem final de Produto, Variacao e Complemento.
+- Definir contrato de categorias homologadas para cadastro real.
+- Definir disponibilidade, preco e visibilidade por unidade.
+- Definir schema/contrato de snapshot completo do carrinho.
+- Definir observacoes por item e seu caminho ate o Pedido.
+- Definir politica de fallback visual vs fonte real.
+- Definir vocabulario fechado para qualquer novo status operacional.
 
 ## Criterios para Aprovar Implementacao
 
@@ -868,6 +992,14 @@ A implementacao so pode ser aprovada quando:
 
 - o Catalogo cria ou recupera sessao rastreavel;
 - carrinho persiste sem virar Pedido automaticamente;
+- carrinho guarda snapshot completo do item escolhido;
+- cadastro real usa categorias homologadas ou excecao formalmente aprovada;
+- produto nao e duplicado por variacao;
+- variacoes, complementos e observacoes seguem o contrato reconciliado;
+- `unit`/multiunidade nao e bloqueado;
+- fallback visual nao e tratado como fonte real;
+- IA nao decide nem altera automaticamente;
+- status operacionais usam vocabulario fechado;
 - ajuda aparece na Central;
 - Central assume sem duplicar outros dominios;
 - Pedido nasce apenas apos validacao OJC/ROR;
@@ -877,4 +1009,3 @@ A implementacao so pode ser aprovada quando:
 - eventos minimos sao auditaveis;
 - status para cliente e simples;
 - erros e bloqueios orientam o usuario sem termos tecnicos.
-

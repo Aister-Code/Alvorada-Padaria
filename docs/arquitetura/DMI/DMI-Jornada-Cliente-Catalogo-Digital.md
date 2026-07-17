@@ -39,6 +39,127 @@ Separacao obrigatoria:
 
 Regra: carrinho nao e pedido; pedido nao e venda; venda nao nasce no catalogo.
 
+## Contrato Reconciliado com Foundation Externa
+
+Este DMI incorpora as decisoes da matriz `docs/arquitetura/UX/Matriz-Reconciliacao-Cardapio-Foundation.md`.
+
+A referencia externa `.rondon` e considerada fonte homologada arquitetural e operacional, mas nao e codigo-fonte do projeto atual. Ela nao deve ser copiada literalmente, especialmente por conter problemas de encoding, paleta/tipografia pendentes ou nulas e possiveis assets ausentes.
+
+### Categorias reais homologadas
+
+As categorias reais do cadastro definitivo do catalogo devem ser orientadas pela Foundation externa:
+
+- Lanches Tradicionais
+- Hamburgueres Artesanais
+- Pizzas Salgadas
+- Pizzas Doces
+- Porcoes
+- Caldos
+- Sucos
+- Bebidas
+- Cervejas
+
+Categorias recentes usadas em preview/fallback, como Padaria, Lanches, Pizzas, Bebidas e Sobremesas, nao devem orientar o cadastro real definitivo sem nova homologacao.
+
+### Modelo real do catalogo
+
+A estrutura homologada do catalogo e:
+
+```text
+Categoria
+-> Produto
+-> Variacoes
+-> Complementos
+-> Observacoes
+```
+
+Regras obrigatorias:
+
+- Produto nao deve ser duplicado por tamanho.
+- Produto nao deve ser duplicado por sabor.
+- Produto nao deve ser duplicado por massa.
+- Produto nao deve ser duplicado por volume.
+- Produto nao deve ser duplicado por complemento.
+- Complementos pertencem ao produto.
+- Observacoes pertencem ao item/carrinho/pedido, nao ao cadastro fixo do produto.
+
+Exemplo correto:
+
+```text
+Produto: Pizza Calabresa
+Variacoes: P, M, G
+```
+
+Exemplo errado:
+
+```text
+Pizza Calabresa P
+Pizza Calabresa M
+Pizza Calabresa G
+```
+
+### Multiunidade / unit
+
+O Catalogo deve nascer preparado para Matriz, Filiais e `unit`.
+
+Regras arquiteturais:
+
+- produto pode ter disponibilidade por unidade;
+- preco pode variar por unidade quando necessario;
+- visibilidade pode variar por unidade;
+- o MVP pode usar unidade padrao, mas a modelagem nao deve bloquear multiunidade futura.
+
+### Snapshot operacional do carrinho
+
+O carrinho OJC deve guardar snapshot operacional do item escolhido, porque produto, preco, descricao, imagem e disponibilidade podem mudar depois.
+
+Ao adicionar item ao carrinho, preservar:
+
+- produtoId;
+- categoriaId;
+- variacaoId quando houver;
+- complementos selecionados;
+- observacao do item;
+- nomeSnapshot;
+- descricaoSnapshot;
+- precoSnapshot;
+- unidade/unit;
+- imagemSnapshot quando aplicavel.
+
+### Fallback visual vs fonte real
+
+Fallback visual pode existir para preview/desenvolvimento, mas nao e fonte da verdade.
+
+Regras:
+
+- seed generico nao e cadastro homologado;
+- fallback local nao e cadastro real;
+- cadastro real deve seguir a Foundation reconciliada;
+- o sistema nao deve confundir dados mockados com dados reais.
+
+### IA
+
+IA observa, aprende e sugere.
+
+IA nao decide, nao altera catalogo, nao altera carrinho, nao cria Pedido e nao confirma Venda automaticamente.
+
+IA pode ajudar na triagem, sugestao e orientacao, sempre com rastreabilidade e sem substituir acao clara do cliente, operador ou gerente.
+
+### Status operacionais fechados
+
+Estados operacionais devem ter vocabulario fechado.
+
+Nao criar status livres ou ambiguos para:
+
+- sessao de catalogo;
+- carrinho;
+- pedido;
+- atendimento;
+- pagamento;
+- entrega.
+
+Qualquer novo status deve ser registrado no DMI/MHO antes de implementacao.
+
 ## Perfil Principal
 
 Cliente externo, com acompanhamento do Sistema/OJC e apoio da Central de Atendimento.
@@ -319,17 +440,23 @@ Resultado esperado: permitir jornada sem cadastro completo, mas preparar cadastr
 
 Cliente ve categorias e produtos ativos, com leitura mobile-first e sem excesso de cards pesados.
 
+Categorias de preview/fallback nao devem ser confundidas com categorias reais homologadas do cadastro definitivo.
+
 Resultado esperado: cliente entende rapido onde tocar e o que esta comprando.
 
 ### 5. Ficha do produto
 
 Produto abre com nome, imagem quando houver, descricao curta, preco, variacoes, observacoes e acao de adicionar.
 
+Variacoes, complementos e observacoes devem respeitar o modelo reconciliado: variacoes e complementos pertencem ao produto; observacoes pertencem ao item/carrinho/pedido.
+
 Resultado esperado: ficha resolve decisao de compra sem virar tela complexa.
 
 ### 6. Adicao ao carrinho
 
 Ao adicionar item, o carrinho da sessao e atualizado.
+
+O carrinho deve registrar snapshot operacional do item escolhido, incluindo produto, categoria, variacao quando houver, complementos, observacao do item, nome, descricao, preco, imagem quando aplicavel e `unit`.
 
 Resultado esperado: evento `item_adicionado_carrinho` e snapshot de carrinho atualizado.
 
@@ -689,6 +816,14 @@ Com base na auditoria do estado atual:
 - Contrato de eventos append-only.
 - Regra objetiva de pedido editavel vs Pedido Complementar.
 - Status do pedido para cliente fora do WhatsApp.
+- Categorias homologadas do cadastro real.
+- Modelagem de Produto, Variacao, Complemento e Observacao.
+- `unit`/multiunidade no catalogo.
+- Disponibilidade, preco e visibilidade por unidade.
+- Snapshot completo do carrinho OJC.
+- Fallback visual vs fonte real.
+- IA apenas sugestiva e nao decisoria.
+- Status operacionais com vocabulario fechado.
 
 ## Riscos de Implementacao
 
