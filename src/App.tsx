@@ -12,6 +12,7 @@ import AcompanhamentoPage from "./pages/acompanhamento/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import CaixaPage from "./pages/caixa/page.tsx";
 import WhatsAppReceptionPage from "./pages/whatsapp/page.tsx";
+import CatalogPage from "./pages/catalog/page.tsx";
 
 export type OperatorSession = {
   operatorId: string;
@@ -103,6 +104,8 @@ export default function App() {
           />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/cardapio" element={<CatalogPage />} />
+          <Route path="/catalogo" element={<CatalogPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
