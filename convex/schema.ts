@@ -1,6 +1,20 @@
 
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import {
+  cartContractVersionValidator,
+  catalogCartContractValidator,
+  catalogMigrationStatusValidator,
+  conversionSnapshotValidator,
+  conversionSnapshotVersionValidator,
+  imageOriginValidator,
+  imageStatusValidator,
+  pizzaKindValidator,
+  pizzaPricingPolicyValidator,
+  priceStatusValidator,
+  productOriginValidator,
+  upgradeOperationalStatusValidator,
+} from "./catalog/contracts";
 
 const enderecoEntrega = v.object({
   cep: v.string(),
@@ -55,7 +69,20 @@ export default defineSchema({
     icon: v.string(),
     order: v.number(),
     active: v.boolean(),
-  }).index("by_slug", ["slug"]).index("by_order", ["order"]),
+    documentKey: v.optional(v.string()),
+    code: v.optional(v.string()),
+    description: v.optional(v.string()),
+    displayOrder: v.optional(v.number()),
+    createdAt: v.optional(v.string()),
+    updatedAt: v.optional(v.string()),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.optional(v.string()),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_order", ["order"])
+    .index("by_document_key", ["documentKey"])
+    .index("by_active_order", ["active", "displayOrder"]),
 
   products: defineTable({
     categoryId: v.id("categories"),
@@ -67,9 +94,206 @@ export default defineSchema({
     featured: v.boolean(),
     hasSizes: v.optional(v.boolean()),
     sizes: v.optional(v.array(v.object({ label: v.string(), extraPrice: v.number() }))),
+    documentKey: v.optional(v.string()),
+    documentalId: v.optional(v.string()),
+    slug: v.optional(v.string()),
+    subcategory: v.optional(v.string()),
+    family: v.optional(v.string()),
+    shortDescription: v.optional(v.string()),
+    origin: v.optional(productOriginValidator),
+    displayOrder: v.optional(v.number()),
+    basePrice: v.optional(v.number()),
+    priceStatus: v.optional(priceStatusValidator),
+    productionSector: v.optional(v.string()),
+    migrationStatus: v.optional(catalogMigrationStatusValidator),
+    documentVersion: v.optional(v.string()),
+    createdAt: v.optional(v.string()),
+    updatedAt: v.optional(v.string()),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.optional(v.string()),
   })
     .index("by_category", ["categoryId"])
-    .index("by_active", ["active"]),
+    .index("by_active", ["active"])
+    .index("by_document_key", ["documentKey"])
+    .index("by_category_active_order", ["categoryId", "active", "displayOrder"])
+    .index("by_documental_id", ["documentalId"]),
+
+  productOptions: defineTable({
+    documentKey: v.string(),
+    productId: v.id("products"),
+    code: v.string(),
+    label: v.string(),
+    optionType: v.string(),
+    price: v.optional(v.number()),
+    priceStatus: priceStatusValidator,
+    active: v.boolean(),
+    sellable: v.boolean(),
+    required: v.boolean(),
+    displayOrder: v.number(),
+    metadata: v.optional(v.record(v.string(), v.string())),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_document_key", ["documentKey"])
+    .index("by_product_active_order", ["productId", "active", "displayOrder"])
+    .index("by_product_sellable", ["productId", "sellable"]),
+
+  complementGroups: defineTable({
+    documentKey: v.string(),
+    name: v.string(),
+    description: v.optional(v.string()),
+    minSelections: v.number(),
+    maxSelections: v.optional(v.number()),
+    required: v.boolean(),
+    active: v.boolean(),
+    displayOrder: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_document_key", ["documentKey"])
+    .index("by_active_order", ["active", "displayOrder"]),
+
+  complementItems: defineTable({
+    documentKey: v.string(),
+    groupId: v.id("complementGroups"),
+    name: v.string(),
+    price: v.optional(v.number()),
+    priceStatus: priceStatusValidator,
+    maxQuantity: v.optional(v.number()),
+    active: v.boolean(),
+    sellable: v.boolean(),
+    displayOrder: v.number(),
+    metadata: v.optional(v.record(v.string(), v.string())),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_document_key", ["documentKey"])
+    .index("by_group_active_order", ["groupId", "active", "displayOrder"])
+    .index("by_group_sellable", ["groupId", "sellable"]),
+
+  productComplementGroups: defineTable({
+    productId: v.id("products"),
+    groupId: v.id("complementGroups"),
+    active: v.boolean(),
+    displayOrder: v.number(),
+    rules: v.optional(v.record(v.string(), v.string())),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_product", ["productId"])
+    .index("by_group", ["groupId"])
+    .index("by_product_active_order", ["productId", "active", "displayOrder"]),
+
+  commercialUpgrades: defineTable({
+    documentKey: v.string(),
+    name: v.string(),
+    description: v.optional(v.string()),
+    price: v.optional(v.number()),
+    priceStatus: priceStatusValidator,
+    operationalStatus: upgradeOperationalStatusValidator,
+    active: v.boolean(),
+    displayOrder: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_document_key", ["documentKey"])
+    .index("by_operational_status", ["operationalStatus"])
+    .index("by_active_order", ["active", "displayOrder"]),
+
+  productUpgrades: defineTable({
+    productId: v.id("products"),
+    upgradeId: v.id("commercialUpgrades"),
+    active: v.boolean(),
+    displayOrder: v.number(),
+    rules: v.optional(v.record(v.string(), v.string())),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_product", ["productId"])
+    .index("by_upgrade", ["upgradeId"])
+    .index("by_product_active_order", ["productId", "active", "displayOrder"]),
+
+  productImages: defineTable({
+    documentKey: v.string(),
+    productId: v.id("products"),
+    assetReference: v.optional(v.string()),
+    storageId: v.optional(v.string()),
+    externalUrl: v.optional(v.string()),
+    origin: imageOriginValidator,
+    status: imageStatusValidator,
+    altText: v.string(),
+    replacementPending: v.boolean(),
+    isPrimary: v.boolean(),
+    displayOrder: v.number(),
+    active: v.boolean(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_document_key", ["documentKey"])
+    .index("by_product", ["productId"])
+    .index("by_product_primary", ["productId", "isPrimary"])
+    .index("by_origin", ["origin"])
+    .index("by_status", ["status"]),
+
+  productUnitAvailability: defineTable({
+    productId: v.id("products"),
+    unit: v.string(),
+    available: v.boolean(),
+    temporarilyUnavailable: v.boolean(),
+    unavailableReason: v.optional(v.string()),
+    active: v.boolean(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_unit_available", ["unit", "available"])
+    .index("by_product_unit", ["productId", "unit"])
+    .index("by_product_active", ["productId", "active"]),
+
+  pizzaConfigurations: defineTable({
+    productId: v.id("products"),
+    pizzaKind: pizzaKindValidator,
+    allowedSizes: v.array(v.union(v.literal("P"), v.literal("M"), v.literal("G"))),
+    maxFlavorsBySize: v.object({
+      P: v.number(),
+      M: v.number(),
+      G: v.number(),
+    }),
+    secondFlavorAllowed: v.boolean(),
+    pricingPolicy: pizzaPricingPolicyValidator,
+    active: v.boolean(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    createdBy: v.optional(v.string()),
+    updatedBy: v.optional(v.string()),
+    version: v.string(),
+  })
+    .index("by_product", ["productId"])
+    .index("by_kind_active", ["pizzaKind", "active"]),
 
   pedidos: defineTable({
     numero: v.string(),
@@ -277,8 +501,12 @@ export default defineSchema({
       v.literal("critical"),
     ),
     itensSnapshot: v.optional(v.string()),
+    cartContractVersion: v.optional(cartContractVersionValidator),
+    cartSnapshot: v.optional(catalogCartContractValidator),
     quantidadeItens: v.optional(v.number()),
     valorEstimado: v.optional(v.number()),
+    conversionSnapshotVersion: v.optional(conversionSnapshotVersionValidator),
+    conversionSnapshot: v.optional(conversionSnapshotValidator),
     enderecoEntregaSnapshot: v.optional(v.string()),
     observacoes: v.optional(v.string()),
     responsavelAtualId: v.optional(v.id("operators")),
@@ -301,6 +529,25 @@ export default defineSchema({
     .index("by_pedido", ["pedidoId"])
     .index("by_responsavel", ["responsavelAtualId"])
     .index("by_ajuda", ["unit", "ajudaSolicitada"]),
+
+  catalogConversionSnapshots: defineTable({
+    sessaoCatalogoId: v.id("sessoesCatalogo"),
+    unit: v.string(),
+    snapshotVersion: conversionSnapshotVersionValidator,
+    cartContractVersion: cartContractVersionValidator,
+    conversionSnapshot: conversionSnapshotValidator,
+    status: v.union(
+      v.literal("preparado"),
+      v.literal("vinculado_pedido"),
+      v.literal("cancelado"),
+    ),
+    pedidoId: v.optional(v.id("pedidos")),
+    createdAt: v.string(),
+    createdBy: v.optional(v.string()),
+  })
+    .index("by_sessao", ["sessaoCatalogoId"])
+    .index("by_unit_status", ["unit", "status"])
+    .index("by_pedido", ["pedidoId"]),
 
   transferenciasTrabalho: defineTable({
     unit: v.string(),

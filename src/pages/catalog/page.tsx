@@ -1,4 +1,4 @@
-﻿import { useQuery, useMutation } from "convex/react";
+﻿import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTheme } from "next-themes";
@@ -108,6 +108,7 @@ const catalogTextScaleOptions: Array<{ value: CatalogTextScale; label: string; n
   { value: "normal", label: "Aa", name: "padrão", factor: 1 },
   { value: "large", label: "AA", name: "ampliado", factor: 1.15 },
 ];
+const isDevelopmentCatalogFallback = import.meta.env.DEV;
 
 const isHeaderSurface = (value: string | null): value is Exclude<HeaderSurface, null> =>
   value === "rail" ||
@@ -327,13 +328,10 @@ const fallbackProducts: ProductDoc[] = [
 export default function CatalogPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const remoteCategories = useQuery(api.catalog.categories.list, {}) as CategoryDoc[] | undefined;
-  const seedCategories = useMutation(api.catalog.categories.seed);
-  const seedProducts = useMutation(api.catalog.products.seed);
   const [activeCategoryId, setActiveCategoryId] = useState<Id<"categories"> | null>(null);
   const [activeCatalogKey, setActiveCatalogKey] = useState<CatalogCategoryKey>("highlights");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [seeded, setSeeded] = useState(false);
   const [useLocalCatalog, setUseLocalCatalog] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
   const [activeHeaderSurface, setActiveHeaderSurface] = useState<HeaderSurface>(() => {
@@ -356,7 +354,7 @@ export default function CatalogPage() {
   const [visualCart, setVisualCart] = useState<VisualCartItem[]>([]);
   const headerRef = useRef<HTMLElement | null>(null);
   const lastHeaderTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const shouldUseLocalCatalog = useLocalCatalog || remoteCategories?.length === 0;
+  const shouldUseLocalCatalog = isDevelopmentCatalogFallback && (useLocalCatalog || remoteCategories?.length === 0);
   const categories = shouldUseLocalCatalog ? fallbackCategories : remoteCategories;
   const isDark = resolvedTheme === "dark";
   const isStoreOpen = true;
@@ -429,19 +427,6 @@ export default function CatalogPage() {
       return [...items, { product, quantity: 1 }];
     });
   };
-
-  // Seed data on first load
-  useEffect(() => {
-    if (seeded) return;
-    const run = async () => {
-      const ids = await seedCategories();
-      if (ids) {
-        await seedProducts({ categoryIds: ids as Record<string, Id<"categories">> });
-      }
-      setSeeded(true);
-    };
-    run().catch(console.error);
-  }, [seedCategories, seedProducts, seeded]);
 
   useEffect(() => {
     if (remoteCategories !== undefined) {

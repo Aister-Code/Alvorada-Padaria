@@ -14,6 +14,7 @@ import type * as auth_operators from "../auth/operators.js";
 import type * as auth_pinReset from "../auth/pinReset.js";
 import type * as caixa_vendas from "../caixa/vendas.js";
 import type * as catalog_categories from "../catalog/categories.js";
+import type * as catalog_contracts from "../catalog/contracts.js";
 import type * as catalog_list from "../catalog/list.js";
 import type * as catalog_products from "../catalog/products.js";
 import type * as ojc_catalogo from "../ojc/catalogo.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   "auth/pinReset": typeof auth_pinReset;
   "caixa/vendas": typeof caixa_vendas;
   "catalog/categories": typeof catalog_categories;
+  "catalog/contracts": typeof catalog_contracts;
   "catalog/list": typeof catalog_list;
   "catalog/products": typeof catalog_products;
   "ojc/catalogo": typeof ojc_catalogo;

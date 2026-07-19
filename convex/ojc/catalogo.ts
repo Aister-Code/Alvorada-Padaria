@@ -2,6 +2,10 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "../_generated/server";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import type { Id } from "../_generated/dataModel.d.ts";
+import {
+  catalogCartContractValidator,
+  CATALOG_CART_CONTRACT_VERSION,
+} from "../catalog/contracts";
 
 type SessaoStatus =
   | "navegando"
@@ -29,7 +33,7 @@ const prioridadeValidator = v.union(
   v.literal("critical"),
 );
 
-// Contrato MVP para itensSnapshot:
+// Contrato legado para itensSnapshot:
 // JSON.stringify({
 //   itens: [{
 //     produtoId?: string,
@@ -40,6 +44,8 @@ const prioridadeValidator = v.union(
 //     observacao?: string
 //   }]
 // })
+// M-003.M1 introduz cartSnapshot tipado e preserva itensSnapshot para leitura
+// de registros antigos durante a transicao.
 function validarJsonString(valor: string | undefined, campo: string) {
   if (!valor) return;
   try {
@@ -81,6 +87,7 @@ export const criarSessaoCatalogo = mutation({
     origemDetalhe: v.optional(v.string()),
     conversaWhatsAppId: v.optional(v.id("conversasWhatsApp")),
     itensSnapshot: v.optional(v.string()),
+    cartSnapshot: v.optional(catalogCartContractValidator),
     quantidadeItens: v.optional(v.number()),
     valorEstimado: v.optional(v.number()),
     enderecoEntregaSnapshot: v.optional(v.string()),
@@ -107,7 +114,10 @@ export const criarSessaoCatalogo = mutation({
     }
 
     const agora = new Date().toISOString();
-    const temCarrinho = (args.quantidadeItens ?? 0) > 0 || Boolean(args.itensSnapshot);
+    const temCarrinho =
+      (args.quantidadeItens ?? 0) > 0 ||
+      Boolean(args.itensSnapshot) ||
+      Boolean(args.cartSnapshot && args.cartSnapshot.items.length > 0);
 
     return await ctx.db.insert("sessoesCatalogo", {
       unit: args.unit,
@@ -121,6 +131,8 @@ export const criarSessaoCatalogo = mutation({
       status: temCarrinho ? "carrinho" : "navegando",
       prioridade: "info",
       itensSnapshot: args.itensSnapshot,
+      cartContractVersion: args.cartSnapshot ? CATALOG_CART_CONTRACT_VERSION : undefined,
+      cartSnapshot: args.cartSnapshot,
       quantidadeItens: args.quantidadeItens,
       valorEstimado: args.valorEstimado,
       enderecoEntregaSnapshot: args.enderecoEntregaSnapshot,
@@ -164,6 +176,7 @@ export const atualizarCarrinhoSessao = mutation({
   args: {
     sessaoId: v.id("sessoesCatalogo"),
     itensSnapshot: v.string(),
+    cartSnapshot: v.optional(catalogCartContractValidator),
     quantidadeItens: v.number(),
     valorEstimado: v.number(),
   },
@@ -174,6 +187,8 @@ export const atualizarCarrinhoSessao = mutation({
     await ctx.db.patch(args.sessaoId, {
       status: args.quantidadeItens > 0 ? "carrinho" : "navegando",
       itensSnapshot: args.itensSnapshot,
+      cartContractVersion: args.cartSnapshot ? CATALOG_CART_CONTRACT_VERSION : undefined,
+      cartSnapshot: args.cartSnapshot,
       quantidadeItens: args.quantidadeItens,
       valorEstimado: args.valorEstimado,
       atualizadaEm: agora,
