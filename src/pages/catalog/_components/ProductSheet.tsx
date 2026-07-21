@@ -8,7 +8,7 @@ export type Product = {
   _id: Id<"products">;
   name: string;
   description?: string;
-  price: number;
+  price?: number;
   imageUrl?: string;
   hasSizes?: boolean;
   sizes?: Array<{ label: string; extraPrice: number }>;
@@ -28,8 +28,9 @@ export default function ProductSheet({ product, onAdd, onClose }: Props) {
 
   const isOpen = product !== null;
   const sizeExtra = product?.hasSizes && product.sizes ? product.sizes[sizeIdx]?.extraPrice ?? 0 : 0;
-  const unitPrice = (product?.price ?? 0) + sizeExtra;
-  const total = unitPrice * qty;
+  const hasConfirmedPrice = typeof product?.price === "number";
+  const unitPrice = hasConfirmedPrice ? product.price! + sizeExtra : undefined;
+  const total = unitPrice !== undefined ? unitPrice * qty : undefined;
 
   const handleOpen = () => {
     setQty(1);
@@ -83,7 +84,9 @@ export default function ProductSheet({ product, onAdd, onClose }: Props) {
 
               <div>
                 <p className="text-[length:var(--catalog-text-xs)] font-bold uppercase tracking-wide text-muted-foreground">Preço base</p>
-                <p className="mt-0.5 text-[length:var(--catalog-text-title)] font-extrabold text-foreground">{formatSheetPrice(product.price)}</p>
+                <p className="mt-0.5 text-[length:var(--catalog-text-title)] font-extrabold text-foreground">
+                  {hasConfirmedPrice ? formatSheetPrice(product.price!) : "Preço indisponível"}
+                </p>
               </div>
 
               {product.hasSizes && product.sizes && product.sizes.length > 0 && (
@@ -149,13 +152,14 @@ export default function ProductSheet({ product, onAdd, onClose }: Props) {
 
                 <Button
                   className="h-11 flex-1 gap-2 rounded-xl text-[length:var(--catalog-text-title)] font-bold"
+                  disabled={total === undefined}
                   onClick={() => {
                     onAdd?.(product);
                     onClose();
                   }}
                 >
                   <ShoppingCartIcon className="h-4 w-4" />
-                  Adicionar . {formatSheetPrice(total)}
+                  {total === undefined ? "Indisponível" : `Adicionar . ${formatSheetPrice(total)}`}
                 </Button>
               </div>
             </div>

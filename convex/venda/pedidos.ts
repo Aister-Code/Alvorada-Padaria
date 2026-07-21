@@ -5,6 +5,10 @@ import { ConvexError } from "convex/values";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import type { Id } from "../_generated/dataModel.d.ts";
 
+export function isLegacyProductPrice(price: number | undefined): price is number {
+  return typeof price === "number" && Number.isFinite(price);
+}
+
 async function gerarNumeroPedido(ctx: QueryCtx | MutationCtx, unit: string): Promise<string> {
   const ultimo = await ctx.db.query("pedidos").withIndex("by_unit_numero", (q) => q.eq("unit", unit)).order("desc").first();
   const proximo = ultimo ? parseInt(ultimo.numero, 10) + 1 : 1;
@@ -76,6 +80,7 @@ export const adicionarItem = mutation({
     const produto = await ctx.db.get(args.produtoId);
     if (!produto) throw new ConvexError({ message: "Produto não encontrado", code: "NOT_FOUND" });
     if (!produto.active) throw new ConvexError({ message: "Produto inativo", code: "BAD_REQUEST" });
+    if (!isLegacyProductPrice(produto.price)) throw new ConvexError({ message: "Produto sem preço legado para venda operacional", code: "BAD_REQUEST" });
     const categoria = await ctx.db.get(produto.categoryId);
     const operadorNome = await resolverOperadorNome(ctx, args.operadorId);
     const totalAdicionais = (args.adicionais ?? []).reduce((acc, a) => acc + a.precoSnapshot * a.quantidade, 0);

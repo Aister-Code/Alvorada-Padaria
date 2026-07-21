@@ -48,7 +48,10 @@ type ProductDoc = {
   _creationTime: number;
   name: string;
   description?: string;
-  price: number;
+  price?: number;
+  basePrice?: number;
+  priceFrom?: number;
+  sellable?: boolean;
   imageUrl?: string;
   active: boolean;
   featured: boolean;
@@ -167,6 +170,8 @@ function getCatalogMenuItems({ customerIdentified }: CatalogMenuContext): Catalo
 }
 
 const formatCatalogPrice = (value: number) => value.toFixed(2).replace(".", ",");
+const getProductDisplayPrice = (product: Pick<ProductDoc, "price" | "basePrice" | "priceFrom">) =>
+  product.price ?? product.basePrice ?? product.priceFrom;
 
 const normalizeText = (value: string | undefined) =>
   (value ?? "")
@@ -365,7 +370,7 @@ export default function CatalogPage() {
   const customerMainText = customerDisplayName ? `${customerDisplayName}!` : "Bem-vindo(a)!";
   const currentTextScaleOption = catalogTextScaleOptions.find((option) => option.value === textScale) ?? catalogTextScaleOptions[1];
   const visualCartQuantity = visualCart.reduce((total, item) => total + item.quantity, 0);
-  const visualCartTotal = visualCart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  const visualCartTotal = visualCart.reduce((total, item) => total + (item.product.price ?? 0) * item.quantity, 0);
   const closeHeaderSurface = (force = false) => {
     if (!force && customerDraftDirty) {
       setCustomerDiscardConfirmOpen(true);
@@ -419,6 +424,7 @@ export default function CatalogPage() {
     if (closeSurface) closeHeaderSurface(true);
   };
   const handleAddVisualItem = (product: Product) => {
+    if (typeof product.price !== "number") return;
     setVisualCart((items) => {
       const current = items.find((item) => item.product._id === product._id);
       if (current) {
@@ -1372,7 +1378,14 @@ function ProductCard({
 }) {
   const cleanName = normalizeText(product.name);
   const cleanDescription = normalizeText(product.description);
-  const priceText = product.hasSizes && product.sizes ? `A partir de ${formatCatalogPrice(product.price)}` : formatCatalogPrice(product.price);
+  const displayPrice = getProductDisplayPrice(product);
+  const hasDisplayPrice = typeof displayPrice === "number";
+  const canAddVisualItem = typeof product.price === "number";
+  const priceText = hasDisplayPrice
+    ? product.hasSizes && product.sizes
+      ? `A partir de ${formatCatalogPrice(displayPrice)}`
+      : formatCatalogPrice(displayPrice)
+    : "Preço indisponível";
   const badgeConfig = {
     always: { label: "DE SEMPRE", dot: "bg-[#d45519]", text: "text-[#d45519]", bg: "bg-[#fff0e7]" },
     promo: { label: "PROMOÇÃO", dot: "bg-[#d83b7d]", text: "text-[#c63872]", bg: "bg-[#fdebf3]" },
@@ -1408,9 +1421,11 @@ function ProductCard({
           type="button"
           onClick={(event) => {
             event.stopPropagation();
+            if (!canAddVisualItem) return;
             onAdd(product);
           }}
-          className="mr-1 flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-[#ff4a2a] text-white shadow-[0_2px_5px_rgba(240,74,42,0.13)] transition-colors hover:bg-[#ec3f22]"
+          disabled={!canAddVisualItem}
+          className="mr-1 flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-[#ff4a2a] text-white shadow-[0_2px_5px_rgba(240,74,42,0.13)] transition-colors hover:bg-[#ec3f22] disabled:cursor-not-allowed disabled:bg-[#d9d7d0] disabled:text-[#7d7a70] disabled:shadow-none"
           aria-label={`Adicionar ${cleanName}`}
         >
           <PlusIcon className="h-[18px] w-[18px] stroke-[2.05]" />

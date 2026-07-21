@@ -17,6 +17,24 @@ export const priceStatusValidator = v.union(
   v.literal("aguardando_confirmacao"),
 );
 
+export const optionTypeValidator = v.union(
+  v.literal("padrao"),
+  v.literal("tamanho"),
+  v.literal("volume"),
+  v.literal("embalagem"),
+  v.literal("combinacao_suco"),
+  v.literal("pizza_tamanho"),
+);
+
+export const optionMetadataValidator = v.object({
+  size: v.optional(v.union(v.literal("P"), v.literal("M"), v.literal("G"))),
+  volumeMl: v.optional(v.number()),
+  packageType: v.optional(v.string()),
+  liquidBase: v.optional(v.union(v.literal("agua"), v.literal("leite"))),
+  portionGrams: v.optional(v.number()),
+  displayHint: v.optional(v.string()),
+});
+
 export const imageOriginValidator = v.union(
   v.literal("propria"),
   v.literal("oficial_fabricante"),
@@ -86,10 +104,10 @@ export const selectedOptionSnapshotValidator = v.object({
   optionDocumentKey: v.optional(v.string()),
   code: v.optional(v.string()),
   label: v.string(),
-  optionType: v.string(),
+  optionType: optionTypeValidator,
   price: v.optional(v.number()),
   priceStatus: priceStatusValidator,
-  metadata: v.optional(v.record(v.string(), v.string())),
+  metadata: v.optional(optionMetadataValidator),
 });
 
 export const pizzaConfigurationSnapshotValidator = v.object({
@@ -183,6 +201,7 @@ export const conversionSnapshotValidator = v.object({
 
 export type ProductOrigin = "produzido" | "revendido" | "misto";
 export type PriceStatus = "confirmado" | "pendente" | "aguardando_confirmacao";
+export type OptionType = "padrao" | "tamanho" | "volume" | "embalagem" | "combinacao_suco" | "pizza_tamanho";
 export type ImageOrigin = "propria" | "oficial_fabricante" | "generica" | "placeholder";
 export type ImageStatus = "aprovada" | "provisoria" | "substituir";
 export type UpgradeOperationalStatus = "pendente_modelagem" | "inativo" | "ativo";
