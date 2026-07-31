@@ -316,6 +316,51 @@ Regras:
 - nao criar Venda;
 - nao enviar para Producao.
 
+## Jornada Dedicada de Pizza
+
+Reconciliacao M-003.M3:
+
+- produtos comuns continuam usando `ProductSheet`;
+- pizzas usam configurador dedicado, iniciado pela categoria Pizzas ou por uma
+  pizza encontrada na busca;
+- a categoria Pizzas apresenta uma relacao completa de sabores disponiveis;
+- a relacao permite escolher `1 sabor` ou `2 sabores` sem criar produtos
+  duplicados;
+- `1 sabor` permite P, M e G;
+- `2 sabores` permite somente M e G;
+- P nao permite segundo sabor;
+- `Sabor 2` so aparece/habilita depois da escolha do `Sabor 1`;
+- borda pertence a personalizacao, vem depois dos sabores e sempre oferece
+  `Sem borda`;
+- `Pizza Atual` permanece fixa no rodape do configurador e mostra montagem,
+  composicao de preco e total;
+- montagem incompleta nao entra no carrinho;
+- carrinho continua sendo intencao, nao Pedido.
+
+Fluxo:
+
+```text
+Categoria Pizzas
+-> relacao de sabores
+-> 1 sabor / 2 sabores
+-> Monte sua pizza
+-> tamanho
+-> Sabor 1
+-> Sabor 2 quando aplicavel
+-> borda ou Sem borda
+-> Pizza Atual
+-> Adicionar ao carrinho
+```
+
+Politica de dois sabores:
+
+- `media_arredondada_050`;
+- usa o preco de cada sabor no tamanho escolhido;
+- calcula a media;
+- arredonda para multiplos de R$ 0,50;
+- borda e demais impactos sao somados separadamente;
+- backend permanece fonte da verdade.
+
 ## Carrinho Visual
 
 Carrinho representa intencao/carrinho, nao Pedido.
