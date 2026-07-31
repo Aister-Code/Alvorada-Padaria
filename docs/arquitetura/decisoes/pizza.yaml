@@ -1,0 +1,664 @@
+schema_version: 1
+module: catalogo_pizza
+updated_at: 2026-07-27
+decisions:
+  - id: DEC-CATALOGO-001
+    status: approved_later
+    title: Migracao do catalogo real Alvorada
+    statement: O documento auditado CATALOG-INSTANCE-ALVORADA-001 e a fonte comercial da migracao; dados confirmados devem ser migrados para o Convex DEV de forma idempotente; pendencias nao bloqueiam os demais itens; preco pendente nunca vira zero; registros pendentes nao ficam vendaveis; produtos existentes nao devem ser excluidos sem reconciliacao; categorias visiveis novas nao devem ser criadas sem aprovacao; o catalogo real do Convex e a fonte da verdade no fluxo normal.
+    prohibits:
+      - converter preco pendente em zero
+      - tornar registro pendente vendavel
+      - criar duplicata em segunda execucao
+      - excluir produto existente sem reconciliacao
+      - criar menu visivel novo sem aprovacao
+      - usar fixture generica como fonte normal quando Convex responder
+      - aplicar dados simulados em producao, carrinho, Pedido ou snapshot
+    sources:
+      - docs/arquitetura/Catalogo/CATALOG-INSTANCE-ALVORADA-001.md:1
+      - docs/arquitetura/Catalogo/CATALOG-INSTANCE-ALVORADA-001.md:33
+      - docs/arquitetura/Catalogo/CATALOG-INSTANCE-ALVORADA-001.md:64
+      - docs/arquitetura/Catalogo/CATALOG-INSTANCE-ALVORADA-001.md:525
+      - docs/arquitetura/Catalogo/CATALOG-MODEL-ALVORADA-001.md:1
+      - Usuario, conversa de 2026-07-28: MIGRACAO CONTROLADA - CATALOGO REAL ALVORADA + PREVIA DEV DE ADICIONAIS DE PIZZA
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-002
+    status: approved_later
+    title: Carrinho flutuante e ajuda com destaque premium
+    statement: O carrinho flutuante do catalogo deve funcionar como mini-cart ou dock mais evidente quando houver item adicionado, com icone, bloco textual e CTA claro; o canal de ajuda permanece secundario ao carrinho quando ha item, mas com acabamento mais visivel, contraste adequado e aparencia confiavel. A mudanca e exclusivamente visual e de UX, sem alterar regras de negocio, calculo, backend, schema, pedido, carrinho logico ou checkout.
+    prohibits:
+      - alterar regra de negocio do carrinho
+      - alterar calculo, backend, schema, pedido ou checkout
+      - criar fluxo novo de carrinho ou ajuda
+      - enfraquecer a hierarquia do carrinho quando houver item
+    sources:
+      - Usuario, conversa de 2026-07-29: refinamento premium do carrinho flutuante e canal de ajuda do catalogo
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-003
+    status: approved_later
+    title: Ajuda integrada ao dock do carrinho
+    statement: Com carrinho ativo, Ajuda fica visualmente anexada ao dock; carrinho e Ajuda possuem acoes e areas de toque separadas; Ver carrinho permanece como acao comercial principal; Ajuda ocupa o extremo direito, separada por divisor sutil; sem carrinho, Ajuda retorna ao formato de FAB independente; a integracao nao altera canal, contexto ou comportamento funcional da Ajuda; o refinamento deve liberar espaco vertical sem reduzir acessibilidade.
+    prohibits:
+      - manter Ajuda como FAB separado acima do dock quando houver carrinho
+      - sobrepor areas clicaveis de carrinho e Ajuda
+      - alterar canal, contexto ou comportamento funcional da Ajuda
+      - alterar total, quantidade, checkout, pedido, carrinho logico, backend ou schema
+      - renderizar texto Ajuda dentro do dock com carrinho ativo
+    sources:
+      - Usuario, conversa de 2026-07-29: REFINAMENTO CONTROLADO - AJUDA ANEXADA AO DOCK DO CARRINHO
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-004
+    status: approved_later
+    title: Dock do carrinho com superficie oliva
+    statement: Com itens no carrinho, o dock usa fundo oliva escuro reutilizando exatamente a superficie ja existente em Pizza Atual; nao criar nova tonalidade paralela; carrinho permanece como acao principal; Ajuda permanece anexada e secundaria; sem carrinho, o FAB independente de Ajuda permanece como esta.
+    prohibits:
+      - usar fundo branco, bege claro ou gradiente no dock ativo do carrinho
+      - criar nova tonalidade paralela para substituir o oliva canonico
+      - alterar CTA Ver carrinho, fluxo, total, quantidade, canal de Ajuda, checkout, pedido, backend ou schema
+      - alterar o FAB independente de Ajuda quando o carrinho estiver vazio
+    sources:
+      - src/pages/catalog/_components/PizzaBuilder.tsx:1608
+      - src/pages/catalog/_components/PizzaBuilder.tsx:1655
+      - Usuario, conversa de 2026-07-29: REFINAMENTO PONTUAL - DOCK DO CARRINHO EM OLIVA ESCURO
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-005
+    status: approved_later
+    title: Distribuicao uniforme do menu de categorias
+    statement: No menu compacto do catalogo, a lupa permanece fixa na extremidade esquerda, o expansor permanece fixo na extremidade direita, e as cinco categorias principais ocupam uma regiao central estavel com centros uniformemente distribuidos; icone, texto e indicador ativo de cada categoria compartilham o mesmo eixo; o comprimento do rotulo nao pode deslocar a categoria vizinha; os alinhamentos externos ja aprovados devem ser preservados.
+    prohibits:
+      - distribuir categorias pela largura natural dos rotulos
+      - usar justify-between para espacamento das categorias principais
+      - aplicar margens, offsets ou transformacoes especificas por categoria
+      - permitir que Destaques invada a celula de Lanches
+      - deslocar a lupa ou o expansor homologados
+      - alterar busca, sticky, textos, icones, fonte, cards, carrinho, Ajuda, PizzaBuilder, backend ou schema
+    sources:
+      - Usuario, conversa de 2026-07-30: CORRECAO PONTUAL - DISTRIBUICAO HARMONICA DO MENU DE CATEGORIAS
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-006
+    status: approved_later
+    title: Alinhamento optico do menu de categorias
+    statement: O menu de categorias deve preservar lupa e expansor nas extremidades e cinco celulas simetricas, mas a homologacao depende da percepcao visual real; icone, rotulo e indicador ativo compartilham o mesmo eixo; as distancias aparentes entre rotulos vizinhos devem parecer uniformes; nenhum rotulo pode parecer unido ao seguinte; a correcao deve ser global e simetrica, sem ajustes individuais por categoria.
+    prohibits:
+      - declarar sucesso apenas por centros matematicamente regulares
+      - usar margin, translate, largura ou offset especifico por categoria
+      - condicionar ajuste ao texto de Destaques ou Lanches
+      - permitir fusao visual entre Destaques e Lanches
+      - fazer underline invadir visualmente categorias vizinhas
+      - alterar textos, icones, ordem, busca, sticky, cabecalho, expansor, categorias secundarias, cards, carrinho, Ajuda, PizzaBuilder ou backend
+    sources:
+      - Usuario, conversa de 2026-07-30: CORRECAO PONTUAL - ALINHAMENTO OPTICO, HARMONICO E SIMETRICO DO MENU
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-007
+    status: approved_later
+    title: Ritmo vertical uniforme do menu de categorias
+    statement: Todos os itens do menu de categorias usam a mesma estrutura e as mesmas metricas verticais; o estado ativo nao altera gap, altura, line-height ou posicao; icone, rotulo e indicador ativo mantem eixos e distancias constantes; o underline deve ficar absoluto e fora do fluxo, sem mudar a altura do item.
+    prohibits:
+      - alterar gap, altura, line-height ou posicao por estado ativo
+      - renderizar indicador ativo de forma que mude a estrutura vertical do item
+      - usar offsets, margens ou transformacoes especificas por categoria
+      - deixar Destaques com ritmo vertical diferente das demais categorias
+      - alterar textos, icones, ordem, busca, sticky, cabecalho, cards, carrinho, Ajuda, PizzaBuilder ou backend
+    sources:
+      - Usuario, conversa de 2026-07-30: CORRECAO CONTROLADA - RITMO VERTICAL DO MENU E ALTERNANCIA DIA/NOITE
+      - DEC-CATALOGO-005
+      - DEC-CATALOGO-006
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-008
+    status: approved_later
+    title: Alternancia funcional de tema Dia/Noite
+    statement: O botao Dia/Noite alterna efetivamente entre os temas claro e escuro em todo o catalogo; o parametro theme da URL pode definir o estado inicial, mas nao pode bloquear a alternancia do usuario; a mudanca preserva o sistema de tema e os tokens existentes.
+    prohibits:
+      - reaplicar o parametro theme da URL de modo que desfaça o clique do usuario
+      - criar sistema paralelo de tema fora do provider existente
+      - limitar a alternancia a uma parte isolada do catalogo
+      - alterar textos, icones, menu, cards, carrinho, Ajuda, ProductSheet, PizzaBuilder, backend ou schema fora do necessario ao tema
+    sources:
+      - src/components/providers/theme.tsx
+      - Usuario, conversa de 2026-07-30: CORRECAO CONTROLADA - RITMO VERTICAL DO MENU E ALTERNANCIA DIA/NOITE
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-009
+    status: approved_later
+    title: Distribuicao optica do menu por largura real dos conjuntos
+    statement: A regiao central do menu de categorias nao usa cinco celulas iguais nem centros equidistantes como metrica principal; as categorias principais sao distribuidas conforme a largura real de cada conjunto visual, com wrappers de largura real, espaco livre igualmente distribuido entre os wrappers, icone, texto e underline centralizados dentro de cada wrapper, e sem flex-grow nos itens. A regra substitui a parte conflitante das decisoes anteriores que usava cinco areas iguais, preservando lupa e expansor nas extremidades, ritmo vertical uniforme, underline fora do fluxo e ausencia de ajustes individuais por categoria.
+    supersedes:
+      - DEC-CATALOGO-005: regra conflitante de cinco celulas iguais e centros uniformemente distribuidos
+      - DEC-CATALOGO-006: medicao por centros como principal evidencia de alinhamento
+    prohibits:
+      - usar grid-template-columns repeat(5, minmax(0, 1fr)) na regiao das categorias principais
+      - usar flex-grow, flex: 1, width 20% ou comportamento equivalente para forcar cinco areas iguais
+      - perseguir centros equidistantes como metrica principal da correcao optica
+      - aplicar margin, offset, translate, largura ou ajuste individual por categoria
+      - alterar tema, textos, icones, ordem, busca, sticky, cabecalho, cards, carrinho, Ajuda, PizzaBuilder, ProductSheet, backend ou schema
+    sources:
+      - Usuario, conversa de 2026-07-30: NAO CONFORMIDADE - A CORRECAO OPTICA DEC-CATALOGO-009 NAO FOI EXECUTADA
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-010
+    status: approved_later
+    title: Gap uniforme entre conjuntos visuais das categorias
+    statement: O espacamento do menu principal do catalogo deve ser medido entre os elementos efetivamente visiveis de cada categoria, compostos por icone, rotulo e underline; areas invisiveis de toque nao podem interferir no espacamento optico; os quatro gaps visiveis usam um unico valor global, o grupo visual completo permanece centralizado entre lupa e expansor, e nao sao permitidos offsets, margens, larguras ou transformacoes especificas por categoria. A regra substitui a parte conflitante da DEC-CATALOGO-009 que considerava o bounding box do wrapper com area minima de toque como referencia do gap.
+    supersedes:
+      - DEC-CATALOGO-009: medicao por wrapper clicavel ou area minima de toque como referencia do gap visual
+    prohibits:
+      - medir gaps pelo wrapper clicavel quando ele inclui area invisivel de toque
+      - deixar min-width 44px, padding ou hit area determinar a distribuicao optica
+      - usar justify-between, space-around, flex-grow, cinco colunas iguais, width 20%, margens individuais ou translateX especifico na regiao visual principal
+      - aplicar correcao exclusiva em Destaques, Lanches ou qualquer categoria isolada
+      - alterar tema, ritmo vertical, textos, icones, ordem, busca, sticky, carrinho, Ajuda, cards, PizzaBuilder, ProductSheet, backend ou schema
+    sources:
+      - Usuario, conversa de 2026-07-30: CORRECAO BLOQUEANTE - ESPACAMENTO UNIFORME ENTRE OS ELEMENTOS VISIVEIS DO MENU
+    forbidden_copy: []
+
+  - id: DEC-CATALOGO-011
+    status: approved_later
+    title: Areas de toque independentes em telas estreitas
+    statement: A camada visual do menu de categorias continua distribuida por conteudo e gaps opticos homologados, enquanto a camada interativa e calculada separadamente; areas clicaveis vizinhas nunca podem se sobrepor, cada toque deve acionar somente a categoria pretendida, e a correcao interativa nao pode alterar o alinhamento visual homologado em 408px. Em telas estreitas, as zonas de toque usam fronteiras deterministicas pelos pontos medios entre os centros visuais das categorias, preservando altura minima de 44px, foco visivel e eventos isolados.
+    supersedes:
+      - DEC-CATALOGO-010: uso de pseudo-elementos de 44px por item como area de toque quando quase encostam em telas estreitas
+    prohibits:
+      - alterar os gaps visuais de 19px em 408px
+      - alterar posicao dos icones, rotulos, underlines, centralizacao visual, tipografia, ritmo vertical, lupa, expansor ou tema
+      - usar pseudo-elementos de 44px por item quando isso cria fronteiras quase encostadas sem divisao deterministica
+      - reintroduzir cinco colunas visuais iguais, flex-grow, margens individuais, offsets especificos ou reducao isolada de gap por categoria
+      - permitir sobreposicao entre zonas clicaveis ou acionamento duplo de categorias vizinhas
+    sources:
+      - Usuario, conversa de 2026-07-30: CORRECAO PONTUAL - AREAS DE TOQUE SEGURAS NO MENU EM 320PX
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-001
+    status: approved_later
+    title: SelectionSquare canonico
+    statement: Todos os controles elegiveis usam o mesmo SelectionSquare, com quadrado vazio ou quadrado preenchido com check.
+    prohibits:
+      - marcador circular
+      - radio visual
+      - letras dentro do marcador
+      - variante local por etapa
+    sources:
+      - src/pages/catalog/_components/PizzaBuilder.tsx:1547
+      - docs/screenshots/m003-pizza-selection-final-01-tipo-aberto-nao-selecionada-408.png
+      - docs/screenshots/m003-pizza-selection-final-02-tipo-aberto-selecionada-408.png
+      - docs/screenshots/m003-pizza-selection-final-03-tamanho-aberto-408.png
+      - docs/screenshots/m003-pizza-selection-final-04-borda-aberta-408.png
+      - docs/screenshots/m003-pizza-selection-final-05-retirar-ingredientes-aberto-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-002
+    status: approved_later
+    title: Sem CTA intermediario entre Tipo e Tamanho
+    statement: Nao existe CTA intermediario "Continuar para o tamanho"; selecionar Tipo atualiza a escolha, aplica feedback e recolhe o editor.
+    prohibits:
+      - Continuar para o tamanho
+      - Proximo equivalente entre Tipo e Tamanho
+      - Confirmar tipo
+    sources:
+      - src/pages/catalog/_components/PizzaBuilder.tsx
+      - docs/screenshots/m003-pizza-selection-final-06-tipo-recolhido-sem-cta-408.png
+    forbidden_copy:
+      - Continuar para o tamanho
+      - Confirmar tipo
+
+  - id: DEC-PIZZA-003
+    status: approved_later
+    title: Busca expandida sem duplicidade
+    statement: A busca expandida nao exibe simultaneamente "Escolher sabor" na metade ativa.
+    prohibits:
+      - campo expandido com Escolher sabor duplicado
+      - lupa duplicada
+      - chevron junto com busca aberta
+    sources:
+      - docs/screenshots/m003-pizza-builder-search-gate-01-expandida-sem-duplicidade-408.png
+      - docs/screenshots/m003-pizza-builder-search-gate-02-detalhe-superficie-sem-input-interno-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-004
+    status: approved_later
+    title: Metades sem check visual
+    statement: Nenhum check e usado nas metades; conclusao e comunicada por nome, tonalidade e acessibilidade.
+    prohibits:
+      - check de conclusao em Metade 1
+      - check de conclusao em Metade 2
+      - check mais Alterar
+    sources:
+      - docs/screenshots/m003-pizza-builder-gate-fix-04-metade1-confirmada-metade2-ativa-sem-check-408.png
+      - docs/screenshots/m003-pizza-builder-gate-fix-05-ambas-confirmadas-sem-check-408.png
+      - docs/screenshots/m003-pizza-builder-summary-gate-01-metade1-confirmada-metade2-busca-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-005
+    status: approved_later
+    title: Metades com dimensoes e posicoes fixas
+    statement: Metade 1 e Metade 2 mantem dimensoes e posicoes fixas, com Metade 1 a esquerda e Metade 2 no extremo direito.
+    prohibits:
+      - deslocamento horizontal entre estados
+      - largura variando por estado
+      - Metade 2 saindo do extremo direito
+    sources:
+      - docs/screenshots/m003-pizza-builder-tone-tabs-01-metade1-ativa-408.png
+      - docs/screenshots/m003-pizza-builder-tone-tabs-02-metade1-confirmada-metade2-ativa-408.png
+      - docs/screenshots/m003-pizza-builder-summary-gate-03-busca-retraida-sem-residuo-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-006
+    status: approved_dna
+    title: Pizza Atual fixa no rodape
+    statement: Pizza Atual permanece fixa no rodape do configurador.
+    sources:
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:335
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:351
+      - docs/arquitetura/Catalogo/M-003.M3-Complementos-Upgrades-Pizzas.md:200
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-007
+    status: approved_dna
+    title: Ordem Tipo, Tamanho, Sabores e Borda
+    statement: Tipo precede Tamanho; Tamanho precede sabores; Borda vem depois dos sabores e nao pode aparecer no lugar de Tamanho.
+    superseded_rules:
+      - rule: Tamanho visivel enquanto o editor de Tipo esta aberto antes da escolha.
+        superseded_by: DEC-PIZZA-008
+    prohibits:
+      - Borda como proximo controle durante edicao de Tipo
+      - Borda antes de Tamanho
+      - Borda antes das metades ou sabor confirmado
+      - Continuar para o tamanho
+    sources:
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:340
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:347
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:348
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:349
+      - docs/arquitetura/UX/UX-Cardapio-Digital-Telas-Modais.md:350
+      - docs/arquitetura/Catalogo/M-003.M3-Complementos-Upgrades-Pizzas.md:196
+      - docs/arquitetura/Catalogo/M-003.M3-Complementos-Upgrades-Pizzas.md:197
+      - docs/arquitetura/Catalogo/M-003.M3-Complementos-Upgrades-Pizzas.md:198
+      - docs/arquitetura/Catalogo/M-003.M3-Complementos-Upgrades-Pizzas.md:199
+    forbidden_copy:
+      - Continuar para o tamanho
+
+  - id: DEC-PIZZA-008
+    status: approved_later
+    title: Tamanho somente depois da escolha do Tipo
+    statement: Enquanto nenhum Tipo estiver escolhido, mostrar somente o editor de Tipo; Tamanho aparece apenas depois da selecao de Salgada ou Doce; Borda continua posterior aos sabores.
+    superseded_rules:
+      - rule: Depois da selecao de Tipo, mostrar Tamanho fechado como resumo Escolher antes de abrir o editor.
+        superseded_by: DEC-PIZZA-009
+    supersedes:
+      - DEC-PIZZA-007: Tamanho visivel com Tipo aberto antes da escolha.
+    prohibits:
+      - Tamanho antes da escolha de Tipo
+      - Borda antes da escolha de Tipo
+      - Borda no lugar de Tamanho
+      - Continuar para o tamanho
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO DE DECISAO — TAMANHO SOMENTE APOS A ESCOLHA DO TIPO
+      - docs/screenshots/m003-pizza-order-01-tipo-aberto-tamanho-abaixo-408.png
+      - docs/screenshots/m003-pizza-order-02-tipo-recolhido-tamanho-proximo-408.png
+    forbidden_copy:
+      - Continuar para o tamanho
+
+  - id: DEC-PIZZA-009
+    status: approved_later
+    title: Tamanho abre imediatamente apos Tipo
+    statement: Antes de escolher Tipo, mostrar somente o editor de Tipo; apos selecionar Salgada ou Doce, aplicar feedback, recolher Tipo e abrir automaticamente o editor de Tamanho; apos escolher Tamanho, avancar para sabores/metades; Borda permanece posterior aos sabores.
+    supersedes:
+      - DEC-PIZZA-008: Tamanho fechado como resumo Escolher logo apos Tipo.
+    prohibits:
+      - Tamanho antes da escolha de Tipo
+      - Tamanho fechado como etapa intermediaria imediatamente apos Tipo
+      - Borda antes da escolha de Tipo
+      - Borda antes dos sabores ou metades
+      - Continuar para o tamanho
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO CONTROLADA — ABRIR TAMANHO APOS TIPO E RENDERIZAR IMAGEM PERSONALIZADA
+      - docs/screenshots/m003-pizza-order-01-tipo-aberto-tamanho-abaixo-408.png
+      - docs/screenshots/m003-pizza-order-03-tamanho-aberto-408.png
+    forbidden_copy:
+      - Continuar para o tamanho
+
+  - id: DEC-PIZZA-010
+    status: approved_later
+    title: Escopo dos adicionais da pizza
+    statement: Adicionais por metade pertencem a respectiva metade; adicionais globais pertencem a pizza inteira; adicionais por metade aparecem depois das retiradas e antes da confirmacao da metade; adicionais globais aparecem depois das duas metades e antes da revisao; secoes vazias nao sao renderizadas; backend continua autoritativo para disponibilidade e preco.
+    prohibits:
+      - aplicar adicional de uma metade a outra silenciosamente
+      - renderizar secao vazia de adicionais
+      - inventar adicional, preco, regra ou fixture como verdade de producao
+      - misturar borda com adicionais
+    sources:
+      - Usuario, conversa de 2026-07-28: IMPLEMENTACAO CONTROLADA - ADICIONAIS POR METADE E ADICIONAIS GLOBAIS
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-011
+    status: approved_later
+    title: Estados visuais canonicos das metades
+    statement: Tarefas nao relacionadas as metades nao podem alterar sua aparencia; posicoes, dimensoes, cores, bordas, sombras e estados sao canonicos; Metade 1 ativa usa familia terracota, Metade 2 ativa usa familia oliva, metade ativa possui autorrelevo sutil persistente, metade confirmada e inativa mantem tom muito suave, nome e chevron, metade indisponivel permanece neutra e plana, edicao pendente usa amarelo, e nao sao usados checks visuais nas metades.
+    prohibits:
+      - alterar aparencia das metades em tarefas nao relacionadas
+      - remover nome ou chevron de metade confirmada inativa
+      - usar check visual nas metades
+      - alterar largura ou posicao das metades por conteudo
+      - sobrescrever estados visuais das metades a partir de adicionais
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO DE REGRESSAO - RESTAURAR DESTAQUES APROVADOS DAS METADES
+      - docs/screenshots/m003-pizza-builder-gate-fix-04-metade1-confirmada-metade2-ativa-sem-check-408.png
+      - docs/screenshots/m003-pizza-builder-search-gate-05-metade2-mesmo-padrao-408.png
+      - docs/screenshots/m003-pizza-builder-in-half-02-metade1-calabresa-sem-check-408.png
+      - docs/screenshots/m003-pizza-builder-active-half-01-metade1-ativa-sem-check-408.png
+      - docs/screenshots/m003-pizza-builder-active-half-02-metade1-confirmada-metade2-ativa-408.png
+      - docs/screenshots/m003-pizza-builder-active-half-05-metade1-reaberta-pendente-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-012
+    status: approved_later
+    title: Previa DEV isolada dos adicionais
+    statement: A simulacao de adicionais existe somente em desenvolvimento, precisa de ativacao explicita por parametro de URL, nao altera dados reais, nao grava em backend, carrinho, pedido ou snapshot, nao aparece em producao, serve apenas para homologacao visual e de interacao, e apos aprovacao os itens simulados serao removidos ou substituidos pela configuracao autoritativa real.
+    prohibits:
+      - renderizar simulacao de adicionais em producao
+      - ativar simulacao sem parametro pizzaAddonsPreview=1
+      - gravar itens simulados no backend, carrinho, pedido ou snapshot
+      - tratar fixture DEV como verdade comercial
+      - misturar fixture DEV com fixtures normais do catalogo
+    sources:
+      - Usuario, conversa de 2026-07-28: SIMULACAO VISUAL CONTROLADA - ADICIONAIS DA PIZZA
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-013
+    status: approved_later
+    title: Contexto das metades antes dos adicionais globais
+    statement: Retiradas pertencem exclusivamente a metade correspondente; adicionais por metade permanecem dentro da respectiva metade; adicionais globais so aparecem apos as duas metades confirmadas; ao entrar nos adicionais globais, os resumos das duas metades permanecem visiveis; Borda vem depois dos adicionais globais; Observacao vem depois da Borda; nao existe CTA intermediario "Continuar" nessa etapa.
+    prohibits:
+      - adicionais globais antes das duas metades confirmadas
+      - ocultar resumos das metades na etapa de adicionais globais
+      - perder contexto das retiradas por metade
+      - renderizar CTA intermediario Continuar na etapa de adicionais globais
+      - renderizar Borda antes dos adicionais globais quando houver adicionais globais vendaveis ou previa DEV ativa
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO BLOQUEANTE - CONTEXTO DAS METADES NA ETAPA DE ADICIONAIS GLOBAIS
+      - docs/screenshots/catalog-real-preview-11-adicional-global-antes-borda-408.png
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-014
+    status: approved_later
+    title: Estado visual da Observacao recolhida
+    statement: Observacao aberta ou em edicao pode usar estado contextual ativo; Observacao recolhida vazia usa linha compacta neutra com Opcional; Observacao recolhida preenchida usa linha compacta neutra com Preenchida; concluir a Observacao nao mantem fundo, borda, sombra ou elevacao de estado ativo; a estrutura recolhida reutiliza o mesmo componente ou classes canonicas de Tipo, Tamanho e Borda.
+    prohibits:
+      - manter destaque ativo apos concluir Observacao
+      - usar card externo exclusivo para Observacao recolhida
+      - aplicar fundo, borda, sombra ou elevacao especial quando recolhida
+      - criar variante visual local para Observacao recolhida
+      - remover focus-visible para esconder estado visual persistente
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO PONTUAL - OBSERVACAO RECOLHIDA DEVE VOLTAR AO PADRAO NEUTRO
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-015
+    status: approved_later
+    title: Resumo textual da Observacao
+    statement: Observacao vazia mostra Opcional; Observacao preenchida mostra um trecho da primeira linha do texto real, limitado a uma linha com reticencias; nao usar o texto generico Preenchida; chevron permanece disponivel para reabrir e editar; texto completo permanece no textarea, aria-label e Pizza Atual.
+    prohibits:
+      - mostrar Preenchida como valor da Observacao recolhida
+      - esconder os resumos das metades nas etapas globais
+      - renderizar Borda ou Observacao substituindo os resumos das metades
+      - remover chevron da Observacao recolhida
+      - truncar ou perder o texto completo da Observacao ao reabrir
+    sources:
+      - Usuario, conversa de 2026-07-28: CORRECAO BLOQUEANTE - RESTAURAR SABORES NO RESUMO E MOSTRAR TRECHO DA OBSERVACAO
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-016
+    status: approved_later
+    title: Finalizacao premium pelo resumo Pizza Atual
+    statement: O subtitulo de dois sabores recebe destaque premium no cabecalho; nao existe capsula isolada Pronta; Pizza Atual comunica estado, composicao e total; nao existe etapa separada Revisar pizza; expandir Pizza Atual funciona como revisao; quando todos os requisitos estiverem validos, o CTA final e Adicionar com o total; Observacao continua opcional; nenhuma regra autoritativa ou validacao e removida.
+    prohibits:
+      - exibir capsula isolada Pronta
+      - renderizar etapa separada Revisar pizza
+      - renderizar CTA Revisar pizza
+      - exigir revisao separada antes de adicionar quando a configuracao estiver completa
+      - remover validacoes autoritativas, calculo ou regras financeiras
+      - transformar o destaque 2 SABORES do cabecalho em selo grande, capsula ou imagem fotografica
+    sources:
+      - Usuario, conversa de 2026-07-29: REFINAMENTO CONTROLADO - CABECALHO PREMIUM E FINALIZACAO SEM ETAPA REDUNDANTE
+    forbidden_copy:
+      - Revisar pizza
+
+  - id: DEC-PIZZA-017
+    status: approved_later
+    title: Subtitulo tipografico de dois sabores
+    statement: O cabecalho mantem Monte sua pizza e abaixo mostra somente DOIS SABORES em caixa alta, cor terracota da identidade Alvorada, peso semibold, tracking discreto, centralizacao optica e cabecalho compacto. O destaque e construido apenas por cor, peso e espacamento tipografico.
+    prohibits:
+      - exibir icone no subtitulo DOIS SABORES
+      - exibir emoji no subtitulo DOIS SABORES
+      - exibir selo, capsula, fundo colorido ou sublinhado no subtitulo DOIS SABORES
+      - reservar wrapper, margem ou gap para icone removido
+      - substituir DOIS SABORES por outro elemento decorativo
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO PONTUAL - SUBTITULO DOIS SABORES SOMENTE TIPOGRAFICO
+    forbidden_copy: []
+
+  - id: DEC-PIZZA-018
+    status: approved_later
+    title: Clareza da conferencia final
+    statement: Na conferencia final, o resumo da Metade 2 usa a mesma familia oliva da superficie interna aprovada para essa metade; Metade 1 permanece como esta nesta tarefa; observacao vazia e resumida como Sem observacao; e o controle de quantidade sempre exibe o numero atual entre os botoes de diminuir e aumentar.
+    prohibits:
+      - deixar Metade 2 visualmente indistinta na conferencia final
+      - mostrar Opcional, Preenchida, campo vazio ou hifen isolado para Observacao vazia
+      - esconder o numero atual da quantidade no controle do rodape
+      - permitir quantidade menor que 1
+      - alterar fluxo, precos, calculo autoritativo, backend ou snapshots
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO PONTUAL - REVISAO FINAL, OBSERVACAO VAZIA E QUANTIDADE
+    forbidden_copy: []
+  - id: DEC-PIZZA-019
+    status: approved_later
+    title: Hierarquia visual do resumo Pizza Atual
+    statement: No resumo expandido da Pizza Atual, Metade 1 usa acento terracota e Metade 2 usa acento oliva apenas para separar visualmente os contextos; Pizza Atual e seu status permanecem no cabecalho do painel expandido; o conteudo interno nao repete titulo nem status; total, quantidade e CTA permanecem nas posicoes aprovadas.
+    prohibits:
+      - repetir Pizza Atual ou o status dentro do conteudo expandido
+      - deixar Metade 1 e Metade 2 sem diferenciacao visual no resumo expandido
+      - mover total, quantidade ou CTA das posicoes aprovadas
+      - alterar fluxo, calculo autoritativo, backend ou snapshots
+    sources:
+      - Usuario, conversa de 2026-07-29: REFINAMENTO PONTUAL - PIZZA ATUAL EXPANDIDA COM CORES DAS METADES E CABECALHO INTEGRADO
+    forbidden_copy: []
+    partially_superseded_by:
+      - DEC-PIZZA-020
+  - id: DEC-PIZZA-020
+    status: approved_later
+    title: Tela dedicada de finalizacao e conferencia
+    statement: Pizza Atual abre uma tela dedicada quando a configuracao estiver valida; a finalizacao substitui visualmente o conteudo da montagem e a montagem anterior nao aparece atras nem abaixo; o cabecalho muda para Pizza Atual e Configuracao concluida; a tela centraliza e organiza a conferencia; retiradas, adicionais, borda e observacao sao exibidos; precos de sabores sao referencias do calculo, nao precos das metades; o CTA final adiciona ao carrinho e retorna a categoria Pizzas; voltar preserva a montagem.
+    supersedes_conflicting_parts_of:
+      - DEC-PIZZA-016
+      - DEC-PIZZA-019
+    preserves:
+      - ausencia de etapa separada Revisar pizza
+      - ausencia de capsula Pronta
+      - CTA final Adicionar com total
+      - cores das metades como separacao visual
+      - validacoes autoritativas e calculo financeiro
+    prohibits:
+      - mostrar a montagem atras ou abaixo da conferencia final
+      - repetir Salgada, Doce ou 2 sabores como status do cabecalho da finalizacao
+      - chamar valores dos sabores de preco da metade
+      - ocultar retiradas, adicionais, borda ou observacao da conferencia
+      - perder as escolhas ao voltar da finalizacao
+      - alterar backend, schema, contratos de preco, snapshots ou media_arredondada_050
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO ESTRUTURAL APROVADA - TELA DEDICADA DE FINALIZACAO DA PIZZA
+    forbidden_copy:
+      - preco da metade
+    partially_superseded_by:
+      - DEC-PIZZA-021
+  - id: DEC-PIZZA-021
+    status: approved_later
+    title: Conferencia final orientada a food
+    statement: A finalizacao e uma tela dedicada orientada a conferencia de comida; o cabecalho mostra Pizza Atual e o tipo da pizza no subtitulo, sem status tecnico; o Tipo nao e repetido no corpo; o Tamanho usa o padrao compacto canonico; cada metade concentra sabor, retiradas e adicionais proprios; adicionais globais aparecem somente quando selecionados; o total e protagonista; referencias dos sabores sao detalhes secundarios recolhidos; e adicionar com sucesso retorna a categoria Pizzas.
+    supersedes_conflicting_parts_of:
+      - DEC-PIZZA-020
+    preserves:
+      - tela dedicada de finalizacao
+      - montagem anterior oculta durante a conferencia
+      - voltar preservando a montagem
+      - CTA unico Adicionar com total
+      - retorno ao catalogo com categoria Pizzas apos adicionar
+      - calculo autoritativo e media_arredondada_050
+    prohibits:
+      - mostrar Configuracao concluida, Pronta ou Completa no cabecalho da finalizacao
+      - repetir Tipo no corpo da conferencia
+      - apresentar valores dos sabores como preco ou valor de metade
+      - exibir Preco calculado ou Preco final calculado como titulo principal
+      - exibir adicionais globais quando nenhum foi selecionado
+      - duplicar adicionais globais dentro das metades
+      - renderizar Revisar pizza, Continuar ou CTA interno adicional
+      - mostrar media_arredondada_050 ao cliente
+      - alterar backend, schema, contratos de preco, snapshots ou media_arredondada_050
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO ESTRUTURAL - FINALIZACAO PREMIUM, SIMPLES E ORIENTADA A FOOD
+    forbidden_copy:
+      - Configuracao concluida
+      - Preco final calculado
+      - Preco calculado
+      - Preco da Metade 1
+      - Preco da Metade 2
+      - Valor da metade
+    partially_superseded_by:
+      - DEC-PIZZA-022
+  - id: DEC-PIZZA-022
+    status: approved_later
+    title: Modal central de conferencia da pizza
+    statement: Retiradas permanecem vinculadas a respectiva metade e integradas visualmente a superficie da metade ativa; a conferencia final abre como modal central sobre a montagem apos concluir a Observacao, inclusive vazia; a montagem anterior fica visivel apenas como fundo escurecido e nao interativo; Borda e Observacao seguem o padrao compacto canonico; nao ha explicacao tecnica de formula, referencias de sabores ou precos apresentados como preco de metade; o total final e o principal elemento financeiro; voltar fecha apenas a conferencia preservando a montagem; adicionar com sucesso retorna a categoria Pizzas.
+    supersedes_conflicting_parts_of:
+      - DEC-PIZZA-020
+      - DEC-PIZZA-021
+    preserves:
+      - linguagem de food da conferencia
+      - tipo no subtitulo do cabecalho do modal
+      - ausencia de Tipo repetido no corpo
+      - metades com cores terracota e oliva
+      - CTA unico Adicionar com total
+      - retorno ao catalogo com categoria Pizzas apos adicionar
+      - calculo autoritativo e media_arredondada_050
+    prohibits:
+      - mostrar Configuracao concluida, Pronta ou Completa no cabecalho da conferencia
+      - renderizar Como o preco foi calculado ou secao equivalente
+      - mostrar Referencia sabor 1 ou Referencia sabor 2 ao cliente
+      - apresentar preco ou valor de metade
+      - mostrar media_arredondada_050 ou formula de media
+      - deixar Borda ou Observacao como textos soltos fora do padrao compacto
+      - duplicar adicionais globais dentro das metades
+      - renderizar Revisar pizza, Continuar, Proximo ou Ver resumo
+      - alterar backend, schema, contratos de preco, snapshots ou media_arredondada_050
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO ESTRUTURAL APROVADA - RETIRADAS CONTEXTUAIS E PIZZA ATUAL EM MODAL DE CONFERENCIA
+    forbidden_copy:
+      - Configuracao concluida
+      - Como o preco foi calculado
+      - Referencia sabor 1
+      - Referencia sabor 2
+      - Preco da metade
+      - Valor da metade
+    partially_superseded_by:
+      - DEC-PIZZA-024
+  - id: DEC-PIZZA-023
+    status: approved_later
+    title: Acabamento premium da conferencia final
+    statement: No modal central Pizza Atual, Borda e Observacao usam a mesma linguagem compacta e estrutural em uma superficie neutra compartilhada; nao aparecem como textos soltos ou cards de padroes diferentes; a conferencia deve parecer resumo de pedido de comida, nao relatorio contabil; rotulos secundarios tem menor presenca; o total da pizza permanece como principal destaque; nenhuma mudanca funcional, de fluxo, calculo, maquina de estados ou retorno ao catalogo esta autorizada.
+    preserves:
+      - modal central sobre backdrop
+      - cabecalho Pizza Atual com subtitulo do tipo de pizza
+      - Metade 1 terracota e Metade 2 oliva
+      - retiradas e adicionais contextualizados por metade
+      - adicional global separado quando selecionado
+      - total comercial sem formula tecnica
+      - quantidade e CTA fixos
+      - retorno a categoria Pizzas apos adicionar
+      - calculo autoritativo e media_arredondada_050
+    prohibits:
+      - deixar Borda e Observacao com padroes visuais diferentes
+      - usar lapis em uma linha e Alterar em outra dentro da conferencia
+      - mostrar Observacao como Opcional ou Preenchida na conferencia final
+      - reintroduzir Como o preco foi calculado
+      - apresentar preco ou valor de metade
+      - alterar backend, schema, contratos, snapshots, calculo ou maquina de estados
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO VISUAL FINAL - PADRONIZAR BORDA/OBSERVACAO E REDUZIR APARENCIA DE RELATORIO
+    forbidden_copy:
+      - Como o preco foi calculado
+      - Preco da metade
+      - Valor da metade
+      - Preenchida
+  - id: DEC-PIZZA-024
+    status: approved_later
+    title: Conferencia apos Borda e edicao padronizada
+    statement: A Observacao permanece global e opcional da pizza inteira; ao concluir a escolha da Borda, com tipo, tamanho e metades resolvidos, a conferencia central Pizza Atual abre automaticamente; a Observacao e exibida e editavel dentro da conferencia; Tamanho, Borda e Observacao reutilizam o mesmo padrao compacto canonico; toda edicao na conferencia usa um unico icone de lapis; o texto visivel Alterar nao e exibido na conferencia; chevron fica reservado para expandir e recolher, nao para editar.
+    supersedes_conflicting_parts_of:
+      - DEC-PIZZA-022
+    preserves:
+      - modal central sobre backdrop
+      - Observacao global da pizza inteira
+      - Metade 1 terracota e Metade 2 oliva
+      - retiradas e adicionais contextualizados por metade
+      - adicional global separado quando selecionado
+      - total comercial sem formula tecnica
+      - quantidade e CTA fixos
+      - retorno a categoria Pizzas apos adicionar
+      - calculo autoritativo e media_arredondada_050
+    prohibits:
+      - criar Observacao da Metade 1 ou Observacao da Metade 2
+      - renderizar CTA intermediario apos Borda
+      - mostrar Alterar como texto visivel na conferencia
+      - usar chevron como acao de edicao na conferencia
+      - deixar Tamanho como texto solto fora do padrao compacto
+      - alterar backend, schema, contratos, snapshots, calculo ou fluxo do catalogo
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO CONTROLADA - CONFERENCIA APOS BORDA E PADRAO UNICO DE EDICAO
+    forbidden_copy:
+      - Observacao da Metade 1
+      - Observacao da Metade 2
+      - Proximo
+      - Revisar pizza
+      - Confirmar borda
+    partially_superseded_by:
+      - DEC-PIZZA-025
+  - id: DEC-PIZZA-025
+    status: approved_later
+    title: Montagem e conferencia no mesmo modal
+    statement: O PizzaBuilder possui dois estados visuais no mesmo conteiner principal, montagem e conferencia; nao existe modal empilhado nem segundo backdrop; a conferencia substitui visualmente a montagem, voltar retorna a montagem preservada, e as acoes editaveis da conferencia usam chevron para a direita. Icone de lapis nao e utilizado nessa tela; chevrons verticais ficam reservados a expandir ou recolher conteudo no mesmo local.
+    supersedes_conflicting_parts_of:
+      - DEC-PIZZA-022: modal central sobre a montagem e backdrop interno.
+      - DEC-PIZZA-024: uso de lapis como acao de edicao e reserva absoluta do chevron contra edicao na conferencia.
+    preserves:
+      - Observacao global da pizza inteira
+      - conferencia aberta automaticamente apos Borda
+      - Metade 1 terracota e Metade 2 oliva
+      - retiradas e adicionais contextualizados por metade
+      - adicional global separado quando selecionado
+      - total comercial sem formula tecnica
+      - quantidade e CTA fixos
+      - retorno a categoria Pizzas apos adicionar
+      - calculo autoritativo e media_arredondada_050
+    prohibits:
+      - abrir a conferencia como segundo modal sobre o PizzaBuilder
+      - renderizar segundo backdrop interno
+      - deixar a montagem visivel atras da conferencia
+      - usar icone de lapis na conferencia
+      - usar chevron vertical como edicao na conferencia
+      - mostrar Alterar como texto visivel na conferencia ou nos resumos de metades
+      - alterar backend, schema, contratos, snapshots, calculo ou fluxo do catalogo
+    sources:
+      - Usuario, conversa de 2026-07-29: CORRECAO ESTRUTURAL APROVADA - FINALIZACAO COMO ESTADO DO MESMO MODAL E EDICAO POR CHEVRON
+    forbidden_copy:
+      - Proximo
+      - Revisar pizza
+      - Confirmar borda
+
+pending:
+  - id: DEC-PIZZA-PENDING-001
+    statement: Qualquer nova variacao visual de Tipo, Tamanho, Borda, Metades, Observacao ou Adicionais precisa de fonte aprovada antes da implementacao.

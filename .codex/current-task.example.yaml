@@ -1,0 +1,18 @@
+schema_version: 1
+task_id: example-pizza-selection-square
+summary: Exemplo de contrato para ajuste controlado do PizzaBuilder.
+decision_ids:
+  - DEC-PIZZA-001
+  - DEC-PIZZA-002
+allowed_files:
+  - src/pages/catalog/_components/PizzaBuilder.tsx
+  - src/pages/catalog/_components/pizzaBuilderUtils.test.ts
+  - src/pages/catalog/_components/PizzaBuilder.contract.test.ts
+protected_files:
+  - src/pages/dashboard/_components/DashboardMenu.tsx
+  - src/pages/whatsapp/page.tsx
+scan_paths:
+  - src/pages/catalog/_components/PizzaBuilder.tsx
+references:
+  - docs/arquitetura/decisoes/pizza.yaml
+  - docs/screenshots/m003-pizza-selection-final-01-tipo-aberto-nao-selecionada-408.png

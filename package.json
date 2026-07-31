@@ -9,6 +9,13 @@
     "preview": "vite preview",
     "build": "tsc -b && vite build",
     "test": "vitest run",
+    "test:visual": "vitest run src/pages/catalog/_components/PizzaBuilder.contract.test.ts",
+    "guard:decisions": "node scripts/guards/check-task-contract.mjs && node scripts/guards/check-decision-ids.mjs && node scripts/guards/check-forbidden-copy.mjs",
+    "guard:scope": "node scripts/guards/check-allowed-files.mjs && node scripts/guards/check-protected-files.mjs && node scripts/guards/check-staging.mjs",
+    "guard:ui": "node scripts/guards/check-ui-primitives.mjs",
+    "guard:baseline:capture": "node scripts/guards/capture-worktree-baseline.mjs",
+    "guard:baseline:check": "node scripts/guards/check-worktree-baseline.mjs",
+    "guard:all": "npm run guard:baseline:check && npm run guard:decisions && npm run guard:scope && npm run guard:ui",
     "lint": "eslint .",
     "prettier-fix": "prettier --write .",
     "prettier-check": "prettier --check ."
