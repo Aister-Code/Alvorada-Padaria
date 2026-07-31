@@ -3,7 +3,8 @@ import { v } from "convex/values";
 export const CATALOG_DOCUMENT_VERSION = "CATALOG-INSTANCE-ALVORADA-001";
 export const CATALOG_CONTRACT_VERSION = "catalog-contract-v1";
 export const CATALOG_CART_CONTRACT_VERSION = "catalog-cart-v1";
-export const CATALOG_CONVERSION_SNAPSHOT_VERSION = "catalog-conversion-snapshot-v1";
+export const CATALOG_CONVERSION_SNAPSHOT_VERSION =
+  "catalog-conversion-snapshot-v1";
 
 export const productOriginValidator = v.union(
   v.literal("produzido"),
@@ -54,9 +55,15 @@ export const upgradeOperationalStatusValidator = v.union(
   v.literal("ativo"),
 );
 
-export const pizzaKindValidator = v.union(v.literal("salgada"), v.literal("doce"));
+export const pizzaKindValidator = v.union(
+  v.literal("salgada"),
+  v.literal("doce"),
+);
 
-export const pizzaPricingPolicyValidator = v.literal("pendente_validacao");
+export const pizzaPricingPolicyValidator = v.union(
+  v.literal("pendente_validacao"),
+  v.literal("media_arredondada_050"),
+);
 
 export const catalogMigrationStatusValidator = v.union(
   v.literal("dry_run"),
@@ -66,9 +73,15 @@ export const catalogMigrationStatusValidator = v.union(
   v.literal("rollback_necessario"),
 );
 
-export const catalogContractVersionValidator = v.literal(CATALOG_CONTRACT_VERSION);
-export const cartContractVersionValidator = v.literal(CATALOG_CART_CONTRACT_VERSION);
-export const conversionSnapshotVersionValidator = v.literal(CATALOG_CONVERSION_SNAPSHOT_VERSION);
+export const catalogContractVersionValidator = v.literal(
+  CATALOG_CONTRACT_VERSION,
+);
+export const cartContractVersionValidator = v.literal(
+  CATALOG_CART_CONTRACT_VERSION,
+);
+export const conversionSnapshotVersionValidator = v.literal(
+  CATALOG_CONVERSION_SNAPSHOT_VERSION,
+);
 
 export const priceComponentValidator = v.object({
   kind: v.union(
@@ -162,7 +175,15 @@ export const cartItemContractValidator = v.object({
   productId: v.optional(v.id("products")),
   productDocumentKey: v.string(),
   productNameSnapshot: v.string(),
+  productDescriptionSnapshot: v.optional(v.string()),
+  categoryId: v.optional(v.id("categories")),
+  categoryDocumentKey: v.optional(v.string()),
+  categoryNameSnapshot: v.optional(v.string()),
+  subcategorySnapshot: v.optional(v.string()),
+  familySnapshot: v.optional(v.string()),
   productOriginSnapshot: productOriginValidator,
+  productionSectorSnapshot: v.optional(v.string()),
+  documentVersion: v.optional(v.string()),
   quantity: v.number(),
   selectedOption: v.optional(selectedOptionSnapshotValidator),
   pizzaConfiguration: v.optional(pizzaConfigurationSnapshotValidator),
@@ -201,12 +222,21 @@ export const conversionSnapshotValidator = v.object({
 
 export type ProductOrigin = "produzido" | "revendido" | "misto";
 export type PriceStatus = "confirmado" | "pendente" | "aguardando_confirmacao";
-export type OptionType = "padrao" | "tamanho" | "volume" | "embalagem" | "combinacao_suco" | "pizza_tamanho";
-export type ImageOrigin = "propria" | "oficial_fabricante" | "generica" | "placeholder";
+export type OptionType =
+  | "padrao"
+  | "tamanho"
+  | "volume"
+  | "embalagem"
+  | "combinacao_suco"
+  | "pizza_tamanho";
+export type ImageOrigin =
+  "propria" | "oficial_fabricante" | "generica" | "placeholder";
 export type ImageStatus = "aprovada" | "provisoria" | "substituir";
-export type UpgradeOperationalStatus = "pendente_modelagem" | "inativo" | "ativo";
+export type UpgradeOperationalStatus =
+  "pendente_modelagem" | "inativo" | "ativo";
 export type PizzaKind = "salgada" | "doce";
-export type PizzaPricingPolicy = "pendente_validacao";
+export type PizzaPricingPolicy = "pendente_validacao" | "media_arredondada_050";
 export type CatalogContractVersion = typeof CATALOG_CONTRACT_VERSION;
 export type CartContractVersion = typeof CATALOG_CART_CONTRACT_VERSION;
-export type ConversionSnapshotVersion = typeof CATALOG_CONVERSION_SNAPSHOT_VERSION;
+export type ConversionSnapshotVersion =
+  typeof CATALOG_CONVERSION_SNAPSHOT_VERSION;

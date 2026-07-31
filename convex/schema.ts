@@ -1,8 +1,8 @@
-
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import {
   cartContractVersionValidator,
+  cartItemContractValidator,
   catalogCartContractValidator,
   catalogMigrationStatusValidator,
   conversionSnapshotValidator,
@@ -43,8 +43,12 @@ export default defineSchema({
     tokenIdentifier: v.string(),
     name: v.optional(v.string()),
     email: v.optional(v.string()),
-    role: v.optional(v.union(v.literal("superadmin"), v.literal("admin"), v.literal("user"))),
-  }).index("by_token", ["tokenIdentifier"]).index("by_role", ["role"]),
+    role: v.optional(
+      v.union(v.literal("superadmin"), v.literal("admin"), v.literal("user")),
+    ),
+  })
+    .index("by_token", ["tokenIdentifier"])
+    .index("by_role", ["role"]),
 
   operators: defineTable({
     operatorId: v.string(),
@@ -62,8 +66,14 @@ export default defineSchema({
   pinResets: defineTable({
     operatorId: v.string(),
     newPinHash: v.string(),
-    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
-  }).index("by_operatorId", ["operatorId"]).index("by_status", ["status"]),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("rejected"),
+    ),
+  })
+    .index("by_operatorId", ["operatorId"])
+    .index("by_status", ["status"]),
 
   categories: defineTable({
     name: v.string(),
@@ -95,7 +105,9 @@ export default defineSchema({
     active: v.boolean(),
     featured: v.boolean(),
     hasSizes: v.optional(v.boolean()),
-    sizes: v.optional(v.array(v.object({ label: v.string(), extraPrice: v.number() }))),
+    sizes: v.optional(
+      v.array(v.object({ label: v.string(), extraPrice: v.number() })),
+    ),
     documentKey: v.optional(v.string()),
     documentalId: v.optional(v.string()),
     slug: v.optional(v.string()),
@@ -279,7 +291,9 @@ export default defineSchema({
   pizzaConfigurations: defineTable({
     productId: v.id("products"),
     pizzaKind: pizzaKindValidator,
-    allowedSizes: v.array(v.union(v.literal("P"), v.literal("M"), v.literal("G"))),
+    allowedSizes: v.array(
+      v.union(v.literal("P"), v.literal("M"), v.literal("G")),
+    ),
     maxFlavorsBySize: v.object({
       P: v.number(),
       M: v.number(),
@@ -351,6 +365,7 @@ export default defineSchema({
     quantidade: v.number(),
     subtotal: v.number(),
     adicionais: v.optional(v.array(adicionalItem)),
+    catalogSnapshot: v.optional(cartItemContractValidator),
     observacaoItem: v.optional(v.string()),
     statusProducao: v.string(),
     statusEntidade: v.string(),

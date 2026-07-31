@@ -3,9 +3,19 @@ import type { DatabaseReader } from "../_generated/server";
 import type { Id } from "../_generated/dataModel";
 import { getDocumentKeyConflict } from "./helpers";
 
-type DocumentKeyTable = "categories" | "products" | "productOptions";
+type DocumentKeyTable =
+  | "categories"
+  | "products"
+  | "productOptions"
+  | "complementGroups"
+  | "complementItems"
+  | "commercialUpgrades";
 
-export async function findByDocumentKey(ctx: { db: DatabaseReader }, table: DocumentKeyTable, documentKey: string) {
+export async function findByDocumentKey(
+  ctx: { db: DatabaseReader },
+  table: DocumentKeyTable,
+  documentKey: string,
+) {
   if (table === "categories") {
     return await ctx.db
       .query("categories")
@@ -15,6 +25,24 @@ export async function findByDocumentKey(ctx: { db: DatabaseReader }, table: Docu
   if (table === "products") {
     return await ctx.db
       .query("products")
+      .withIndex("by_document_key", (q) => q.eq("documentKey", documentKey))
+      .first();
+  }
+  if (table === "complementGroups") {
+    return await ctx.db
+      .query("complementGroups")
+      .withIndex("by_document_key", (q) => q.eq("documentKey", documentKey))
+      .first();
+  }
+  if (table === "complementItems") {
+    return await ctx.db
+      .query("complementItems")
+      .withIndex("by_document_key", (q) => q.eq("documentKey", documentKey))
+      .first();
+  }
+  if (table === "commercialUpgrades") {
+    return await ctx.db
+      .query("commercialUpgrades")
       .withIndex("by_document_key", (q) => q.eq("documentKey", documentKey))
       .first();
   }
@@ -36,13 +64,19 @@ export async function assertUniqueDocumentKey(
   }
 }
 
-export async function assertCategoryExists(ctx: { db: DatabaseReader }, categoryId: Id<"categories">) {
+export async function assertCategoryExists(
+  ctx: { db: DatabaseReader },
+  categoryId: Id<"categories">,
+) {
   const category = await ctx.db.get(categoryId);
   if (!category) throw new ConvexError("categoria_nao_encontrada");
   return category;
 }
 
-export async function assertProductExists(ctx: { db: DatabaseReader }, productId: Id<"products">) {
+export async function assertProductExists(
+  ctx: { db: DatabaseReader },
+  productId: Id<"products">,
+) {
   const product = await ctx.db.get(productId);
   if (!product) throw new ConvexError("produto_nao_encontrado");
   return product;

@@ -1,4 +1,3 @@
-
 import { query } from "../_generated/server";
 import {
   compareCatalogOrder,
@@ -24,7 +23,35 @@ export const listProducts = query({
       .query("products")
       .withIndex("by_active", (q) => q.eq("active", true))
       .collect();
-    return products.filter((product) => typeof product.price === "number");
+    const mapped = await Promise.all(
+      products.sort(compareCatalogOrder).map(async (product) => {
+        const category = await ctx.db.get(product.categoryId);
+        const activeOptions = (
+          await ctx.db
+            .query("productOptions")
+            .withIndex("by_product_active_order", (q) =>
+              q.eq("productId", product._id).eq("active", true),
+            )
+            .collect()
+        ).sort(compareCatalogOrder);
+        const sellability = determineProductSellability({
+          product,
+          category,
+          options: activeOptions,
+        });
+        return {
+          ...product,
+          options: getSellableOptions(activeOptions),
+          hasOptions: activeOptions.length > 0 || Boolean(product.hasSizes),
+          legacySizes: product.documentKey ? undefined : product.sizes,
+          sellable: sellability.sellable,
+          sellabilityReason: sellability.reason,
+          priceFrom: sellability.priceFrom,
+          source: product.documentKey ? "structured" : "legacy",
+        };
+      }),
+    );
+    return mapped;
   },
 });
 
@@ -38,7 +65,10 @@ export const getPublicCatalog = query({
         .collect()
     ).sort(compareCatalogOrder);
 
-    const products = await ctx.db.query("products").withIndex("by_active", (q) => q.eq("active", true)).collect();
+    const products = await ctx.db
+      .query("products")
+      .withIndex("by_active", (q) => q.eq("active", true))
+      .collect();
     const productsByCategory = new Map<string, typeof products>();
     for (const product of products.sort(compareCatalogOrder)) {
       const list = productsByCategory.get(product.categoryId) ?? [];
@@ -54,7 +84,9 @@ export const getPublicCatalog = query({
             const activeOptions = (
               await ctx.db
                 .query("productOptions")
-                .withIndex("by_product_active_order", (q) => q.eq("productId", product._id).eq("active", true))
+                .withIndex("by_product_active_order", (q) =>
+                  q.eq("productId", product._id).eq("active", true),
+                )
                 .collect()
             ).sort(compareCatalogOrder);
             const sellableOptions = getSellableOptions(activeOptions);
