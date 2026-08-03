@@ -114,8 +114,8 @@ export default function DashboardMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          "relative cursor-pointer rounded-full text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]",
-          compact ? "p-1.5" : "p-2",
+          "relative inline-flex cursor-pointer items-center justify-center rounded-full text-[#685c20]/62 transition-colors hover:text-[#685c20] focus:outline-none dark:text-[#f3c4a2]/62 dark:hover:text-[#f3c4a2]",
+          compact ? "h-8 w-8 p-0" : "p-2",
           shouldSignalMenu && "text-[#685c20] dark:text-[#f3c4a2]",
           introPulse && "animate-pulse",
         )}

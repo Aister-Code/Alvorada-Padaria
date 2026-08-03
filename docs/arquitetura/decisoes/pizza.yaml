@@ -174,6 +174,24 @@ decisions:
       - Usuario, conversa de 2026-07-30: CORRECAO PONTUAL - AREAS DE TOQUE SEGURAS NO MENU EM 320PX
     forbidden_copy: []
 
+  - id: DEC-DASHBOARD-001
+    status: approved_later
+    title: Gatilho compacto do Menu Geral do dashboard
+    statement: O gatilho do Menu Geral do dashboard preserva o icone Menu por ser semanticamente mais claro que EllipsisVertical; o refinamento aprovado limita-se a caixa fixa compacta de 32x32px com inline-flex, items-center, justify-center e p-0 no estado compacto. O popover, conteudo, eventos, foco, modulos, rotas e permissoes permanecem inalterados.
+    prohibits:
+      - trocar o icone Menu por EllipsisVertical no Menu Geral
+      - alterar modulos, rotas, permissoes ou conteudo do menu
+      - mudar popover, eventos ou comportamento aberto/fechado
+      - incluir screenshots de auditoria no commit
+      - tratar src/pages/whatsapp/page.tsx nesta decisao
+    sources:
+      - Usuario, conversa de 2026-08-03: Aprovar apenas o botao 32x32 mantendo o icone Menu
+      - docs/screenshots/dashboardmenu-visual-audit/dashboardmenu-comparativo-crop-1440.png
+      - docs/screenshots/dashboardmenu-visual-audit/dashboardmenu-comparativo-crop-1024.png
+      - docs/screenshots/dashboardmenu-visual-audit/dashboardmenu-comparativo-crop-408.png
+      - docs/screenshots/dashboardmenu-visual-audit/dashboardmenu-comparativo-crop-320.png
+    forbidden_copy: []
+
   - id: DEC-PIZZA-001
     status: approved_later
     title: SelectionSquare canonico
