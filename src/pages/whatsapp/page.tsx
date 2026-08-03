@@ -241,9 +241,9 @@ const customerContextBadgeClasses: Record<CustomerContextSignal["tone"], string>
 };
 
 const contextualMenu: Record<AtendimentoTab, string[]> = {
-  conversas: ["Relatórios", "Contatos bloqueados", "Filtros", "Mensagens rápidas", "Configurações da conversa", "Ajuda"],
-  pedidos: ["Em aberto", "Em produção", "Prontos", "Encerrados", "Ajuda", "Configurações de pedidos"],
-  clientes: ["Todos", "Recorrentes", "Com pedido", "Bloqueados", "Relatórios", "Ajuda", "Configurações de clientes"],
+  conversas: ["Agenda", "Relatórios", "Contatos bloqueados", "Filtros", "Mensagens rápidas", "Configurações da conversa", "Ajuda"],
+  pedidos: ["Agenda", "Em aberto", "Em produção", "Prontos", "Encerrados", "Ajuda", "Configurações de pedidos"],
+  clientes: ["Agenda", "Todos", "Recorrentes", "Com pedido", "Bloqueados", "Relatórios", "Ajuda", "Configurações de clientes"],
   agenda: ["Hoje", "Amanhã", "Pendências", "Configurar agenda"],
 };
 
@@ -4736,7 +4736,8 @@ export default function WhatsAppReceptionPage({ operator, onBack, onLogout, onSt
             onHelp={() => setShowHelp(true)}
             onLogout={onLogout}
             onFutureAction={(label) => {
-              if (label === "Relatórios") setReportPanelOpen(true);
+              if (label === "Agenda") setActiveTab("agenda");
+              else if (label === "Relatórios") setReportPanelOpen(true);
               else if (label === "Contatos bloqueados" || label === "Bloqueados") setBlockedContactsPanelOpen(true);
               else if (label.toLowerCase().includes("conversa")) setSlaSettingsPanelOpen(true);
               else toast.info(`${label} - em breve`);

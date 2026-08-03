@@ -192,6 +192,20 @@ decisions:
       - docs/screenshots/dashboardmenu-visual-audit/dashboardmenu-comparativo-crop-320.png
     forbidden_copy: []
 
+  - id: DEC-CENTRAL-001
+    status: approved_later
+    title: Agenda como contexto interno da Central
+    statement: Agenda permanece como contexto interno compacto da Central, acessivel pelo menu contextual de navegacao; selecionar Agenda executa setActiveTab(\"agenda\") e preserva o cabecalho existente. Nao criar atalho direto para /cardapio sem contrato de sessao, cliente, carrinho e rastreabilidade; envio ou abertura de Cardapio pela Central sera tratado posteriormente na arquitetura especifica do M-006; esta decisao nao implementa a arquitetura completa da Agenda.
+    prohibits:
+      - criar atalho direto para /cardapio na Central sem contrato operacional
+      - substituir o botao superior de Agenda por Abrir cardapio
+      - navegar ou recarregar a pagina ao selecionar Agenda no menu contextual
+      - alterar cabecalho, conversas, pedidos, clientes, filtros, localStorage ou dados simulados fora do hunk de Agenda
+      - implementar arquitetura completa da Agenda nesta decisao
+    sources:
+      - Usuario, conversa de 2026-08-03: CORRIGIR E ENCERRAR A PENDENCIA DO WHATSAPP/PAGE
+    forbidden_copy: []
+
   - id: DEC-PIZZA-001
     status: approved_later
     title: SelectionSquare canonico
